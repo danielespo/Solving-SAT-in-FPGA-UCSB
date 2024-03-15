@@ -7,12 +7,19 @@ module ClauseTable #(
 (
     input                               clk,        // Clock signal
     input                               reset,      // Reset signal
-    input [CLAUSE_ADDRESS_WIDTH-1:0]    address,    // n-bit number to address the clause table
-    output reg [CLAUSE_ADDRESS_WIDTH-1:0] clause [NUM_CLAUSES-1:0][NSAT-2:0]    // clause output
+    input [CLAUSE_ADDRESS_WIDTH-1:0]    address,    // n-bit number to address the clause 
+    // clause[i][j] is the jth SAT variable w/ negation bit in the ith clause
+    // negation bit is held in the MSB of the variable
+    output reg [CLAUSE_ADDRESS_WIDTH:0] clause [NUM_CLAUSES-1:0][NSAT-2:0]    // clause output
+
+    // load input at the beginning:
+    
 );
 
 // Internal register to hold the clause table
-reg [CLAUSE_ADDRESS_WIDTH-1:0] clause_table [NUM_ROWS-1:0][NUM_CLAUSES-1:0][NSAT-2:0];
+// clause_table[i][j][k] is the kth SAT variable w/ negation bit in the jth clause in the ith row
+// negation bit is held in the MSB of the variable
+reg [CLAUSE_ADDRESS_WIDTH:0] clause_table [NUM_ROWS-1:0][NUM_CLAUSES-1:0][NSAT-2:0];
 
 integer i, j, k;
 
