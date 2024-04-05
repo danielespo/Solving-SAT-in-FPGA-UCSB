@@ -15,6 +15,7 @@
 
 module clauseEvaluator #(
     parameter NUM_CLAUSES = 20, // Maximum number of clauses that can be associated with a single variable (determines # of clause evaluators)
+    parameter NUM_VARIABLES = 2, // Number of Variables and Var Tables being evaluated for each clause
     parameter VARIABLE_ADDRESS_WIDTH = 11, // Width of the incoming flipped variable address (11 bits for 2048 variables)
     parameter VAR_TABLE_ADDRESS_WIDTH = 11, // Width of the address leaving the clause evaluator to fetch the current value of that literal
 )(
