@@ -15,27 +15,27 @@ NOTES:
 
 */
 module Break_Value_Counter #(
-    parameter NUM_CLAUSES = 20,
-    parameter NUM_ROWS = 3,
-    parameter NUM_CLAUSES_BITS = clog2(NUM_CLAUSES)
+    parameter MAX_CLAUSES_PER_VARIABLE = 20,
+    parameter NSAT = 3,
+    parameter MAX_CLAUSES_PER_VARIABLE_BITS = clog2(MAX_CLAUSES_PER_VARIABLE)
 )
 (
     input           clk,                            // Clock signal
     input           reset,                          // Reset signal
-    input           clause [NUM_CLAUSES-1:0],       // array of bits indicating if the clause is broken / unsatisfied
-    output reg [NUM_CLAUSES_BITS-1:0] break_value   // number of clauses that are broken
+    input           clause_sat_i [MAX_CLAUSES_PER_VARIABLE-1:0],       // array of bits indicating if the clause is broken / unsatisfied
+    output reg [MAX_CLAUSES_PER_VARIABLE_BITS-1:0] break_value_o   // number of clauses that are broken
 );
 
 integer index;
 
 always @(posedge clk) begin
     if(reset) begin         // on reset, reset the output
-        break_value <= 0;
+        break_value_o <= 0;
     end else begin
-        break_value <= 0;   // set the output to 0
-        for(index = 0; index < NUM_CLAUSES; index = index + 1) begin    // loop through the "isBroken" array
-            if(clause[index]) begin
-                break_value <= break_value + 1;                         // increment the output for each broken clause
+        break_value_o <= 0;   // set the output to 0
+        for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin    // loop through the "isBroken" array
+            if(clause_sat_i[index]) begin
+                break_value_o <= break_value_o + 1;                         // increment the output for each broken clause
             end
         end
     end
