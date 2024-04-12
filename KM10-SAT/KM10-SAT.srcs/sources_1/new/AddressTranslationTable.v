@@ -22,7 +22,7 @@
 module AddressTranslationTable(
     input wire clk,
     input wire reset,
-    input wire [5:0] index, // Input index to select an entry, assuming NvLog2 bits for variable number + 1 bit for negation
+    input wire [10:0] address_i, // Input index to select an entry, assuming NvLog2 bits for variable number + 1 bit for negation
     output reg [10:0] address, // Output address field corresponding to the index (11b)
     output reg [19:0] mask // Output mask field corresponding to the index (20b)
 );
