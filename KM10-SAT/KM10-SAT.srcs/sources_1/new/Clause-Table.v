@@ -27,16 +27,16 @@ integer i, j, k;
 // assuming synchronous read, which may be incorrect.
 always @(posedge clk) begin
     if (reset) begin
-        for (int i=0; i < NUM_ROWS; i++) begin
-            for (int j=0; j < NUM_CLAUSES; j++) begin
-                for (int k=0; k < NSAT-1; k++) begin
+        for (int i=0; i < NUM_ROWS; i = i + 1) begin
+            for (int j=0; j < NUM_CLAUSES; j = j + 1) begin
+                for (int k=0; k < NSAT-1; k = k +1) begin
                     clause_table[i][j][k] <= 0;
                 end
             end
         end
     end else begin
-        for(int i = 0; i < NUM_CLAUSES; i++) begin
-            for(int j = 0; j < NSAT-1; j++) begin
+        for(int i = 0; i < NUM_CLAUSES; i = i + 1) begin
+            for(int j = 0; j < NSAT-1; j = j + 1) begin
                 clause[i][j] <= clause_table[address][i][j];
             end
         end
