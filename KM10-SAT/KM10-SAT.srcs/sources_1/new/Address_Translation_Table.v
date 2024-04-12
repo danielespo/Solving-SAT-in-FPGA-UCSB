@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module AddressTranslationTable(
+module Address_Translation_Table(
     input wire clk,
     input wire reset,
     input wire [5:0] index, // Input index to select an entry, assuming NvLog2 bits for variable number + 1 bit for negation

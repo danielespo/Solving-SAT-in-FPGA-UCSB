@@ -14,7 +14,7 @@ NOTES:
 - If not, this module is ready for testing.
 
 */
-module BreakValueCounter #(
+module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
     parameter NUM_ROWS = 3,
     parameter NUM_CLAUSES_BITS = clog2(NUM_CLAUSES)

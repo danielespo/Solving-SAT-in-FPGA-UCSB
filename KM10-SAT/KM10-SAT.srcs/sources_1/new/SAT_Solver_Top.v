@@ -1,4 +1,4 @@
-module sat_solver_top #(
+module SAT_Solver_Top #(
     parameter NUM_CLAUSES = 20,
     parameter LITERALS_PER_CLAUSE = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11

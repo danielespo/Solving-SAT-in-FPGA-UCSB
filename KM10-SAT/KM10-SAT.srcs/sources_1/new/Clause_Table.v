@@ -1,4 +1,4 @@
-module ClauseTable #(
+module Clause_Table #(
     parameter NUM_CLAUSES = 20,             // Number of clauses in the clause table
     parameter NUM_ROWS = 2048,              // Number of rows in the clause table
     parameter LITERAL_ADDRESS_WIDTH = 11,    // Number of bits to address the clause table
