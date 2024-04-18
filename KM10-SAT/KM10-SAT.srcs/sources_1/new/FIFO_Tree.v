@@ -9,7 +9,7 @@ module FIFO_tree #(
     input                                       reset,
     input [(LITERAL_ADDRESS_WIDTH+1)*NSAT - 1:0]   clauses_i [MAX_CLAUSES_PER_VARIABLE-1:0],
 
-    output [(LITERAL_ADDRESS_WIDTH+1)*NSAT - 1:0]  clause_o,
+    output [(LITERAL_ADDRESS_WIDTH+1)*NSAT - 1:0]  clause_o
 );
 
 

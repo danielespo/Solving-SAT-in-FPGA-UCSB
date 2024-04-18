@@ -21,7 +21,10 @@
 
 module Address_Translation_Table # (
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter LITERAL_ADDRESS_WIDTH = 11    
+    parameter LITERAL_ADDRESS_WIDTH = 11,  
+    parameter Nv = 32, // Number of variables
+    parameter NvLog2 = 5, // Log2(Nv), adjust based on Nv
+    parameter AT_SIZE = Nv * 2 // Twice the number of variables for negation bit
 )(
     input wire clk,
     input wire reset,
@@ -30,9 +33,7 @@ module Address_Translation_Table # (
     output reg [MAX_CLAUSES_PER_VARIABLE:0] mask_o // Output mask_o field corresponding to the index_i (20b)
 );
 
-parameter Nv = 32; // Number of variables
-parameter NvLog2 = 5; // Log2(Nv), adjust based on Nv
-parameter AT_SIZE = Nv * 2; // Twice the number of variables for negation bit
+
 
 // Internal storage for the address_o and mask_o fields
 reg [10:0] internal_address_field[0:AT_SIZE-1]; // 11 bits for address_o

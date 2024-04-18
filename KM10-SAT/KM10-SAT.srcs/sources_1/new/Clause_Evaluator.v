@@ -55,7 +55,7 @@ module Clause_Evaluator #(
     // NOR the two sides together
     always @(posedge clk) begin
         if (reset) begin
-            isBroken <= MAX_CLAUSES_PER_VARIABLE'b0;
+            isBroken <= {MAX_CLAUSES_PER_VARIABLE{1'b0}};
         end else begin
             isBroken <= ~(leftXOR | rightXOR);
         end
