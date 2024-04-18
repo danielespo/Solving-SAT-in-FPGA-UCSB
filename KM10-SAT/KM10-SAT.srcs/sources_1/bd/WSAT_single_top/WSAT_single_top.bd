@@ -2,12 +2,99 @@
   "design": {
     "design_info": {
       "boundary_crc": "0x0",
+      "device": "xc7z020clg400-1",
       "gen_directory": "../../../../KM10-SAT.gen/sources_1/bd/WSAT_single_top",
       "name": "WSAT_single_top",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
       "tool_version": "2023.2"
     },
-    "design_tree": {}
+    "design_tree": {
+      "AddressTranslationTa_0": "",
+      "ClauseTable_0": ""
+    },
+    "components": {
+      "AddressTranslationTa_0": {
+        "vlnv": "xilinx.com:module_ref:AddressTranslationTable:1.0",
+        "ip_revision": "1",
+        "xci_name": "WSAT_single_top_AddressTranslationTa_0_0",
+        "xci_path": "ip\\WSAT_single_top_AddressTranslationTa_0_0\\WSAT_single_top_AddressTranslationTa_0_0.xci",
+        "inst_hier_path": "AddressTranslationTa_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "AddressTranslationTable",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "address_i": {
+            "direction": "I",
+            "left": "10",
+            "right": "0"
+          },
+          "address": {
+            "direction": "O",
+            "left": "10",
+            "right": "0"
+          },
+          "mask": {
+            "direction": "O",
+            "left": "19",
+            "right": "0"
+          }
+        }
+      },
+      "ClauseTable_0": {
+        "vlnv": "xilinx.com:module_ref:ClauseTable:1.0",
+        "ip_revision": "1",
+        "xci_name": "WSAT_single_top_ClauseTable_0_0",
+        "xci_path": "ip\\WSAT_single_top_ClauseTable_0_0\\WSAT_single_top_ClauseTable_0_0.xci",
+        "inst_hier_path": "ClauseTable_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "ClauseTable",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "address": {
+            "direction": "I",
+            "left": "10",
+            "right": "0"
+          },
+          "clause": {
+            "direction": "O",
+            "left": "479",
+            "right": "0"
+          }
+        }
+      }
+    }
   }
 }

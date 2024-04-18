@@ -1,5 +1,5 @@
-module sat_solver_top #(
-    parameter NUM_CLAUSES = 20,
+module SAT_Solver_Top #(
+    parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter LITERALS_PER_CLAUSE = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11
 )
@@ -12,7 +12,7 @@ wire [LITERAL_ADDRESS_WIDTH:0] literal; // with negation bit
 wire [LITERAL_ADDRESS_WIDTH:0] clause [LITERALS_PER_CLAUSE-1:0]; // clause from processing
 
 clause_processor #(
-    NUM_CLAUSES,
+    MAX_CLAUSES_PER_VARIABLE,
     LITERALS_PER_CLAUSE,
     LITERAL_ADDRESS_WIDTH
 ) c_proc (
@@ -23,7 +23,7 @@ clause_processor #(
 )
 
 clause_selector #(
-    NUM_CLAUSES,
+    MAX_CLAUSES_PER_VARIABLE,
     LITERALS_PER_CLAUSE,
     LITERAL_ADDRESS_WIDTH
 ) c_sel (
