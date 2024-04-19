@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x0",
+      "boundary_crc": "0x436E21052428FF74",
       "device": "xc7z020clg400-1",
       "gen_directory": "../../../../KM10-SAT.gen/sources_1/bd/clause_processor",
       "name": "clause_processor",
@@ -10,9 +10,13 @@
       "tool_version": "2023.2"
     },
     "design_tree": {
-      "AddressTranslationTa_0": "",
-      "ClauseTable_0": "",
-      "BreakValueCounter_0": ""
+      "BreakValueCounter_0": "",
+      "Address_Translation_0": "",
+      "Clause_Table_0": "",
+      "Clause_Evaluator_0": "",
+      "Temporal_Buffer_0": "",
+      "Heuristic_Selector_0": "",
+      "FIFO_tree_0": ""
     },
     "ports": {
       "literalAddress": {
@@ -20,7 +24,9 @@
         "direction": "I"
       },
       "clause": {
-        "direction": "O"
+        "direction": "O",
+        "left": "35",
+        "right": "0"
       },
       "reset_0": {
         "type": "rst",
@@ -37,87 +43,6 @@
       }
     },
     "components": {
-      "AddressTranslationTa_0": {
-        "vlnv": "xilinx.com:module_ref:AddressTranslationTable:1.0",
-        "ip_revision": "1",
-        "xci_name": "clause_processor_AddressTranslationTa_0_0",
-        "xci_path": "ip\\clause_processor_AddressTranslationTa_0_0\\clause_processor_AddressTranslationTa_0_0.xci",
-        "inst_hier_path": "AddressTranslationTa_0",
-        "reference_info": {
-          "ref_type": "hdl",
-          "ref_name": "AddressTranslationTable",
-          "boundary_crc": "0x0"
-        },
-        "ports": {
-          "clk": {
-            "type": "clk",
-            "direction": "I",
-            "parameters": {
-              "ASSOCIATED_RESET": {
-                "value": "reset",
-                "value_src": "constant"
-              }
-            }
-          },
-          "reset": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "address_i": {
-            "direction": "I",
-            "left": "10",
-            "right": "0"
-          },
-          "address": {
-            "direction": "O",
-            "left": "10",
-            "right": "0"
-          },
-          "mask": {
-            "direction": "O",
-            "left": "19",
-            "right": "0"
-          }
-        }
-      },
-      "ClauseTable_0": {
-        "vlnv": "xilinx.com:module_ref:ClauseTable:1.0",
-        "ip_revision": "1",
-        "xci_name": "clause_processor_ClauseTable_0_0",
-        "xci_path": "ip\\clause_processor_ClauseTable_0_0\\clause_processor_ClauseTable_0_0.xci",
-        "inst_hier_path": "ClauseTable_0",
-        "reference_info": {
-          "ref_type": "hdl",
-          "ref_name": "ClauseTable",
-          "boundary_crc": "0x0"
-        },
-        "ports": {
-          "clk": {
-            "type": "clk",
-            "direction": "I",
-            "parameters": {
-              "ASSOCIATED_RESET": {
-                "value": "reset",
-                "value_src": "constant"
-              }
-            }
-          },
-          "reset": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "address": {
-            "direction": "I",
-            "left": "10",
-            "right": "0"
-          },
-          "clause": {
-            "direction": "O",
-            "left": "479",
-            "right": "0"
-          }
-        }
-      },
       "BreakValueCounter_0": {
         "vlnv": "xilinx.com:module_ref:BreakValueCounter:1.0",
         "ip_revision": "1",
@@ -137,6 +62,14 @@
               "ASSOCIATED_RESET": {
                 "value": "reset",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
               }
             }
           },
@@ -155,35 +88,400 @@
             "right": "0"
           }
         }
+      },
+      "Address_Translation_0": {
+        "vlnv": "xilinx.com:module_ref:Address_Translation_Table:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Address_Translation_0_0",
+        "xci_path": "ip\\clause_processor_Address_Translation_0_0\\clause_processor_Address_Translation_0_0.xci",
+        "inst_hier_path": "Address_Translation_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Address_Translation_Table",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "index_i": {
+            "direction": "I",
+            "left": "11",
+            "right": "0",
+            "parameters": {
+              "LAYERED_METADATA": {
+                "value": "undef",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "address_o": {
+            "direction": "O",
+            "left": "10",
+            "right": "0"
+          },
+          "mask_o": {
+            "direction": "O",
+            "left": "20",
+            "right": "0"
+          }
+        }
+      },
+      "Clause_Table_0": {
+        "vlnv": "xilinx.com:module_ref:Clause_Table:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Clause_Table_0_0",
+        "xci_path": "ip\\clause_processor_Clause_Table_0_0\\clause_processor_Clause_Table_0_0.xci",
+        "inst_hier_path": "Clause_Table_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Clause_Table",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "address_i": {
+            "direction": "I",
+            "left": "10",
+            "right": "0"
+          },
+          "clauses_o": {
+            "direction": "O",
+            "left": "479",
+            "right": "0"
+          }
+        }
+      },
+      "Clause_Evaluator_0": {
+        "vlnv": "xilinx.com:module_ref:Clause_Evaluator:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Clause_Evaluator_0_0",
+        "xci_path": "ip\\clause_processor_Clause_Evaluator_0_0\\clause_processor_Clause_Evaluator_0_0.xci",
+        "inst_hier_path": "Clause_Evaluator_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Clause_Evaluator",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "varTableAddressL_out": {
+            "direction": "O",
+            "left": "219",
+            "right": "0"
+          },
+          "varTableAddressR_out": {
+            "direction": "O",
+            "left": "219",
+            "right": "0"
+          },
+          "negationBitLitL_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "negationBitLitR_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "alt_negationBitLitL_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "alt_negationBitLitR_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "isBroken": {
+            "direction": "O",
+            "left": "19",
+            "right": "0"
+          }
+        }
+      },
+      "Temporal_Buffer_0": {
+        "vlnv": "xilinx.com:module_ref:Temporal_Buffer:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Temporal_Buffer_0_0",
+        "xci_path": "ip\\clause_processor_Temporal_Buffer_0_0\\clause_processor_Temporal_Buffer_0_0.xci",
+        "inst_hier_path": "Temporal_Buffer_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Temporal_Buffer",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "literals_i": {
+            "direction": "I",
+            "left": "35",
+            "right": "0",
+            "parameters": {
+              "LAYERED_METADATA": {
+                "value": "undef",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "isBroken_i": {
+            "direction": "I"
+          },
+          "heuristic_selection_i": {
+            "direction": "I",
+            "left": "1",
+            "right": "0"
+          },
+          "clause_o": {
+            "direction": "O",
+            "left": "35",
+            "right": "0"
+          }
+        }
+      },
+      "Heuristic_Selector_0": {
+        "vlnv": "xilinx.com:module_ref:Heuristic_Selector:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Heuristic_Selector_0_0",
+        "xci_path": "ip\\clause_processor_Heuristic_Selector_0_0\\clause_processor_Heuristic_Selector_0_0.xci",
+        "inst_hier_path": "Heuristic_Selector_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Heuristic_Selector",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "break_value_i": {
+            "direction": "I",
+            "left": "4",
+            "right": "0"
+          },
+          "selected_flip_o": {
+            "direction": "O",
+            "left": "1",
+            "right": "0"
+          }
+        }
+      },
+      "FIFO_tree_0": {
+        "vlnv": "xilinx.com:module_ref:FIFO_tree:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_FIFO_tree_0_0",
+        "xci_path": "ip\\clause_processor_FIFO_tree_0_0\\clause_processor_FIFO_tree_0_0.xci",
+        "inst_hier_path": "FIFO_tree_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "FIFO_tree",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "1000000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "clause_processor_clk",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "clauses_i": {
+            "direction": "I",
+            "left": "719",
+            "right": "0"
+          },
+          "clause_o": {
+            "direction": "O",
+            "left": "35",
+            "right": "0"
+          }
+        }
       }
     },
     "nets": {
-      "AddressTranslationTa_0_address": {
+      "Address_Translation_0_address_o": {
         "ports": [
-          "AddressTranslationTa_0/address",
-          "ClauseTable_0/address"
+          "Address_Translation_0/address_o",
+          "Clause_Table_0/address_i"
+        ]
+      },
+      "BreakValueCounter_0_break_value": {
+        "ports": [
+          "BreakValueCounter_0/break_value",
+          "Heuristic_Selector_0/break_value_i"
+        ]
+      },
+      "Clause_Evaluator_0_isBroken": {
+        "ports": [
+          "Clause_Evaluator_0/isBroken",
+          "BreakValueCounter_0/clause"
+        ]
+      },
+      "FIFO_tree_0_clause_o": {
+        "ports": [
+          "FIFO_tree_0/clause_o",
+          "clause"
+        ]
+      },
+      "Heuristic_Selector_0_selected_flip_o": {
+        "ports": [
+          "Heuristic_Selector_0/selected_flip_o",
+          "Temporal_Buffer_0/heuristic_selection_i"
+        ]
+      },
+      "Temporal_Buffer_0_clause_o": {
+        "ports": [
+          "Temporal_Buffer_0/clause_o",
+          "FIFO_tree_0/clauses_i"
         ]
       },
       "clk_1": {
         "ports": [
           "clk",
           "BreakValueCounter_0/clk",
-          "ClauseTable_0/clk",
-          "AddressTranslationTa_0/clk"
+          "Clause_Evaluator_0/clk",
+          "Clause_Table_0/clk",
+          "Address_Translation_0/clk",
+          "Temporal_Buffer_0/clk",
+          "FIFO_tree_0/clk",
+          "Heuristic_Selector_0/clk"
         ]
       },
       "literalAddress_1": {
         "ports": [
           "literalAddress",
-          "AddressTranslationTa_0/address_i"
+          "Temporal_Buffer_0/literals_i",
+          "Address_Translation_0/index_i"
         ]
       },
       "reset_0_1": {
         "ports": [
           "reset_0",
-          "AddressTranslationTa_0/reset",
-          "ClauseTable_0/reset",
-          "BreakValueCounter_0/reset"
+          "BreakValueCounter_0/reset",
+          "Clause_Evaluator_0/reset",
+          "Temporal_Buffer_0/reset",
+          "Address_Translation_0/reset",
+          "Clause_Table_0/reset",
+          "FIFO_tree_0/reset",
+          "Heuristic_Selector_0/reset"
         ]
       }
     }

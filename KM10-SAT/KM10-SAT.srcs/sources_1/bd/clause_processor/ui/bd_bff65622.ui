@@ -1,23 +1,40 @@
 {
    "ActiveEmotionalView":"Default View",
-   "Default View_ScaleFactor":"2.14355",
-   "Default View_TopLeft":"-136,-36",
+   "Default View_Layers":"/reset_0_1:true|/literalAddress_1:true|/clk_1:true|",
+   "Default View_ScaleFactor":"1.93028",
+   "Default View_TopLeft":"-65,-262",
+   "Display-PortTypeClock":"true",
+   "Display-PortTypeData":"true",
+   "Display-PortTypeOthers":"true",
+   "Display-PortTypeReset":"true",
    "ExpandedHierarchyInLayout":"",
+   "Interfaces View_Layers":"/reset_0_1:false|/literalAddress_1:false|/clk_1:false|",
+   "Interfaces View_ScaleFactor":"1.27327",
+   "Interfaces View_TopLeft":"-176,-161",
    "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0
 #  -string -flagsOSRD
-preplace port port-id_literalAddress -pg 1 -lvl 0 -x 0 -y 270 -defaultsOSRD
-preplace port port-id_clause -pg 1 -lvl 3 -x 620 -y 20 -defaultsOSRD
-preplace port port-id_reset_0 -pg 1 -lvl 0 -x 0 -y 170 -defaultsOSRD
-preplace port port-id_clk -pg 1 -lvl 1 -x 60 -y 350 -defaultsOSRD -bot
-preplace inst AddressTranslationTa_0 -pg 1 -lvl 1 -x 170 -y 250 -defaultsOSRD
-preplace inst ClauseTable_0 -pg 1 -lvl 2 -x 460 -y 220 -defaultsOSRD
-preplace inst BreakValueCounter_0 -pg 1 -lvl 2 -x 460 -y 80 -defaultsOSRD
-preplace netloc AddressTranslationTa_0_address 1 1 1 N 240
-preplace netloc literalAddress_1 1 0 1 NJ 270
-preplace netloc reset_0_1 1 0 2 20 170 320
-preplace netloc clk_1 1 0 2 30 160 310
-levelinfo -pg 1 0 170 460 620
-pagesize -pg 1 -db -bbox -sgen -140 0 710 420
+preplace port port-id_literalAddress -pg 1 -lvl 0 -x -70 -y 140 -defaultsOSRD
+preplace port port-id_reset_0 -pg 1 -lvl 0 -x -70 -y 240 -defaultsOSRD
+preplace port port-id_clk -pg 1 -lvl 0 -x -70 -y 210 -defaultsOSRD
+preplace portBus clause -pg 1 -lvl 6 -x 1970 -y 350 -defaultsOSRD
+preplace inst BreakValueCounter_0 -pg 1 -lvl 4 -x 1420 -y 180 -defaultsOSRD
+preplace inst Address_Translation_0 -pg 1 -lvl 1 -x 120 -y -10 -defaultsOSRD
+preplace inst Clause_Table_0 -pg 1 -lvl 2 -x 530 -y 40 -defaultsOSRD
+preplace inst Clause_Evaluator_0 -pg 1 -lvl 2 -x 530 -y 240 -defaultsOSRD
+preplace inst Temporal_Buffer_0 -pg 1 -lvl 2 -x 530 -y 450 -defaultsOSRD
+preplace inst Heuristic_Selector_0 -pg 1 -lvl 5 -x 1770 -y 170 -defaultsOSRD
+preplace inst FIFO_tree_0 -pg 1 -lvl 4 -x 1420 -y 530 -defaultsOSRD
+preplace netloc Address_Translation_0_address_o 1 1 1 260 -20n
+preplace netloc BreakValueCounter_0_break_value 1 4 1 1570 180n
+preplace netloc Clause_Evaluator_0_isBroken 1 2 2 750 200 N
+preplace netloc FIFO_tree_0_clause_o 1 4 2 1560 350 N
+preplace netloc Heuristic_Selector_0_selected_flip_o 1 1 5 310 -40 N -40 N -40 N -40 1930
+preplace netloc Temporal_Buffer_0_clause_o 1 2 2 N 450 1020
+preplace netloc clk_1 1 0 5 -40 70 290 130 N 130 1270 90 1570
+preplace netloc literalAddress_1 1 0 2 -20 450 N
+preplace netloc reset_0_1 1 0 5 -30 80 300 120 N 120 1280 100 1560
+levelinfo -pg 1 -70 120 530 1000 1420 1770 1970
+pagesize -pg 1 -db -bbox -sgen -220 -260 2110 760
 "
 }
-
+0

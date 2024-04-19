@@ -4,9 +4,10 @@ module UNSAT_Clause_Buffer # (
 )(
     input clk,
     input reset,
-    input [(LITERAL_ADDRESS_WIDTH+1)*NSAT - 1:0] clause_i,
+    input [LITERAL_ADDRESS_WIDTH:0] clause_i [0: NSAT-1],
     
-    output [(LITERAL_ADDRESS_WIDTH+1)*NSAT - 1:0] clause_o
+    output [LITERAL_ADDRESS_WIDTH:0] clause_o [0: NSAT-1]
 );
+
 
 endmodule

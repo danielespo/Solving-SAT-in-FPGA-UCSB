@@ -1,24 +1,26 @@
 {
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
-    "xci_name": "clause_processor_ClauseTable_0_0",
-    "cell_name": "ClauseTable_0",
-    "component_reference": "xilinx.com:module_ref:ClauseTable:1.0",
+    "xci_name": "clause_processor_Address_Translation_0_0",
+    "cell_name": "Address_Translation_0",
+    "component_reference": "xilinx.com:module_ref:Address_Translation_Table:1.0",
     "ip_revision": "1",
-    "gen_directory": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_ClauseTable_0_0",
+    "gen_directory": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Address_Translation_0_0",
     "parameters": {
       "component_parameters": {
-        "NUM_CLAUSES": [ { "value": "20", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "NUM_ROWS": [ { "value": "2048", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "Component_Name": [ { "value": "clause_processor_ClauseTable_0_0", "resolve_type": "user", "usage": "all" } ]
+        "Nv": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "NvLog2": [ { "value": "5", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "AT_SIZE": [ { "value": "64", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "Component_Name": [ { "value": "clause_processor_Address_Translation_0_0", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
-        "NUM_CLAUSES": [ { "value": "20", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "NUM_ROWS": [ { "value": "2048", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "generated", "format": "long", "usage": "all" } ]
+        "Nv": [ { "value": "32", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "NvLog2": [ { "value": "5", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "AT_SIZE": [ { "value": "64", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
         "ARCHITECTURE": [ { "value": "zynq" } ],
@@ -37,7 +39,7 @@
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
         "IPREVISION": [ { "value": "1" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_ClauseTable_0_0" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Address_Translation_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2023.2" } ],
@@ -48,8 +50,9 @@
       "ports": {
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
-        "address": [ { "direction": "in", "size_left": "10", "size_right": "0" } ],
-        "clause": [ { "direction": "out", "size_left": "479", "size_right": "0" } ]
+        "index_i": [ { "direction": "in", "size_left": "11", "size_right": "0" } ],
+        "address_o": [ { "direction": "out", "size_left": "10", "size_right": "0" } ],
+        "mask_o": [ { "direction": "out", "size_left": "20", "size_right": "0" } ]
       },
       "interfaces": {
         "reset": {
@@ -70,10 +73,10 @@
           "mode": "slave",
           "parameters": {
             "ASSOCIATED_RESET": [ { "value": "reset", "value_src": "constant", "value_permission": "bd_and_user", "usage": "all" } ],
-            "FREQ_HZ": [ { "value": "100000000", "value_permission": "bd_and_user", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
+            "FREQ_HZ": [ { "value": "1000000000", "value_src": "user_prop", "value_permission": "bd_and_user", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "FREQ_TOLERANCE_HZ": [ { "value": "0", "value_permission": "bd_and_user", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "PHASE": [ { "value": "0.0", "value_permission": "bd_and_user", "resolve_type": "generated", "format": "float", "is_ips_inferred": true, "is_static_object": false } ],
-            "CLK_DOMAIN": [ { "value": "", "value_permission": "bd_and_user", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
+            "CLK_DOMAIN": [ { "value": "clause_processor_clk", "value_src": "default_prop", "value_permission": "bd_and_user", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
             "ASSOCIATED_BUSIF": [ { "value": "", "value_permission": "bd_and_user", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
             "ASSOCIATED_PORT": [ { "value": "", "value_permission": "bd_and_user", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
             "INSERT_VIP": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "simulation.rtl", "is_ips_inferred": true, "is_static_object": false } ]
