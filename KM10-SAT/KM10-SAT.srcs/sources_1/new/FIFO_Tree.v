@@ -37,6 +37,12 @@ wire                      buffer_level_1_valid  [TREE_LEAVES - 1:0];
 wire [Data_WIDTH - 1 : 0] buffer_level_2        [TREE_LEAVES / 2 - 1:0];
 wire                      buffer_level_2_valid  [TREE_LEAVES / 2 - 1:0];
 
+reg buffer_read_en_level_1  [TREE_LEAVES - 1:0];
+reg buffer_empty_level_1    [TREE_LEAVES - 1:0];
+
+reg p2s_write_en_level_2    [TREE_LEAVES / 2 - 1:0];
+reg buffer_read_en_level_2  [TREE_LEAVES / 2 - 1:0];
+
 // TODO: fix this
 reg [] clk_counter;
 

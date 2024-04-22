@@ -25,7 +25,7 @@ module FIFO_Buffer #(
 )(
     input                       clk,            // Clock signal
     input                       reset,          // Reset signal
-    input [DATA_WIDTH-1:0]      data_i,         // Data input
+    input      [DATA_WIDTH-1:0] data_i,         // Data input
     input                       read_en_i,      // Read signal
     input                       write_en_i,     // Write signal
     
@@ -60,7 +60,9 @@ always @ (posedge clk) begin
         read_ptr <= 0;
         write_ptr <= 0;
         counter <= 0;
+        data_valid_o <= 0;
     end else begin
+        data_valid_o <= 0;
         if (write_en_i && !full_o) begin
             buffer[write_ptr] <= data_i;
             write_ptr <= write_ptr + 1;
@@ -68,6 +70,7 @@ always @ (posedge clk) begin
         end
         if (read_en_i && !empty_o) begin
             data_o <= buffer[read_ptr];
+            data_valid_o <= 1;
             read_ptr <= read_ptr + 1;
             counter <= counter - 1;
         end
