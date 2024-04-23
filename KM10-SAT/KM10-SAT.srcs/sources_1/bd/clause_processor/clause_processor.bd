@@ -12,7 +12,8 @@
     "design_tree": {
       "AddressTranslationTa_0": "",
       "ClauseTable_0": "",
-      "BreakValueCounter_0": ""
+      "BreakValueCounter_0": "",
+      "Clause_Evaluator_0": ""
     },
     "ports": {
       "literalAddress": {
@@ -152,6 +153,69 @@
           "break_value": {
             "direction": "O",
             "left": "4",
+            "right": "0"
+          }
+        }
+      },
+      "Clause_Evaluator_0": {
+        "vlnv": "xilinx.com:module_ref:Clause_Evaluator:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Clause_Evaluator_0_0",
+        "xci_path": "ip\\clause_processor_Clause_Evaluator_0_0\\clause_processor_Clause_Evaluator_0_0.xci",
+        "inst_hier_path": "Clause_Evaluator_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Clause_Evaluator",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "varTableAddressL_out": {
+            "direction": "O",
+            "left": "219",
+            "right": "0"
+          },
+          "varTableAddressR_out": {
+            "direction": "O",
+            "left": "219",
+            "right": "0"
+          },
+          "negationBitLitL_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "negationBitLitR_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "alt_negationBitLitL_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "alt_negationBitLitR_in": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "isBroken": {
+            "direction": "O",
+            "left": "19",
             "right": "0"
           }
         }

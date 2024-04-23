@@ -37,14 +37,20 @@ module Clause_Evaluator #(
 
     output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]               isBroken // Outputs high when the evaluated canadate clause was BROKEN by the flip
 );
+
+    // Wire arrays for XOR outputs
     wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsLeft;
     wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsRight;
 
-    integer i;
-    for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
+    // Continuous assignment using generate block for conditional compiling
+    // I changed this from just the forloop because I was getting syntax errors, Ben - Daniel
+    genvar i;
+    generate
+        for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin : gen_negBits
             assign negBitsLeft[i] = negationBitLitL_in[i];
             assign negBitsRight[i] = negationBitLitR_in[i];
-    end
+        end
+    endgenerate
 
     // This is the clause evaluator logic
     //Xor all of the left sides 0-MAX_CLAUSES_PER_VARIABLE
