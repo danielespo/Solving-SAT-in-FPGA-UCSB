@@ -1,3 +1,5 @@
+// Skeleton file of the UNSAT buffer
+
 module UNSAT_Clause_Buffer # (
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11
