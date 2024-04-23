@@ -1,5 +1,5 @@
-// *********** ClauseEvaluator 1 ***********
-/*
+
+/************ ClauseEvaluator 1 ***********
     In this module, we will be evaluating the clauses that are associated with a given variable. 
     This module is desiged to have all of the clause evaluators running in parallel, 
     in one module and should not be instantiated multiple times in a one thread implementation.

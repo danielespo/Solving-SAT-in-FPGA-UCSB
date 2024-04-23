@@ -7,6 +7,7 @@ module Clause_Table #(
 (
     input                               clk,        // Clock signal
     input                               reset,      // Reset signal
+    input                               write_enable, //To write to the table ALSO once this value goes to 0.. we can kickstarrt the whole WSAT algorithm..
     input [LITERAL_ADDRESS_WIDTH-1:0]   address_i,    // n-bit number to address the clause 
     // clause[i][j] is the jth SAT variable w/ negation bit in the ith clause
     // negation bit is held in the MSB of the variable
@@ -34,7 +35,12 @@ always @(posedge clk) begin
                 end
             end
         end
-    end else begin
+    end 
+    else if (write_enable) begin
+    // TODO write the write logic.
+        for     
+    end    
+    else begin
         for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
             for (j = 0; j < NSAT; j = j + 1) begin
                 clauses_o[i][j] <= clause_table[address_i][i][j];
@@ -42,6 +48,7 @@ always @(posedge clk) begin
         end
     end
 end
+
 
 
 endmodule
