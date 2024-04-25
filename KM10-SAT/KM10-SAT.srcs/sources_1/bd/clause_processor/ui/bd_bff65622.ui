@@ -1,7 +1,7 @@
 {
    "ActiveEmotionalView":"Default View",
    "Default View_ScaleFactor":"1.0",
-   "Default View_TopLeft":"-425,-184",
+   "Default View_TopLeft":"-425,-234",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0
 #  -string -flagsOSRD
@@ -13,12 +13,13 @@ preplace inst AddressTranslationTa_0 -pg 1 -lvl 1 -x 170 -y 250 -defaultsOSRD
 preplace inst ClauseTable_0 -pg 1 -lvl 2 -x 540 -y 220 -defaultsOSRD
 preplace inst BreakValueCounter_0 -pg 1 -lvl 2 -x 540 -y 80 -defaultsOSRD
 preplace inst Clause_Evaluator_0 -pg 1 -lvl 3 -x 900 -y 230 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 1 -x 170 -y -80 -defaultsOSRD
 preplace netloc AddressTranslationTa_0_address 1 1 1 N 240
-preplace netloc clk_1 1 0 2 30 170 390
+preplace netloc clk_1 1 0 2 -30 170 390
 preplace netloc literalAddress_1 1 0 1 NJ 270
-preplace netloc reset_0_1 1 0 2 20 160 400
+preplace netloc reset_0_1 1 0 2 -40 160 400
 levelinfo -pg 1 -80 170 540 900 1140
-pagesize -pg 1 -db -bbox -sgen -220 -160 1230 440
+pagesize -pg 1 -db -bbox -sgen -220 -180 1230 440
 "
 }
 0
