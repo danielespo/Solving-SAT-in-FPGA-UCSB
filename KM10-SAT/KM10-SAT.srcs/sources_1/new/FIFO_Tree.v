@@ -10,7 +10,7 @@ module FIFO_tree #(
     input                       clk,
     input                       reset,
     input [DATA_WIDTH - 1 : 0]  clauses_i [MAX_CLAUSES_PER_VARIABLE-1:0],
-    input                       write_en_i,
+    input                       write_en_i [MAX_CLAUSES_PER_VARIABLE-1:0],
 
     output reg [DATA_WIDTH - 1 : 0] clause_o,
     
@@ -43,6 +43,8 @@ reg buffer_empty_level_1    [TREE_LEAVES - 1:0];
 reg p2s_write_en_level_2    [TREE_LEAVES / 2 - 1:0];
 reg buffer_read_en_level_2  [TREE_LEAVES / 2 - 1:0];
 
+wire level_1_to_2_enable    [TREE_LEAVES / 2 - 1:0];
+
 // TODO: fix this
 reg [] clk_counter;
 
@@ -57,7 +59,7 @@ generate
             .clk(clk),
             .reset(reset),
             .data_i(clauses_i[i*5 +: 5]),
-            .write_en_i(write_en_i),
+            .write_en_i(write_en_i[5*i +: 5]),
             .data_o(serial_level_1[i]),
             .data_valid_o(serial_level_1_valid[i])
         );
@@ -68,7 +70,7 @@ generate
             .clk(clk),
             .reset(reset),
             .data_i(serial_level_1[i]),
-            .read_en_i(), // TODO
+            .read_en_i(~serial_level_2_valid[(i >> 1)]), // use the inverse of the valid signal from the next layer to signal read
             .write_en_i(serial_level_1_valid[i]),
             .data_o(buffer_level_1[i]),
             .data_valid_o(buffer_level_1_valid[i]),
@@ -77,6 +79,7 @@ generate
         );
     end
     // second level of tree
+    // the parallel to serial for this part is currently forced to have 2 parallel inputs
     for(j = 0; j < TREE_LEAVES / 2; j = j + 1) begin
         Parallel_to_Serial #(
             .DATA_WIDTH(DATA_WIDTH),
@@ -96,7 +99,7 @@ generate
             .clk(clk),
             .reset(reset),
             .data_i(serial_level_2[j]),
-            .read_en_i(),  // TODO
+            .read_en_i(1),  // TODO
             .write_en_i(serial_level_2_valid[j]),
             .data_o(buffer_level_2[j]),
             .data_valid_o(buffer_level_2_valid[j]),
@@ -125,7 +128,7 @@ FIFO_Buffer #(
     .clk(clk),
     .reset(reset),
     .data_i(serial_level_3),
-    .read_en_i(),  // TODO
+    .read_en_i(1'b1),              // try always on
     .write_en_i(serial_level_3_valid),
     .data_o(clause_o),
     .data_valid_o(clause_o),

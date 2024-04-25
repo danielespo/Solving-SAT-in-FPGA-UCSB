@@ -18,7 +18,7 @@ module Variable_Table #(
 (
     input               clk,
     input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_address_i [((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE) - 1 :0], // For clause evaluator 1
-    output wire                              calause [((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE) - 1 :0],
+    output wire                              clause [((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE) - 1 :0],
     input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_2_i [NSAT], // For clause evaluator 2
     output wire                              clause_evaluator_2_o [NSAT],
     input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_3_i [NSAT], // For clause evaluator 3
