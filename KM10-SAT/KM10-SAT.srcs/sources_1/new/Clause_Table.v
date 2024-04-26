@@ -38,7 +38,7 @@ always @(posedge clk) begin
     end 
     else if (write_enable) begin
     // TODO write the write logic.
-        for     
+          
     end    
     else begin
         for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
