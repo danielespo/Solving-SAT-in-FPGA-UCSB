@@ -24,7 +24,7 @@ module Parallel_to_Serial #(
     input                       reset,          // Reset signal
     input [DATA_WIDTH-1:0]      data_i          [NUM_PARALLEL-1:0], // Data input
     input                       data_valid_i    [NUM_PARALLEL-1:0], // Data input valid flag
-    input                       write_en_i      [NUM_PARALLEL-1:0]  // Write signal
+    input                       write_en_i,     // Write signal
     
     output reg [DATA_WIDTH-1:0] data_o,         // Data output
     output reg                  data_valid_o    // Data output valid flag
@@ -40,6 +40,8 @@ always @ (posedge clk) begin
         end
         counter <= 0;
     end else begin
+        counter <= 0;
+        write_counter <= 0;
         if (write_en_i) begin               // when write enable is high, 
             counter <= 0;                   // reset counter
             write_counter <= 0;             // reset write counter

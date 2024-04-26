@@ -1,23 +1,38 @@
-// SKELETON FILE FOR FIFO_TREE MODULE
+/*
+FIFO_Tree.v
+
+This module contains the FIFO Tree implementation. The FIFO tree is a tree of FIFO buffers 
+connected via parallel to serial converters. The tree is used to store the clauses that are
+left unsatisfied after a flip in the SAT solver. The tree is used primarily to consolidate
+the data from the parallel clause processors.
+
+This implementation is parameterized to allow for different buffer sizes, data widths, and
+level of parallelism. The tree depth is currently fixed at 3 and the parameter is unused. 
+
+The tree has inputs for the clauses and whether they are valid. It also has an input to 
+write the data to the tree. The tree outputs a single clause at a time. 
+*/
 
 module FIFO_tree #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter DATA_WIDTH = 36,
     parameter BUFFER_SIZE = 32,
-    parameter TREE_LEAVES = MAX_CLAUSES_PER_VARIABLE / 5,
+    parameter FIRST_LEVEL_PARALLEL = 5,
+    parameter TREE_LEAVES = MAX_CLAUSES_PER_VARIABLE / FIRST_LEVEL_PARALLEL,
     parameter TREE_DEPTH = 3    // unused parameter
 )(
     input                       clk,
     input                       reset,
-    input [DATA_WIDTH - 1 : 0]  clauses_i [MAX_CLAUSES_PER_VARIABLE-1:0],
-    input                       write_en_i [MAX_CLAUSES_PER_VARIABLE-1:0],
+    input [DATA_WIDTH - 1 : 0]  clauses_i       [MAX_CLAUSES_PER_VARIABLE-1:0],
+    input                       clause_valid_i  [MAX_CLAUSES_PER_VARIABLE-1:0],
+    input                       write_en_i,
 
     output reg [DATA_WIDTH - 1 : 0] clause_o,
     
 );
 
 // unsure exactly how to parameterize this - what does each level of the tree look like?
-//  - I'm assuming the MAX_CLAUSES_PER_VARIABLE is a multiple of 5
+//  - I'm assuming the MAX_CLAUSES_PER_VARIABLE is a multiple of FIRST_LEVEL_PARALLEL
 //  - the top layer of the tree is just TREE_LEAVES parallel_to_serial modules feeding into that many buffers
 //  - the second layer of the tree is 2 parallel_to_serial modules feeding into 2 buffers
 //  - the third layer is trivial, just a parallel_to_serial module feeding into a buffer (FIFO_Last)
@@ -37,16 +52,17 @@ wire                      buffer_level_1_valid  [TREE_LEAVES - 1:0];
 wire [Data_WIDTH - 1 : 0] buffer_level_2        [TREE_LEAVES / 2 - 1:0];
 wire                      buffer_level_2_valid  [TREE_LEAVES / 2 - 1:0];
 
-reg buffer_read_en_level_1  [TREE_LEAVES - 1:0];
-reg buffer_empty_level_1    [TREE_LEAVES - 1:0];
+// wire buffer_read_en_level_1  [TREE_LEAVES - 1:0];
+// wire buffer_empty_level_1    [TREE_LEAVES - 1:0];
 
-reg p2s_write_en_level_2    [TREE_LEAVES / 2 - 1:0];
-reg buffer_read_en_level_2  [TREE_LEAVES / 2 - 1:0];
+// wire p2s_write_en_level_2    [TREE_LEAVES / 2 - 1:0];
+// wire buffer_read_en_level_2  [TREE_LEAVES / 2 - 1:0];
 
-wire level_1_to_2_enable    [TREE_LEAVES / 2 - 1:0];
+wire level_1_to_2_enable    [TREE_LEAVES - 1:0]; // needs FSM controller 
 
-// TODO: fix this
-reg [] clk_counter;
+// half and quarter speed clocks (high for one clock cycle every 2 and 4 clock cycles respectively)
+reg clk2, clk4;
+reg [1:0] counter;
 
 genvar i, j;
 generate
@@ -54,12 +70,13 @@ generate
     for(i = 0; i < TREE_LEAVES; i = i + 1) begin
         Parallel_to_Serial #(
             .DATA_WIDTH(DATA_WIDTH),
-            .NUM_PARALLEL(5)
+            .NUM_PARALLEL(FIRST_LEVEL_PARALLEL)
         ) parallel_to_serial (
             .clk(clk),
             .reset(reset),
-            .data_i(clauses_i[i*5 +: 5]),
-            .write_en_i(write_en_i[5*i +: 5]),
+            .data_i(clauses_i[i*FIRST_LEVEL_PARALLEL +: FIRST_LEVEL_PARALLEL]),
+            .data_valid_i(clause_valid_i[i*FIRST_LEVEL_PARALLEL +: FIRST_LEVEL_PARALLEL]),
+            .write_en_i(write_en_i),
             .data_o(serial_level_1[i]),
             .data_valid_o(serial_level_1_valid[i])
         );
@@ -78,8 +95,11 @@ generate
             .full_o()   // unused
         );
     end
+
+
     // second level of tree
     // the parallel to serial for this part is currently forced to have 2 parallel inputs
+    // this is because the data_i and data_valid_i ports are arrays of size 2 and I am unsure how to parameterize this
     for(j = 0; j < TREE_LEAVES / 2; j = j + 1) begin
         Parallel_to_Serial #(
             .DATA_WIDTH(DATA_WIDTH),
@@ -88,7 +108,8 @@ generate
             .clk(clk),
             .reset(reset),
             .data_i({buffer_level_1[j*(TREE_LEAVES / 2)], buffer_level_1[j*(TREE_LEAVES / 2) + 1]}),
-            .write_en_i(), // TODO
+            .data_valid_i({buffer_level_1_valid[j*(TREE_LEAVES / 2)], buffer_level_1_valid[j*(TREE_LEAVES / 2) + 1]}),
+            .write_en_i(clk2), 
             .data_o(serial_level_2[j]),
             .data_valid_o(serial_level_2_valid[j])
         );
@@ -99,7 +120,7 @@ generate
             .clk(clk),
             .reset(reset),
             .data_i(serial_level_2[j]),
-            .read_en_i(1),  // TODO
+            .read_en_i(~serial_level_3_valid),  // use the inverse of the valid signal from the next layer to signal read
             .write_en_i(serial_level_2_valid[j]),
             .data_o(buffer_level_2[j]),
             .data_valid_o(buffer_level_2_valid[j]),
@@ -116,7 +137,8 @@ Parallel_to_Serial #(
     .clk(clk),
     .reset(reset),
     .data_i(buffer_level_2),
-    .write_en_i(), // TODO
+    .data_valid_i(buffer_level_2_valid),
+    .write_en_i(clk4), 
     .data_o(serial_level_3),
     .data_valid_o(serial_level_3_valid)
 );
@@ -128,7 +150,7 @@ FIFO_Buffer #(
     .clk(clk),
     .reset(reset),
     .data_i(serial_level_3),
-    .read_en_i(1'b1),              // try always on
+    .read_en_i(1'b1),   // try always on - means the next module needs to expect data always
     .write_en_i(serial_level_3_valid),
     .data_o(clause_o),
     .data_valid_o(clause_o),
@@ -137,6 +159,24 @@ FIFO_Buffer #(
 );
 
 // TODO: implement the rest of the logic
+always @ (posedge clk) begin
+    if (reset) begin
+        clk2 <= 0;
+        clk4 <= 0;
+        counter <= 2'b0;
+    end else begin
+        if(counter[0]) begin
+            clk2 <= 1;
+            if(counter[1]) begin
+                clk4 <= 1;
+            end
+        end else begin
+            clk2 <= 0;
+            clk4 <= 0;
+        end
+        counter <= counter + 1;
+    end
+end
 
 
 endmodule
