@@ -22,7 +22,8 @@
       "Variable_Table_0": "",
       "Clause_Register_0": "",
       "Clause_Evaluator_2": "",
-      "Clause_Evaluator_3": ""
+      "Clause_Evaluator_3": "",
+      "lfsr_prng_0": ""
     },
     "ports": {
       "clause": {
@@ -713,6 +714,39 @@
             "right": "0"
           }
         }
+      },
+      "lfsr_prng_0": {
+        "vlnv": "xilinx.com:module_ref:lfsr_prng:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_lfsr_prng_0_0",
+        "xci_path": "ip\\clause_processor_lfsr_prng_0_0\\clause_processor_lfsr_prng_0_0.xci",
+        "inst_hier_path": "lfsr_prng_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "lfsr_prng",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "out": {
+            "direction": "O",
+            "left": "31",
+            "right": "0"
+          }
+        }
       }
     },
     "nets": {
@@ -834,7 +868,8 @@
           "Clause_Evaluator_2/clk",
           "UNSAT_Clause_Buffer_0/clk",
           "Clause_Register_0/clk",
-          "Clause_Evaluator_3/clk"
+          "Clause_Evaluator_3/clk",
+          "lfsr_prng_0/clk"
         ]
       },
       "literalAddress_1": {
@@ -855,7 +890,8 @@
           "Clause_Register_0/reset",
           "Clause_Evaluator_3/reset",
           "Clause_Evaluator_2/reset",
-          "UNSAT_Clause_Buffer_0/reset"
+          "UNSAT_Clause_Buffer_0/reset",
+          "lfsr_prng_0/reset"
         ]
       }
     }
