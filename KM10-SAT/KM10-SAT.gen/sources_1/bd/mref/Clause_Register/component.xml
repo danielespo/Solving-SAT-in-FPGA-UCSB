@@ -2,7 +2,7 @@
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>xilinx.com</spirit:vendor>
   <spirit:library>module_ref</spirit:library>
-  <spirit:name>Clause_Evaluator</spirit:name>
+  <spirit:name>Clause_Register</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
@@ -51,11 +51,11 @@
         <spirit:displayName>Synthesis</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:synthesis</spirit:envIdentifier>
         <spirit:language>Verilog</spirit:language>
-        <spirit:modelName>Clause_Evaluator</spirit:modelName>
+        <spirit:modelName>Clause_Register</spirit:modelName>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ee526284</spirit:value>
+            <spirit:value>a9833cff</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -64,11 +64,11 @@
         <spirit:displayName>Simulation</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:simulation</spirit:envIdentifier>
         <spirit:language>Verilog</spirit:language>
-        <spirit:modelName>Clause_Evaluator</spirit:modelName>
+        <spirit:modelName>Clause_Register</spirit:modelName>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ee526284</spirit:value>
+            <spirit:value>a9833cff</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -109,11 +109,37 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>clause_table_i</spirit:name>
+        <spirit:name>flush</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>nextClause_i</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>clause_i</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">479</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 1 )">35</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -134,23 +160,19 @@
             </xilinx:packedDimensionsVector>
             <xilinx:unpackedDimensionsVector>
               <xilinx:dimension>
-                <xilinx:left>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:left>
-                <xilinx:right>0</xilinx:right>
-              </xilinx:dimension>
-              <xilinx:dimension>
-                <xilinx:left>(NSAT - 2)</xilinx:left>
-                <xilinx:right>0</xilinx:right>
+                <xilinx:left>0</xilinx:left>
+                <xilinx:right>(NSAT - 1)</xilinx:right>
               </xilinx:dimension>
             </xilinx:unpackedDimensionsVector>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
       </spirit:port>
       <spirit:port>
-        <spirit:name>var_table_address_o</spirit:name>
+        <spirit:name>literal_address_out</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">439</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) - 1)">10</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -161,69 +183,14 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
         </spirit:wire>
-        <spirit:vendorExtensions>
-          <xilinx:portInfo>
-            <xilinx:packedDimensionsVector>
-              <xilinx:dimension>
-                <xilinx:left>(LITERAL_ADDRESS_WIDTH - 1)</xilinx:left>
-                <xilinx:right>0</xilinx:right>
-              </xilinx:dimension>
-            </xilinx:packedDimensionsVector>
-            <xilinx:unpackedDimensionsVector>
-              <xilinx:dimension>
-                <xilinx:left>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:left>
-                <xilinx:right>0</xilinx:right>
-              </xilinx:dimension>
-              <xilinx:dimension>
-                <xilinx:left>(NSAT - 2)</xilinx:left>
-                <xilinx:right>0</xilinx:right>
-              </xilinx:dimension>
-            </xilinx:unpackedDimensionsVector>
-          </xilinx:portInfo>
-        </spirit:vendorExtensions>
       </spirit:port>
       <spirit:port>
-        <spirit:name>var_table_data_i</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">39</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-        <spirit:vendorExtensions>
-          <xilinx:portInfo>
-            <xilinx:unpackedDimensionsVector>
-              <xilinx:dimension>
-                <xilinx:left>0</xilinx:left>
-                <xilinx:right>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:right>
-              </xilinx:dimension>
-              <xilinx:dimension>
-                <xilinx:left>0</xilinx:left>
-                <xilinx:right>(NSAT - 2)</xilinx:right>
-              </xilinx:dimension>
-            </xilinx:unpackedDimensionsVector>
-          </xilinx:portInfo>
-        </spirit:vendorExtensions>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>isBroken</spirit:name>
+        <spirit:name>literal_negation_bit_out</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1)">19</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
-              <spirit:typeName>reg</spirit:typeName>
+              <spirit:typeName>std_logic</spirit:typeName>
               <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
@@ -233,11 +200,6 @@
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
-        <spirit:name>MAX_CLAUSES_PER_VARIABLE</spirit:name>
-        <spirit:displayName>Max Clauses Per Variable</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>NSAT</spirit:name>
         <spirit:displayName>Nsat</spirit:displayName>
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.NSAT">3</spirit:value>
@@ -253,20 +215,15 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/Clause_Evaluator_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/Clause_Register_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_dfb62905</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_066f9985</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>xilinx.com:module_ref:Clause_Evaluator:1.0</spirit:description>
+  <spirit:description>xilinx.com:module_ref:Clause_Register:1.0</spirit:description>
   <spirit:parameters>
-    <spirit:parameter>
-      <spirit:name>MAX_CLAUSES_PER_VARIABLE</spirit:name>
-      <spirit:displayName>Max Clauses Per Variable</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
-    </spirit:parameter>
     <spirit:parameter>
       <spirit:name>NSAT</spirit:name>
       <spirit:displayName>Nsat</spirit:displayName>
@@ -279,7 +236,7 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">Clause_Evaluator_v1_0</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">Clause_Register_v1_0</spirit:value>
     </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
@@ -290,14 +247,14 @@
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>Clause_Evaluator_v1_0</xilinx:displayName>
+      <xilinx:displayName>Clause_Register_v1_0</xilinx:displayName>
       <xilinx:autoFamilySupportLevel>level_1</xilinx:autoFamilySupportLevel>
       <xilinx:definitionSource>module_ref</xilinx:definitionSource>
       <xilinx:designToolContexts>
         <xilinx:designToolContext>IPI</xilinx:designToolContext>
       </xilinx:designToolContexts>
       <xilinx:coreRevision>1</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-04-26T08:19:44Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-04-26T08:36:30Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2023.2</xilinx:xilinxVersion>

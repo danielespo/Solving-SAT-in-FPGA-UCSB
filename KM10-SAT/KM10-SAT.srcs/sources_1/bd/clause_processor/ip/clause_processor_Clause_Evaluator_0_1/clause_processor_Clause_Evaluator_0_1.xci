@@ -1,21 +1,21 @@
 {
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
-    "xci_name": "clause_processor_Clause_Evaluator_0_0",
-    "cell_name": "Clause_Evaluator_1",
+    "xci_name": "clause_processor_Clause_Evaluator_0_1",
+    "cell_name": "Clause_Evaluator_2",
     "component_reference": "xilinx.com:module_ref:Clause_Evaluator:1.0",
     "ip_revision": "1",
-    "gen_directory": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Clause_Evaluator_0_0",
+    "gen_directory": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Clause_Evaluator_0_1",
     "parameters": {
       "component_parameters": {
-        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "NSAT": [ { "value": "4", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "Component_Name": [ { "value": "clause_processor_Clause_Evaluator_0_0", "resolve_type": "user", "usage": "all" } ]
+        "Component_Name": [ { "value": "clause_processor_Clause_Evaluator_0_1", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
-        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "MAX_CLAUSES_PER_VARIABLE": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "NSAT": [ { "value": "4", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
@@ -35,7 +35,7 @@
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
         "IPREVISION": [ { "value": "1" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Clause_Evaluator_0_0" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../KM10-SAT.gen/sources_1/bd/clause_processor/ip/clause_processor_Clause_Evaluator_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2023.2" } ],
@@ -46,10 +46,10 @@
       "ports": {
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
-        "clause_table_i": [ { "direction": "in", "size_left": "479", "size_right": "0" } ],
-        "var_table_address_o": [ { "direction": "out", "size_left": "439", "size_right": "0" } ],
-        "var_table_data_i": [ { "direction": "in", "size_left": "39", "size_right": "0" } ],
-        "isBroken": [ { "direction": "out", "size_left": "19", "size_right": "0" } ]
+        "clause_table_i": [ { "direction": "in", "size_left": "35", "size_right": "0" } ],
+        "var_table_address_o": [ { "direction": "out", "size_left": "32", "size_right": "0" } ],
+        "var_table_data_i": [ { "direction": "in", "size_left": "2", "size_right": "0" } ],
+        "isBroken": [ { "direction": "out", "size_left": "0", "size_right": "0" } ]
       },
       "interfaces": {
         "reset": {

@@ -2,7 +2,7 @@
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>xilinx.com</spirit:vendor>
   <spirit:library>customized_ip</spirit:library>
-  <spirit:name>clause_processor_Clause_Evaluator_0_0</spirit:name>
+  <spirit:name>clause_processor_Clause_Evaluator_0_1</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
@@ -158,7 +158,7 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">479</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">35</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -194,7 +194,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">439</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">32</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -230,7 +230,7 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">39</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">2</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -260,7 +260,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1)">19</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1)">0</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -276,12 +276,12 @@
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
         <spirit:name>MAX_CLAUSES_PER_VARIABLE</spirit:name>
         <spirit:displayName>Max Clauses Per Variable</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>NSAT</spirit:name>
         <spirit:displayName>Nsat</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.NSAT">3</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.NSAT">4</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>LITERAL_ADDRESS_WIDTH</spirit:name>
@@ -295,12 +295,12 @@
     <spirit:parameter>
       <spirit:name>MAX_CLAUSES_PER_VARIABLE</spirit:name>
       <spirit:displayName>Max Clauses Per Variable</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>NSAT</spirit:name>
       <spirit:displayName>Nsat</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.NSAT">3</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.NSAT">4</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>LITERAL_ADDRESS_WIDTH</spirit:name>
@@ -309,7 +309,7 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">clause_processor_Clause_Evaluator_0_0</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">clause_processor_Clause_Evaluator_0_1</spirit:value>
     </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
@@ -326,6 +326,8 @@
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.CLK.FREQ_TOLERANCE_HZ" xilinx:valuePermission="bd_and_user"/>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.CLK.PHASE" xilinx:valuePermission="bd_and_user"/>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.RESET.POLARITY" xilinx:valuePermission="bd_and_user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.MAX_CLAUSES_PER_VARIABLE" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.NSAT" xilinx:valueSource="user"/>
       </xilinx:configElementInfos>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
