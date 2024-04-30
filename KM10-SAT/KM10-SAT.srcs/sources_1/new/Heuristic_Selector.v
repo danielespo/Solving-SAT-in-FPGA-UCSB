@@ -3,8 +3,8 @@
 module Heuristic_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = $clog2(MAX_CLAUSES_PER_VARIABLE),
-    parameter NSAT_BITS = #clog2(NSAT),
+    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
+    parameter NSAT_BITS = 2
 )(
     input clk,
     input reset,

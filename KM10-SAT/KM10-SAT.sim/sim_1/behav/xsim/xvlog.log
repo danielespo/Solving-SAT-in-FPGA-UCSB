@@ -1,0 +1,4 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/dalbe/OneDrive/Documents/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.srcs/sources_1/new/Clause_Table.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module Clause_Table
+ERROR: [VRFC 10-3642] port 'clauses_o' must not be declared to be an array [C:/Users/dalbe/OneDrive/Documents/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.srcs/sources_1/new/Clause_Table.v:13]
+ERROR: [VRFC 10-8530] module 'Clause_Table' is ignored due to previous errors [C:/Users/dalbe/OneDrive/Documents/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.srcs/sources_1/new/Clause_Table.v:1]

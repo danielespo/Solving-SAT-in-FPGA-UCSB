@@ -12,17 +12,17 @@ TO UPDATE THE VARIABLE TABLE AND FLIP A VARIABLE:
 module Variable_Table #(
     parameter LITERAL_ADDRESS_WIDTH = 11,
     parameter MAX_CLAUSES_PER_VARIABLE = 20, // Maximum number of clauses that can be associated with a single variable (determines # of clause evaluators)
-    parameter NSAT = 3  // Number of SAT variables (3 for 3-SAT)
-    parameter NUM_VARIABLES = 2048, // Number of Variables
+    parameter NSAT = 3,  // Number of SAT variables (3 for 3-SAT)
+    parameter NUM_VARIABLES = 2048 // Number of Variables
 )
 (
     input               clk,
-    input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_address_i [((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE) - 1 :0], // For clause evaluator 1
-    output wire                              clause [((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE) - 1 :0],
-    input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_2_i [NSAT], // For clause evaluator 2
-    output wire                              clause_evaluator_2_o [NSAT],
-    input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_3_i [NSAT], // For clause evaluator 3
-    output wire                              clause_evaluator_3_o [NSAT],
+   input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_address_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [0:NSAT-2], // For clause evaluator 1
+    output wire                              clause [0:MAX_CLAUSES_PER_VARIABLE - 1] [0:NSAT-2],
+    input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_2_i [0: NSAT - 1], // For clause evaluator 2
+    output wire                              clause_evaluator_2_o [0: NSAT - 1],
+    input        [LITERAL_ADDRESS_WIDTH-1:0] clause_evaluator_3_i [0: NSAT - 1], // For clause evaluator 3
+    output wire                              clause_evaluator_3_o [0: NSAT - 1],
     input        [LITERAL_ADDRESS_WIDTH-1:0] flip_var_address_i,
     input                                    write_var_i
 );
@@ -36,14 +36,16 @@ always @ (negedge clk) begin
     end
 end
 
-integer i, j;
-for (i = 0; i < ((NSAT - 1) * MAX_CLAUSES_PER_VARIABLE); i = i + 1) begin
-    assign calause[i] = variableMem[clause_evaluator_address_i[i]];
+integer i, j, k;
+for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
+    for (j = 0; j < NSAT-1; j = j + 1) begin
+        assign calause[i][j] = variableMem[clause_evaluator_address_i[i][j]];
+    end
 end
 
-for (j = 0; j < NSAT; j = j + 1) begin
-    assign clause_evaluator_2_o[i] = variableMem[clause_evaluator_2_i[i]];
-    assign clause_evaluator_3_o[i] = variableMem[clause_evaluator_3_i[i]];
+for (k = 0; k < NSAT; k = k + 1) begin
+    assign clause_evaluator_2_o[k] = variableMem[clause_evaluator_2_i[k]];
+    assign clause_evaluator_3_o[k] = variableMem[clause_evaluator_3_i[k]];
 end
 
 
