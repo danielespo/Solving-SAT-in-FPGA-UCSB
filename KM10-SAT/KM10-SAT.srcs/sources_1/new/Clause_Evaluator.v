@@ -9,8 +9,6 @@
 
     It then outputs a MAX_CLAUSES_PER_VARIABLE wide isBroken signal, 
     which will be high if the clause at that index was broken by the flip.
-
-    ALERT [TODO] - This module is not done yet, and the addressing for the varTable is not setup yetVariable_Table (Variable_Table.v).
 */
 
 module Clause_Evaluator #(

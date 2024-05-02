@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
-
+// Note, this still needs to interface with the Variable Table somehow and I have no idea currently (5/02/24) how to do this, help later
+// thanks, -Dan
 module Clause_Evaluator_tb;
 parameter MAX_CLAUSES_PER_VARIABLE = 20;
 parameter NSAT = 3;
@@ -14,12 +15,12 @@ reg [LITERAL_ADDRESS_WIDTH-1:0] var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1
 // Outputs
 wire [MAX_CLAUSES_PER_VARIABLE-1:0] isBroken;
 
-// Instantiate the Unit Under Test (UUT)
+// Start
 Clause_Evaluator #(
     .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
     .NSAT(NSAT),
     .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
-) UUT (
+) uut (
     .clk(clk),
     .reset(reset),
     .clause_table_i(clause_table_i),
@@ -27,28 +28,28 @@ Clause_Evaluator #(
     .isBroken(isBroken)
 );
 
-// Clock generation
+// Clock
 initial begin
     clk = 0;
     forever #5 clk = ~clk; // 100 MHz Clock
 end
 
-// Initialize Inputs and apply test cases
+// Ins and test cases
 initial begin
-    // Initialize inputs
+    // Ins
     reset = 1;
     clause_table_i = 0;
     var_table_data_i = 0;
     
-    // Reset the system
+    // Reset test
     #10;
     reset = 0;
     #10;
     reset = 1;
     #10;
-    
-    // Example test case
-    // Define your clause_table_i and var_table_data_i based on specific test cases
+    reset = 0;
+    #10;
+    // Test cases
     clause_table_i[0][0] = 'h1A; // Example address for first clause
     clause_table_i[0][1] = 'h1B; // Example address for second clause
 
@@ -58,6 +59,7 @@ initial begin
     // More initialization and test cases can be added here
     
     #100;
+    reset = 1;
     
     // Monitor output
     $monitor("Time = %t, isBroken = %b", $time, isBroken);
