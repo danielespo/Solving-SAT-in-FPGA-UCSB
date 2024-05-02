@@ -18,7 +18,7 @@ module Address_Translation_Table_tb;
     reg [LITERAL_ADDRESS_WIDTH-1:0] address_o; // Output address_o field corresponding to the index_i (11b)
     reg [MAX_CLAUSES_PER_VARIABLE:0] mask_o; // Output mask_o field corresponding to the index_i (20b)
 
-    // Instantiate the Module (UUT)
+    // Start the module (UUT)
     Address_Translation_Table #(
         .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
         .NvLog2(NvLog2),
