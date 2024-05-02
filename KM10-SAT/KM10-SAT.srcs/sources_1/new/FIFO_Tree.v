@@ -27,9 +27,8 @@ module FIFO_tree #(
     input                       clause_valid_i  [MAX_CLAUSES_PER_VARIABLE-1:0],
     input                       write_en_i,
 
-    output reg [DATA_WIDTH - 1 : 0] clause_o,
-    
-); // syntax error here I have no idea how to fix
+    output reg [DATA_WIDTH - 1 : 0] clause_o
+    );
 
 // unsure exactly how to parameterize this - what does each level of the tree look like?
 //  - I'm assuming the MAX_CLAUSES_PER_VARIABLE is a multiple of FIRST_LEVEL_PARALLEL
