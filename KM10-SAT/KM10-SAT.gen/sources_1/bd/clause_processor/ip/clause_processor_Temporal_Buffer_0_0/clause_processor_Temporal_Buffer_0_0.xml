@@ -154,11 +154,27 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>literals_i</spirit:name>
+        <spirit:name>flipped_literal_i</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 1 )">35</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;))">11</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>dummy_view</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>clause_table_literals_i</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">23</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -178,7 +194,7 @@
             </xilinx:packedDimensionsVector>
             <xilinx:unpackedDimensionsVector>
               <xilinx:dimension>
-                <xilinx:left>(NSAT - 1)</xilinx:left>
+                <xilinx:left>(NSAT - 2)</xilinx:left>
                 <xilinx:right>0</xilinx:right>
               </xilinx:dimension>
             </xilinx:unpackedDimensionsVector>
@@ -192,6 +208,22 @@
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>dummy_view</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>current_flip_i</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT_BITS&apos;)) - 1)">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
               <spirit:viewNameRef>dummy_view</spirit:viewNameRef>
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
@@ -218,7 +250,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(((spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;))) - 1)">35</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 1 )">35</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -228,6 +260,22 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
         </spirit:wire>
+        <spirit:vendorExtensions>
+          <xilinx:portInfo>
+            <xilinx:packedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>LITERAL_ADDRESS_WIDTH</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:packedDimensionsVector>
+            <xilinx:unpackedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>(NSAT - 1)</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:unpackedDimensionsVector>
+          </xilinx:portInfo>
+        </spirit:vendorExtensions>
       </spirit:port>
     </spirit:ports>
     <spirit:modelParameters>

@@ -366,13 +366,23 @@
             "type": "rst",
             "direction": "I"
           },
-          "literals_i": {
+          "flipped_literal_i": {
             "direction": "I",
-            "left": "35",
+            "left": "11",
+            "right": "0"
+          },
+          "clause_table_literals_i": {
+            "direction": "I",
+            "left": "23",
             "right": "0"
           },
           "isBroken_i": {
             "direction": "I"
+          },
+          "current_flip_i": {
+            "direction": "I",
+            "left": "1",
+            "right": "0"
           },
           "heuristic_selection_i": {
             "direction": "I",
@@ -521,7 +531,7 @@
             "left": "439",
             "right": "0"
           },
-          "calause": {
+          "clause": {
             "direction": "O",
             "left": "39",
             "right": "0"
@@ -771,8 +781,8 @@
       "Clause_Evaluator_0_isBroken": {
         "ports": [
           "Clause_Evaluator_1/isBroken",
-          "Temporal_Buffer_0/isBroken_i",
-          "BreakValueCounter_0/clause"
+          "BreakValueCounter_0/clause",
+          "Temporal_Buffer_0/isBroken_i"
         ]
       },
       "Clause_Evaluator_0_var_table_address_o": {
@@ -815,8 +825,8 @@
       },
       "Net": {
         "ports": [
-          "Clause_Evaluator_1/clk",
-          "FIFO_tree_0/clk"
+          "FIFO_tree_0/clk",
+          "Clause_Evaluator_1/clk"
         ]
       },
       "Net1": {
@@ -840,7 +850,6 @@
       },
       "Variable_Table_0_calause": {
         "ports": [
-          "Variable_Table_0/calause",
           "Clause_Evaluator_1/var_table_data_i"
         ]
       },
@@ -862,12 +871,12 @@
           "BreakValueCounter_0/clk",
           "ClauseTable_0/clk",
           "AddressTranslationTa_0/clk",
-          "Heuristic_Selector_0/clk",
-          "Temporal_Buffer_0/clk",
-          "Variable_Table_0/clk",
-          "Clause_Evaluator_2/clk",
           "UNSAT_Clause_Buffer_0/clk",
+          "Temporal_Buffer_0/clk",
+          "Heuristic_Selector_0/clk",
+          "Variable_Table_0/clk",
           "Clause_Register_0/clk",
+          "Clause_Evaluator_2/clk",
           "Clause_Evaluator_3/clk",
           "lfsr_prng_0/clk"
         ]
@@ -875,8 +884,7 @@
       "literalAddress_1": {
         "ports": [
           "Clause_Register_0/literal_address_out",
-          "AddressTranslationTa_0/address_i",
-          "Temporal_Buffer_0/literals_i"
+          "AddressTranslationTa_0/address_i"
         ]
       },
       "reset_0_1": {
@@ -885,12 +893,12 @@
           "AddressTranslationTa_0/reset",
           "ClauseTable_0/reset",
           "BreakValueCounter_0/reset",
+          "UNSAT_Clause_Buffer_0/reset",
           "Temporal_Buffer_0/reset",
           "Heuristic_Selector_0/reset",
           "Clause_Register_0/reset",
-          "Clause_Evaluator_3/reset",
           "Clause_Evaluator_2/reset",
-          "UNSAT_Clause_Buffer_0/reset",
+          "Clause_Evaluator_3/reset",
           "lfsr_prng_0/reset"
         ]
       }

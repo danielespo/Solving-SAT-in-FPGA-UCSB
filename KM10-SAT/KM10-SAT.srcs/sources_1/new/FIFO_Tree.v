@@ -18,7 +18,7 @@ module FIFO_tree #(
     parameter DATA_WIDTH = 36,
     parameter BUFFER_SIZE = 32,
     parameter FIRST_LEVEL_PARALLEL = 5,
-    parameter TREE_LEAVES = MAX_CLAUSES_PER_VARIABLE / FIRST_LEVEL_PARALLEL,
+    parameter TREE_LEAVES = MAX_CLAUSES_PER_VARIABLE / FIRST_LEVEL_PARALLEL, // a bit risky I would just hardcode this everytime as MAX_CLAUSES_PER_VARIABLE / FIRST_LEVEL_PARALLEL
     parameter TREE_DEPTH = 3    // unused parameter
 )(
     input                       clk,
@@ -29,7 +29,7 @@ module FIFO_tree #(
 
     output reg [DATA_WIDTH - 1 : 0] clause_o,
     
-);
+); // syntax error here I have no idea how to fix
 
 // unsure exactly how to parameterize this - what does each level of the tree look like?
 //  - I'm assuming the MAX_CLAUSES_PER_VARIABLE is a multiple of FIRST_LEVEL_PARALLEL

@@ -46,8 +46,10 @@
       "ports": {
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
-        "literals_i": [ { "direction": "in", "size_left": "35", "size_right": "0" } ],
+        "flipped_literal_i": [ { "direction": "in", "size_left": "11", "size_right": "0" } ],
+        "clause_table_literals_i": [ { "direction": "in", "size_left": "23", "size_right": "0" } ],
         "isBroken_i": [ { "direction": "in" } ],
+        "current_flip_i": [ { "direction": "in", "size_left": "1", "size_right": "0" } ],
         "heuristic_selection_i": [ { "direction": "in", "size_left": "1", "size_right": "0" } ],
         "clause_o": [ { "direction": "out", "size_left": "35", "size_right": "0" } ]
       },
