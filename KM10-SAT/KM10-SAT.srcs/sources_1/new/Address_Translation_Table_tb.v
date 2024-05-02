@@ -38,6 +38,8 @@ module Address_Translation_Table_tb;
         clk = 0;
         forever #5 clk = ~clk; // Generate a clock with a period of 10ns
     end
+    integer i;  // Declare loop variables outside the for loop (verilog hates us)
+    integer j; 
 
     initial begin
         // Initialize inputs
@@ -56,14 +58,14 @@ module Address_Translation_Table_tb;
 
         // Test Case 2: internal storage with test values
         @(posedge clk); // Wait for a positive edge of the clock
-        for (int i = 0; i < AT_SIZE; i++) begin
+        for (i = 0; i < AT_SIZE; i = i + 1) begin
             @(posedge clk); // Wait for clock edge for each operation to mimic realistic scenario
             uut.internal_mask_field[i] = {20{i[0]}}; // Alternate pattern for mask
         end
 
         // Check initialized values
         @(posedge clk);
-        for (int j = 0; j < AT_SIZE; j++) begin
+        for (j = 0; j < AT_SIZE; j = j + 1) begin
             @(posedge clk); // Update index on a clock edge
             index_i = j;
             @(posedge clk); // Wait for another clock edge to observe the output
