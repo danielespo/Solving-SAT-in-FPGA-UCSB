@@ -90,7 +90,7 @@ module Address_Translation_Table_tb;
     
     // Check the correctness of outputs
     initial begin
-        for (int j = 0; j < AT_SIZE; j++) begin
+        for (j = 0; j < AT_SIZE; j = j+1) begin
             @(posedge clk);
             index_i = j;
             @(posedge clk);
