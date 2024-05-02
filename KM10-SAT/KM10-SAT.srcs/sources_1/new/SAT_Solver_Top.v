@@ -1,6 +1,6 @@
 module SAT_Solver_Top #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter LITERALS_PER_CLAUSE = 3,
+    parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11
 )
 (
@@ -9,12 +9,12 @@ module SAT_Solver_Top #(
 )
 
 wire [LITERAL_ADDRESS_WIDTH:0] literal; // with negation bit
-wire [LITERAL_ADDRESS_WIDTH:0] clause [LITERALS_PER_CLAUSE-1:0]; // clause from processing
+wire [LITERAL_ADDRESS_WIDTH:0] clause [NSAT-1:0]; // clause from processing
 
 clause_processor #(
-    MAX_CLAUSES_PER_VARIABLE,
-    LITERALS_PER_CLAUSE,
-    LITERAL_ADDRESS_WIDTH
+    .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
+    .NSAT(NSAT),
+    .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
 ) c_proc (
     .clk(clk),
     .reset(reset),
@@ -23,9 +23,9 @@ clause_processor #(
 )
 
 clause_selector #(
-    MAX_CLAUSES_PER_VARIABLE,
-    LITERALS_PER_CLAUSE,
-    LITERAL_ADDRESS_WIDTH
+    .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
+    .NSAT(NSAT),
+    .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
 ) c_sel (
     .clk(clk),
     .reset(reset),
