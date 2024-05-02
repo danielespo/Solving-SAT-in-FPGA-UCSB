@@ -23,7 +23,7 @@ module Clause_Evaluator #(
     input [LITERAL_ADDRESS_WIDTH:0] clause_table_i [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause table input
     output [LITERAL_ADDRESS_WIDTH-1:0] var_table_address_o [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause output
     input                              var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [0:NSAT-2],
-    output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]               isBroken // Outputs high when the evaluated canadate clause was BROKEN by the flip
+    output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]               isBroken // Outputs high when the evaluated candidate clause was BROKEN by the flip
 );
 
     // Wire arrays for XOR outputs
