@@ -422,6 +422,14 @@
             "left": "719",
             "right": "0"
           },
+          "clause_valid_i": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
+          "write_en_i": {
+            "direction": "I"
+          },
           "clause_o": {
             "direction": "O",
             "left": "35",
@@ -825,14 +833,14 @@
       },
       "Net": {
         "ports": [
-          "FIFO_tree_0/clk",
-          "Clause_Evaluator_1/clk"
+          "Clause_Evaluator_1/clk",
+          "FIFO_tree_0/clk"
         ]
       },
       "Net1": {
         "ports": [
-          "FIFO_tree_0/reset",
-          "Clause_Evaluator_1/reset"
+          "Clause_Evaluator_1/reset",
+          "FIFO_tree_0/reset"
         ]
       },
       "Temporal_Buffer_0_clause_o": {
@@ -870,9 +878,9 @@
           "processing_system7_0/FCLK_CLK0",
           "BreakValueCounter_0/clk",
           "ClauseTable_0/clk",
-          "UNSAT_Clause_Buffer_0/clk",
           "Temporal_Buffer_0/clk",
           "Heuristic_Selector_0/clk",
+          "UNSAT_Clause_Buffer_0/clk",
           "Variable_Table_0/clk",
           "Clause_Register_0/clk",
           "Clause_Evaluator_2/clk",
@@ -886,9 +894,9 @@
           "processing_system7_0/FCLK_RESET0_N",
           "ClauseTable_0/reset",
           "BreakValueCounter_0/reset",
-          "UNSAT_Clause_Buffer_0/reset",
           "Temporal_Buffer_0/reset",
           "Heuristic_Selector_0/reset",
+          "UNSAT_Clause_Buffer_0/reset",
           "Clause_Register_0/reset",
           "Clause_Evaluator_2/reset",
           "Clause_Evaluator_3/reset",

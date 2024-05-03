@@ -11,6 +11,7 @@
     which will be high if the clause at that index was broken by the flip.
 
     ALERT [TODO] - This module is not done yet, and the addressing for the varTable is not setup yetVariable_Table (Variable_Table.v).
+    NOTE: Clause Evaluator takes 2 CLOCK CYCLES as it needs to call on the variable table.
 */
 
 module Clause_Evaluator #(
@@ -18,12 +19,15 @@ module Clause_Evaluator #(
     parameter NSAT = 3, // Number of Variables and Var Tables being evaluated for each clause
     parameter LITERAL_ADDRESS_WIDTH = 11 // Width of the incoming flipped variable address (11 bits for 2048 variables)
 )(
-    input                                       clk,          // Clock signal
-    input                                       reset,        // Reset signal
-    input [LITERAL_ADDRESS_WIDTH:0] clause_table_i [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause table input
-    output [LITERAL_ADDRESS_WIDTH-1:0] var_table_address_o [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause output
-    input                              var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [0:NSAT-2],
-    output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]               isBroken // Outputs high when the evaluated candidate clause was BROKEN by the flip
+    input                                         clk,          // Clock signal
+    input                                         reset,        // Reset signal
+    input  [LITERAL_ADDRESS_WIDTH:0]              clause_table_i [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause table input
+    input  [MAX_CLAUSES_PER_VARIABLE:0]           clause_table_mask_i,
+    output [LITERAL_ADDRESS_WIDTH-1:0]            var_table_address_o [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause output
+    input                                         var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [NSAT-2:0],
+    output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]    isBroken, // Outputs high when the evaluated candidate clause was BROKEN by the flip
+    output reg  [LITERAL_ADDRESS_WIDTH:0]         flipped_literal_temp_buffer_o   [0:MAX_CLAUSES_PER_VARIABLE - 1],
+    output reg  [LITERAL_ADDRESS_WIDTH:0]         rest_clause_temp_buffer_o       [0:MAX_CLAUSES_PER_VARIABLE - 1] [NSAT-2:0]
 );
 
     // Wire arrays for XOR outputs
