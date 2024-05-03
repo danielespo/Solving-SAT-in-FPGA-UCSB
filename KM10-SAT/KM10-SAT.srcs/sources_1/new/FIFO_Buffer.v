@@ -51,31 +51,31 @@ reg [BUFFER_BITS-1:0] read_ptr, write_ptr, counter;
 assign empty_o = (counter == 0);
 assign full_o = (counter == BUFFER_SIZE - 1);
 
-
+// replaced all <= with = in the always block (non-blocking assignments with blocking assignments)
 always @ (posedge clk) begin
     if (reset) begin
         for (int i = 0; i < BUFFER_SIZE; i = i + 1) begin
-            buffer[i] <= 0;
+            buffer[i] = 0;
         end
-        read_ptr <= 0;
-        write_ptr <= 0;
-        counter <= 0;
-        data_valid_o <= 0;
+        read_ptr = 0;
+        write_ptr = 0;
+        counter = 0;
+        data_valid_o = 0;
     end else begin
-        data_valid_o <= 0;  // default: no data to output
+        data_valid_o = 0;  // default: no data to output
         if (write_en_i && !full_o) begin    // if write enable is high and the buffer is not full
-            buffer[write_ptr] <= data_i;    // write the data to buffer at the write_ptr index
-            write_ptr <= write_ptr + 1;     // increment write_ptr
-            counter <= counter + 1;         // increment counter
+            buffer[write_ptr] = data_i;    // write the data to buffer at the write_ptr index
+            write_ptr = write_ptr + 1;     // increment write_ptr
+            counter = counter + 1;         // increment counter
         end
         if (read_en_i && !empty_o) begin    // if read enable is high and the buffer is not empty
-            data_o <= buffer[read_ptr];     // output the data at the read_ptr index
-            data_valid_o <= 1;              // signal that there is data to output
-            read_ptr <= read_ptr + 1;       // increment read_ptr
-            counter <= counter - 1;         // decrement counter
+            data_o = buffer[read_ptr];     // output the data at the read_ptr index
+            data_valid_o = 1;              // signal that there is data to output
+            read_ptr = read_ptr + 1;       // increment read_ptr
+            counter = counter - 1;         // decrement counter
         end else if (read_en_i && empty_o) begin
-            data_o <= 0;                    // output 0 if the buffer is empty
-            data_valid_o <= 0;              // signal that there is no data to output
+            data_o = 0;                    // output 0 if the buffer is empty
+            data_valid_o = 0;              // signal that there is no data to output
         end
     end
 end
