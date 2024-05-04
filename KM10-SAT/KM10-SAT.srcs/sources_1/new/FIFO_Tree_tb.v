@@ -79,7 +79,7 @@ for(i = 0; i < 20; i = i + 1) begin
     write_en_i = 0;
     $display("FIFO output: %b", clause_o);
     // check for output clause in expected clause list
-    for(j = 0; j < 12; j = j + 1) begin
+    for(j = 0; j <= index; j = j + 1) begin
         if(clause_o == clauses[j]) begin
             $display("Matched clause %d: %b", j, clause_o);
             if(matched[j] == 1) begin
@@ -87,14 +87,14 @@ for(i = 0; i < 20; i = i + 1) begin
             end
             matched[j] = 1;
             break;
-        end else if(j == 11) begin
+        end else if(j == index) begin
             $display("Error: Unexpected clause %b", clause_o);
         end
     end
 end
 
 // Check if all clauses have been matched
-for(i = 0; i < 12; i = i + 1) begin
+for(i = 0; i <= index; i = i + 1) begin
     if(matched[i] == 0) begin
         $display("Error: Unmatched clause %d: %b", i, clauses[i]);
     end
