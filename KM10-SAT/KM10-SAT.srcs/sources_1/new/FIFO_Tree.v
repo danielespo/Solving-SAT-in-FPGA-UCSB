@@ -145,7 +145,7 @@ Parallel_to_Serial #(
 FIFO_Buffer #(
     .DATA_WIDTH(DATA_WIDTH),
     .BUFFER_SIZE(BUFFER_SIZE)
-) fifo_buffer_3 (
+) fifo_last (
     .clk(clk),
     .reset(reset),
     .data_i(serial_level_3),
