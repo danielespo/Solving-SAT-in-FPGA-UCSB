@@ -30,7 +30,7 @@ module Address_Translation_Table # (
     input wire reset,
     input wire [LITERAL_ADDRESS_WIDTH:0] index_i, // Input index_i to select an entry, assuming 11 bits for variable number + 1 bit for negation
     output reg [LITERAL_ADDRESS_WIDTH-1:0] address_o, // Output address_o field corresponding to the index_i (11b)
-    output reg [MAX_CLAUSES_PER_VARIABLE:0] mask_o // Output mask_o field corresponding to the index_i (20b)
+    output reg [MAX_CLAUSES_PER_VARIABLE-1:0] mask_o // Output mask_o field corresponding to the index_i (20b)
 );
 
 

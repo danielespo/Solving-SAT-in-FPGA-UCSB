@@ -1,0 +1,17 @@
+#-----------------------------------------------------------
+# Vivado v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:14:34 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Fri May  3 08:29:41 2024
+# Process ID: 7128
+# Current directory: Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.runs/synth_1
+# Command line: vivado.exe -log Address_Translation_Table_tb.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source Address_Translation_Table_tb.tcl
+# Log file: Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.runs/synth_1/Address_Translation_Table_tb.vds
+# Journal file: Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.runs/synth_1\vivado.jou
+# Running On: BENRICHARDS184E, OS: Windows, CPU Frequency: 3200 MHz, CPU Physical cores: 4, Host memory: 8584 MB
+#-----------------------------------------------------------
+source Address_Translation_Table_tb.tcl -notrace
+create_project: Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 499.168 ; gain = 184.375
+ERROR: [Common 17-275] File does not exist [Z:/Downloads/base.xdc]
+INFO: [Common 17-206] Exiting Vivado at Fri May  3 08:30:02 2024...

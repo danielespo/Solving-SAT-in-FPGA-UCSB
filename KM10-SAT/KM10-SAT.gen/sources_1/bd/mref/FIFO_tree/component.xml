@@ -55,7 +55,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a2469750</spirit:value>
+            <spirit:value>7f513385</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -68,7 +68,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a2469750</spirit:value>
+            <spirit:value>7f513385</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -113,7 +113,7 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( ((spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;))) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1 )">719</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( spirit:decode(id(&apos;MODELPARAM_VALUE.DATA_WIDTH&apos;)) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1 )">719</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -128,7 +128,7 @@
           <xilinx:portInfo>
             <xilinx:packedDimensionsVector>
               <xilinx:dimension>
-                <xilinx:left>(((LITERAL_ADDRESS_WIDTH + 1) * NSAT) - 1)</xilinx:left>
+                <xilinx:left>(DATA_WIDTH - 1)</xilinx:left>
                 <xilinx:right>0</xilinx:right>
               </xilinx:dimension>
             </xilinx:packedDimensionsVector>
@@ -142,16 +142,56 @@
         </spirit:vendorExtensions>
       </spirit:port>
       <spirit:port>
-        <spirit:name>clause_o</spirit:name>
+        <spirit:name>clause_valid_i</spirit:name>
         <spirit:wire>
-          <spirit:direction>out</spirit:direction>
+          <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(((spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;))) - 1)">35</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1)">19</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+        <spirit:vendorExtensions>
+          <xilinx:portInfo>
+            <xilinx:unpackedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:unpackedDimensionsVector>
+          </xilinx:portInfo>
+        </spirit:vendorExtensions>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>write_en_i</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>clause_o</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.DATA_WIDTH&apos;)) - 1)">35</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>reg</spirit:typeName>
               <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
@@ -166,14 +206,29 @@
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>LITERAL_ADDRESS_WIDTH</spirit:name>
-        <spirit:displayName>Literal Address Width</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH">11</spirit:value>
+        <spirit:name>DATA_WIDTH</spirit:name>
+        <spirit:displayName>Data Width</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.DATA_WIDTH">36</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>NSAT</spirit:name>
-        <spirit:displayName>Nsat</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.NSAT">3</spirit:value>
+        <spirit:name>BUFFER_SIZE</spirit:name>
+        <spirit:displayName>Buffer Size</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.BUFFER_SIZE">32</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>FIRST_LEVEL_PARALLEL</spirit:name>
+        <spirit:displayName>First Level Parallel</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.FIRST_LEVEL_PARALLEL">5</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>TREE_LEAVES</spirit:name>
+        <spirit:displayName>Tree Leaves</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.TREE_LEAVES" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) / spirit:decode(id(&apos;MODELPARAM_VALUE.FIRST_LEVEL_PARALLEL&apos;)))">4</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>TREE_DEPTH</spirit:name>
+        <spirit:displayName>Tree Depth</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.TREE_DEPTH">3</spirit:value>
       </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
@@ -183,7 +238,7 @@
       <spirit:file>
         <spirit:name>xgui/FIFO_tree_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_b528629e</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_1dc2d856</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -196,14 +251,29 @@
       <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_CLAUSES_PER_VARIABLE">20</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
-      <spirit:name>LITERAL_ADDRESS_WIDTH</spirit:name>
-      <spirit:displayName>Literal Address Width</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.LITERAL_ADDRESS_WIDTH">11</spirit:value>
+      <spirit:name>DATA_WIDTH</spirit:name>
+      <spirit:displayName>Data Width</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.DATA_WIDTH">36</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
-      <spirit:name>NSAT</spirit:name>
-      <spirit:displayName>Nsat</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.NSAT">3</spirit:value>
+      <spirit:name>BUFFER_SIZE</spirit:name>
+      <spirit:displayName>Buffer Size</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.BUFFER_SIZE">32</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>FIRST_LEVEL_PARALLEL</spirit:name>
+      <spirit:displayName>First Level Parallel</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.FIRST_LEVEL_PARALLEL">5</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>TREE_LEAVES</spirit:name>
+      <spirit:displayName>Tree Leaves</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.TREE_LEAVES">4</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>TREE_DEPTH</spirit:name>
+      <spirit:displayName>Tree Depth</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.TREE_DEPTH">3</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -225,7 +295,7 @@
         <xilinx:designToolContext>IPI</xilinx:designToolContext>
       </xilinx:designToolContexts>
       <xilinx:coreRevision>1</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-04-18T03:39:53Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-05-03T06:30:04Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2023.2</xilinx:xilinxVersion>
