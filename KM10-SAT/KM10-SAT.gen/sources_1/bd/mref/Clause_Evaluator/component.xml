@@ -55,7 +55,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>61dae3a9</spirit:value>
+            <spirit:value>7bb69c5a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -68,7 +68,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>61dae3a9</spirit:value>
+            <spirit:value>7bb69c5a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -146,6 +146,23 @@
         </spirit:vendorExtensions>
       </spirit:port>
       <spirit:port>
+        <spirit:name>clause_table_mask_i</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1)">19</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>var_table_address_o</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
@@ -206,8 +223,8 @@
                 <xilinx:right>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:right>
               </xilinx:dimension>
               <xilinx:dimension>
-                <xilinx:left>0</xilinx:left>
-                <xilinx:right>(NSAT - 2)</xilinx:right>
+                <xilinx:left>(NSAT - 2)</xilinx:left>
+                <xilinx:right>0</xilinx:right>
               </xilinx:dimension>
             </xilinx:unpackedDimensionsVector>
           </xilinx:portInfo>
@@ -229,6 +246,76 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
         </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>flipped_literal_temp_buffer_o</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) - 1 )">239</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>reg</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+        <spirit:vendorExtensions>
+          <xilinx:portInfo>
+            <xilinx:packedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>LITERAL_ADDRESS_WIDTH</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:packedDimensionsVector>
+            <xilinx:unpackedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>0</xilinx:left>
+                <xilinx:right>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:unpackedDimensionsVector>
+          </xilinx:portInfo>
+        </spirit:vendorExtensions>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>rest_clause_temp_buffer_o</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="( (spirit:decode(id(&apos;MODELPARAM_VALUE.LITERAL_ADDRESS_WIDTH&apos;)) + 1) * spirit:decode(id(&apos;MODELPARAM_VALUE.MAX_CLAUSES_PER_VARIABLE&apos;)) * ((spirit:decode(id(&apos;MODELPARAM_VALUE.NSAT&apos;)) - 2) + 1) - 1 )">479</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>reg</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+        <spirit:vendorExtensions>
+          <xilinx:portInfo>
+            <xilinx:packedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>LITERAL_ADDRESS_WIDTH</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:packedDimensionsVector>
+            <xilinx:unpackedDimensionsVector>
+              <xilinx:dimension>
+                <xilinx:left>0</xilinx:left>
+                <xilinx:right>(MAX_CLAUSES_PER_VARIABLE - 1)</xilinx:right>
+              </xilinx:dimension>
+              <xilinx:dimension>
+                <xilinx:left>(NSAT - 2)</xilinx:left>
+                <xilinx:right>0</xilinx:right>
+              </xilinx:dimension>
+            </xilinx:unpackedDimensionsVector>
+          </xilinx:portInfo>
+        </spirit:vendorExtensions>
       </spirit:port>
     </spirit:ports>
     <spirit:modelParameters>
@@ -297,7 +384,7 @@
         <xilinx:designToolContext>IPI</xilinx:designToolContext>
       </xilinx:designToolContexts>
       <xilinx:coreRevision>1</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-05-03T06:30:11Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-05-05T02:16:10Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2023.2</xilinx:xilinxVersion>

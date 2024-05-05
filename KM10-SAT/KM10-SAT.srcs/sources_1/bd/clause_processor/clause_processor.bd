@@ -14,7 +14,6 @@
       "BreakValueCounter_0": "",
       "Clause_Evaluator_1": "",
       "processing_system7_0": "",
-      "Temporal_Buffer_0": "",
       "Heuristic_Selector_0": "",
       "FIFO_tree_0": "",
       "UNSAT_Clause_Buffer_0": "",
@@ -23,7 +22,9 @@
       "Clause_Evaluator_2": "",
       "Clause_Evaluator_3": "",
       "lfsr_prng_0": "",
-      "Address_Translation_0": ""
+      "Address_Translation_0": "",
+      "xlconcat_0": "",
+      "Temporal_Buffer_0": ""
     },
     "ports": {
       "clause": {
@@ -143,6 +144,11 @@
             "left": "479",
             "right": "0"
           },
+          "clause_table_mask_i": {
+            "direction": "I",
+            "left": "19",
+            "right": "0"
+          },
           "var_table_address_o": {
             "direction": "O",
             "left": "439",
@@ -156,6 +162,16 @@
           "isBroken": {
             "direction": "O",
             "left": "19",
+            "right": "0"
+          },
+          "flipped_literal_temp_buffer_o": {
+            "direction": "O",
+            "left": "239",
+            "right": "0"
+          },
+          "rest_clause_temp_buffer_o": {
+            "direction": "O",
+            "left": "479",
             "right": "0"
           }
         }
@@ -294,62 +310,6 @@
                 }
               }
             }
-          }
-        }
-      },
-      "Temporal_Buffer_0": {
-        "vlnv": "xilinx.com:module_ref:Temporal_Buffer:1.0",
-        "ip_revision": "1",
-        "xci_name": "clause_processor_Temporal_Buffer_0_0",
-        "xci_path": "ip\\clause_processor_Temporal_Buffer_0_0\\clause_processor_Temporal_Buffer_0_0.xci",
-        "inst_hier_path": "Temporal_Buffer_0",
-        "reference_info": {
-          "ref_type": "hdl",
-          "ref_name": "Temporal_Buffer",
-          "boundary_crc": "0x0"
-        },
-        "ports": {
-          "clk": {
-            "type": "clk",
-            "direction": "I",
-            "parameters": {
-              "ASSOCIATED_RESET": {
-                "value": "reset",
-                "value_src": "constant"
-              }
-            }
-          },
-          "reset": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "flipped_literal_i": {
-            "direction": "I",
-            "left": "11",
-            "right": "0"
-          },
-          "clause_table_literals_i": {
-            "direction": "I",
-            "left": "23",
-            "right": "0"
-          },
-          "isBroken_i": {
-            "direction": "I"
-          },
-          "current_flip_i": {
-            "direction": "I",
-            "left": "1",
-            "right": "0"
-          },
-          "heuristic_selection_i": {
-            "direction": "I",
-            "left": "1",
-            "right": "0"
-          },
-          "clause_o": {
-            "direction": "O",
-            "left": "35",
-            "right": "0"
           }
         }
       },
@@ -617,6 +577,11 @@
             "left": "35",
             "right": "0"
           },
+          "clause_table_mask_i": {
+            "direction": "I",
+            "left": "0",
+            "right": "0"
+          },
           "var_table_address_o": {
             "direction": "O",
             "left": "32",
@@ -630,6 +595,16 @@
           "isBroken": {
             "direction": "O",
             "left": "0",
+            "right": "0"
+          },
+          "flipped_literal_temp_buffer_o": {
+            "direction": "O",
+            "left": "11",
+            "right": "0"
+          },
+          "rest_clause_temp_buffer_o": {
+            "direction": "O",
+            "left": "35",
             "right": "0"
           }
         }
@@ -673,6 +648,11 @@
             "left": "35",
             "right": "0"
           },
+          "clause_table_mask_i": {
+            "direction": "I",
+            "left": "0",
+            "right": "0"
+          },
           "var_table_address_o": {
             "direction": "O",
             "left": "32",
@@ -686,6 +666,16 @@
           "isBroken": {
             "direction": "O",
             "left": "0",
+            "right": "0"
+          },
+          "flipped_literal_temp_buffer_o": {
+            "direction": "O",
+            "left": "11",
+            "right": "0"
+          },
+          "rest_clause_temp_buffer_o": {
+            "direction": "O",
+            "left": "35",
             "right": "0"
           }
         }
@@ -761,7 +751,78 @@
           },
           "mask_o": {
             "direction": "O",
-            "left": "20",
+            "left": "19",
+            "right": "0"
+          }
+        }
+      },
+      "xlconcat_0": {
+        "vlnv": "xilinx.com:ip:xlconcat:2.1",
+        "ip_revision": "5",
+        "xci_name": "clause_processor_xlconcat_0_0",
+        "xci_path": "ip\\clause_processor_xlconcat_0_0\\clause_processor_xlconcat_0_0.xci",
+        "inst_hier_path": "xlconcat_0",
+        "parameters": {
+          "IN0_WIDTH": {
+            "value": "1"
+          },
+          "IN1_WIDTH": {
+            "value": "11"
+          }
+        }
+      },
+      "Temporal_Buffer_0": {
+        "vlnv": "xilinx.com:module_ref:Temporal_Buffer:1.0",
+        "ip_revision": "1",
+        "xci_name": "clause_processor_Temporal_Buffer_0_0",
+        "xci_path": "ip\\clause_processor_Temporal_Buffer_0_0\\clause_processor_Temporal_Buffer_0_0.xci",
+        "inst_hier_path": "Temporal_Buffer_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Temporal_Buffer",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "flipped_literal_i": {
+            "direction": "I",
+            "left": "11",
+            "right": "0"
+          },
+          "clause_table_literals_i": {
+            "direction": "I",
+            "left": "23",
+            "right": "0"
+          },
+          "isBroken_i": {
+            "direction": "I"
+          },
+          "current_flip_i": {
+            "direction": "I",
+            "left": "1",
+            "right": "0"
+          },
+          "heuristic_selection_i": {
+            "direction": "I",
+            "left": "1",
+            "right": "0"
+          },
+          "clause_o": {
+            "direction": "O",
+            "left": "35",
             "right": "0"
           }
         }
@@ -818,6 +879,18 @@
           "Variable_Table_0/clause_evaluator_3_i"
         ]
       },
+      "Clause_Register_0_literal_address_out": {
+        "ports": [
+          "Clause_Register_0/literal_address_out",
+          "xlconcat_0/In1"
+        ]
+      },
+      "Clause_Register_0_literal_negation_bit_out": {
+        "ports": [
+          "Clause_Register_0/literal_negation_bit_out",
+          "xlconcat_0/In0"
+        ]
+      },
       "FIFO_tree_0_clause_o": {
         "ports": [
           "FIFO_tree_0/clause_o",
@@ -833,14 +906,14 @@
       },
       "Net": {
         "ports": [
-          "Clause_Evaluator_1/clk",
-          "FIFO_tree_0/clk"
+          "FIFO_tree_0/clk",
+          "Clause_Evaluator_1/clk"
         ]
       },
       "Net1": {
         "ports": [
-          "Clause_Evaluator_1/reset",
-          "FIFO_tree_0/reset"
+          "FIFO_tree_0/reset",
+          "Clause_Evaluator_1/reset"
         ]
       },
       "Temporal_Buffer_0_clause_o": {
@@ -858,6 +931,7 @@
       },
       "Variable_Table_0_calause": {
         "ports": [
+          "Variable_Table_0/clause",
           "Clause_Evaluator_1/var_table_data_i"
         ]
       },
@@ -878,15 +952,15 @@
           "processing_system7_0/FCLK_CLK0",
           "BreakValueCounter_0/clk",
           "ClauseTable_0/clk",
-          "Temporal_Buffer_0/clk",
           "Heuristic_Selector_0/clk",
           "UNSAT_Clause_Buffer_0/clk",
           "Variable_Table_0/clk",
           "Clause_Register_0/clk",
-          "Clause_Evaluator_2/clk",
-          "Clause_Evaluator_3/clk",
           "lfsr_prng_0/clk",
-          "Address_Translation_0/clk"
+          "Address_Translation_0/clk",
+          "Temporal_Buffer_0/clk",
+          "Clause_Evaluator_2/clk",
+          "Clause_Evaluator_3/clk"
         ]
       },
       "reset_0_1": {
@@ -894,14 +968,20 @@
           "processing_system7_0/FCLK_RESET0_N",
           "ClauseTable_0/reset",
           "BreakValueCounter_0/reset",
-          "Temporal_Buffer_0/reset",
           "Heuristic_Selector_0/reset",
           "UNSAT_Clause_Buffer_0/reset",
           "Clause_Register_0/reset",
-          "Clause_Evaluator_2/reset",
-          "Clause_Evaluator_3/reset",
           "lfsr_prng_0/reset",
-          "Address_Translation_0/reset"
+          "Address_Translation_0/reset",
+          "Temporal_Buffer_0/reset",
+          "Clause_Evaluator_2/reset",
+          "Clause_Evaluator_3/reset"
+        ]
+      },
+      "xlconcat_0_dout": {
+        "ports": [
+          "xlconcat_0/dout",
+          "Address_Translation_0/index_i"
         ]
       }
     }
