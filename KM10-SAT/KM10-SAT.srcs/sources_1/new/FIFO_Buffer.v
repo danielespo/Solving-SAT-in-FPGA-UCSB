@@ -63,12 +63,12 @@ always @ (posedge clk) begin
         data_valid_o = 0;
     end else begin
         data_valid_o = 0;  // default: no data to output
-        if (write_en_i && !full_o) begin    // if write enable is high and the buffer is not full
+        if (write_en_i && !full_o) begin   // if write enable is high and the buffer is not full
             buffer[write_ptr] = data_i;    // write the data to buffer at the write_ptr index
             write_ptr = write_ptr + 1;     // increment write_ptr
             counter = counter + 1;         // increment counter
         end
-        if (read_en_i && !empty_o) begin    // if read enable is high and the buffer is not empty
+        if (read_en_i && !empty_o) begin   // if read enable is high and the buffer is not empty
             data_o = buffer[read_ptr];     // output the data at the read_ptr index
             data_valid_o = 1;              // signal that there is data to output
             read_ptr = read_ptr + 1;       // increment read_ptr
