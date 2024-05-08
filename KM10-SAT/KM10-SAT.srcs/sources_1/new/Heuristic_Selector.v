@@ -16,7 +16,7 @@ module Heuristic_Selector #(
 );
 
 reg [MAX_CLAUSES_PER_VARIABLE_BITS-1:0] break_values [NSAT-1:0];
-reg zero_found;
+reg hasZero;
 
 always @(posedge clk) begin
     if(reset) begin
@@ -25,12 +25,12 @@ always @(posedge clk) begin
         if(0 <= current_flip_i && current_flip_i < NSAT) begin
             break_values[current_flip_i] <= break_value_i;
             if (break_value_i == 0) begin
-                zero_found <= 1;
+                hasZero <= 1;
                 selected_flip_o <= current_flip_i;
             end
         end 
         if(current_flip_i == NSAT - 1) begin
-            if(zero_found == 0) begin
+            if(hasZero == 0) begin
                 if(probability) begin       // don't know how to find this
                     selected_flip_o <= random_i % NSAT;  // figure out best way to chose random flip
                 /* By using < instead of <= for the first flip, we prioritize other flips over the first flip. 
