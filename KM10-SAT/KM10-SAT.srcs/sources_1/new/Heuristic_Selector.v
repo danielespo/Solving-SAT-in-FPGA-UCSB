@@ -45,6 +45,7 @@ always @(posedge clk) begin
                     selected_flip_o <= 2;
                 end
             end
+            hasZero <= 0;
         end
     end
 end
