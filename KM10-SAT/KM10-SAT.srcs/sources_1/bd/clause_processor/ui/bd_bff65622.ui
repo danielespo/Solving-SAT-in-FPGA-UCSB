@@ -1,50 +1,50 @@
 {
    "ActiveEmotionalView":"Default View",
    "Default View_ScaleFactor":"1.25893",
-   "Default View_TopLeft":"1410,-539",
+   "Default View_TopLeft":"10,-697",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0
 #  -string -flagsOSRD
 preplace port port-id_clause -pg 1 -lvl 7 -x 3080 -y 80 -defaultsOSRD
 preplace portBus var_table_address_o -pg 1 -lvl 7 -x 3080 -y 280 -defaultsOSRD
-preplace inst ClauseTable_0 -pg 1 -lvl 5 -x 2050 -y 300 -defaultsOSRD
+preplace inst ClauseTable_0 -pg 1 -lvl 5 -x 2090 -y 300 -defaultsOSRD
 preplace inst BreakValueCounter_0 -pg 1 -lvl 3 -x 1100 -y 160 -defaultsOSRD
-preplace inst Clause_Evaluator_1 -pg 1 -lvl 6 -x 2490 -y 290 -defaultsOSRD
+preplace inst Clause_Evaluator_1 -pg 1 -lvl 6 -x 2530 -y 290 -defaultsOSRD
 preplace inst processing_system7_0 -pg 1 -lvl 1 -x 190 -y 120 -defaultsOSRD
-preplace inst Heuristic_Selector_0 -pg 1 -lvl 4 -x 1580 -y -40 -defaultsOSRD
-preplace inst FIFO_tree_0 -pg 1 -lvl 6 -x 2490 -y 80 -defaultsOSRD
+preplace inst Heuristic_Selector_0 -pg 1 -lvl 4 -x 1620 -y -40 -defaultsOSRD
+preplace inst FIFO_tree_0 -pg 1 -lvl 6 -x 2530 -y 80 -defaultsOSRD
 preplace inst UNSAT_Clause_Buffer_0 -pg 1 -lvl 2 -x 630 -y -330 -defaultsOSRD
 preplace inst Variable_Table_0 -pg 1 -lvl 3 -x 1100 -y -590 -defaultsOSRD
-preplace inst Clause_Register_0 -pg 1 -lvl 4 -x 1580 -y -440 -defaultsOSRD
+preplace inst Clause_Register_0 -pg 1 -lvl 4 -x 1620 -y -440 -defaultsOSRD
 preplace inst Clause_Evaluator_2 -pg 1 -lvl 2 -x 630 -y -600 -defaultsOSRD
-preplace inst Clause_Evaluator_3 -pg 1 -lvl 4 -x 1580 -y -240 -defaultsOSRD
+preplace inst Clause_Evaluator_3 -pg 1 -lvl 4 -x 1620 -y -240 -defaultsOSRD
 preplace inst lfsr_prng_0 -pg 1 -lvl 2 -x 630 -y -200 -defaultsOSRD
-preplace inst Address_Translation_0 -pg 1 -lvl 4 -x 1580 -y 120 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 4 -x 1580 -y 320 -defaultsOSRD -orient R180 -resize 100 121
-preplace inst Temporal_Buffer_0 -pg 1 -lvl 5 -x 2050 -y 0 -defaultsOSRD
-preplace netloc Address_Translation_0_address_o 1 4 1 1830 110n
-preplace netloc BreakValueCounter_0_break_value 1 3 1 1330 -20n
-preplace netloc ClauseTable_0_clause 1 5 1 2250 290n
-preplace netloc Clause_Evaluator_0_isBroken 1 2 5 880 240 1330 230 1840 180 NJ 180 2720
-preplace netloc Clause_Evaluator_0_var_table_address_o 1 2 5 870 250 1350 240 1880 190 N 190 2730J
+preplace inst Address_Translation_0 -pg 1 -lvl 4 -x 1620 -y 120 -defaultsOSRD
+preplace inst xlconcat_0 -pg 1 -lvl 4 -x 1620 -y 320 -defaultsOSRD -orient R180 -resize 100 121
+preplace inst Temporal_Buffer_0 -pg 1 -lvl 5 -x 2090 -y 0 -defaultsOSRD
+preplace netloc Address_Translation_0_address_o 1 4 1 1870 110n
+preplace netloc BreakValueCounter_0_break_value 1 3 1 1320 -40n
+preplace netloc ClauseTable_0_clause 1 5 1 2290 290n
+preplace netloc Clause_Evaluator_0_isBroken 1 2 5 880 240 1370 220 1880 180 NJ 180 2760
+preplace netloc Clause_Evaluator_0_var_table_address_o 1 2 5 870 250 1390 240 1920 190 N 190 2770J
 preplace netloc Clause_Evaluator_2_var_table_address_o 1 2 1 850 -630n
-preplace netloc Clause_Evaluator_3_isBroken 1 3 2 1360 -550 1870
-preplace netloc Clause_Evaluator_3_var_table_address_o 1 2 3 880 -480 1330J -540 1800
-preplace netloc FIFO_tree_0_clause_o 1 1 6 410 260 N 260 1340 200 N 200 2220 -20 2720J
-preplace netloc Net 1 5 1 2250 40n
-preplace netloc Net1 1 5 1 2260 60n
+preplace netloc Clause_Evaluator_3_isBroken 1 3 2 1400 -550 1910
+preplace netloc Clause_Evaluator_3_var_table_address_o 1 2 3 880 -480 1330J -540 1840
+preplace netloc FIFO_tree_0_clause_o 1 1 6 410 260 N 260 1380 200 N 200 2260 -20 2760J
+preplace netloc Net 1 5 1 2290 40n
+preplace netloc Net1 1 5 1 2300 60n
 preplace netloc UNSAT_Clause_Buffer_0_clause_o 1 1 3 400 -410 850 -400 NJ
-preplace netloc Variable_Table_0_calause 1 3 3 N -610 N -610 2240
+preplace netloc Variable_Table_0_calause 1 3 3 N -610 N -610 2280
 preplace netloc Variable_Table_0_clause_evaluator_2_o 1 1 3 410 -470 NJ -470 1320
 preplace netloc Variable_Table_0_clause_evaluator_3_o 1 3 1 1340 -570n
-preplace netloc clk_1 1 1 4 380 -480 860 -410 1350 -120 1860
-preplace netloc reset_0_1 1 1 4 390 160 850 230 1320 40 1870
-preplace netloc Clause_Register_0_literal_negation_bit_out 1 4 1 1810 -430n
-preplace netloc Clause_Register_0_literal_address_out 1 4 1 1820 -450n
-preplace netloc xlconcat_0_dout 1 3 1 1360 140n
-preplace netloc Temporal_Buffer_0_clause_o 1 5 1 2230 0n
-preplace netloc Heuristic_Selector_0_selected_flip_o 1 4 1 1850J -40n
-levelinfo -pg 1 0 190 630 1100 1580 2050 2490 3080
+preplace netloc clk_1 1 1 4 380 -480 860 -410 1350 -140 1900
+preplace netloc reset_0_1 1 1 4 390 160 850 230 1360 230 1910
+preplace netloc Clause_Register_0_literal_negation_bit_out 1 4 1 1850 -430n
+preplace netloc Clause_Register_0_literal_address_out 1 4 1 1860 -450n
+preplace netloc xlconcat_0_dout 1 3 1 1400 140n
+preplace netloc Temporal_Buffer_0_clause_o 1 5 1 2270 0n
+preplace netloc Heuristic_Selector_0_selected_flip_o 1 4 1 1890J -40n
+levelinfo -pg 1 0 190 630 1100 1620 2090 2530 3080
 pagesize -pg 1 -db -bbox -sgen -220 -700 3300 610
 "
 }

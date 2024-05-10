@@ -70,6 +70,11 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
+set_param checkpoint.writeSynthRtdsInDcp 1
+set_param synth.incrementalSynthesisCache C:/Users/benrichardson/AppData/Roaming/Xilinx/Vivado/.Xil/Vivado-7700-BENRICHARDS184E/incrSyn
+set_msg_config -id {HDL-1065} -limit 10000
+set_msg_config -id {Synth 8-256} -limit 10000
+set_msg_config -id {Synth 8-638} -limit 10000
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7z020clg400-1
 
@@ -97,8 +102,8 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc Z:/Downloads/base.xdc
-set_property used_in_implementation false [get_files Z:/Downloads/base.xdc]
+read_xdc {{Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/PYNQ dependancies/base.xdc}}
+set_property used_in_implementation false [get_files {{Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/PYNQ dependancies/base.xdc}}]
 
 set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]

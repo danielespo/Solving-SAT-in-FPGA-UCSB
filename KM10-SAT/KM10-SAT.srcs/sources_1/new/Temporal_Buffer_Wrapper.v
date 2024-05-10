@@ -6,7 +6,7 @@ module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11,
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter NSAT_BITS = $clog2(NSAT)
+    parameter NSAT_BITS = 2)
 )(
     input                               clk,                    // Clock signal
     input                               reset,                  // Reset signal
@@ -25,9 +25,9 @@ genvar i;
 generate
     for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin: clause_generate
         Temporal_Buffer #(
-            NSAT = NSAT,
-            LITERAL_ADDRESS_WIDTH = LITERAL_ADDRESS_WIDTH,
-            NSAT_BITS = NSAT_BITS
+            .NSAT,
+            .LITERAL_ADDRESS_WIDTH,
+            .NSAT_BITS
         ) TB (
             .clk(clk),
             .reset(reset),

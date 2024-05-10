@@ -344,6 +344,14 @@
             "left": "4",
             "right": "0"
           },
+          "current_flip_i": {
+            "direction": "I",
+            "left": "1",
+            "right": "0"
+          },
+          "random_i": {
+            "direction": "I"
+          },
           "selected_flip_o": {
             "direction": "O",
             "left": "1",
@@ -952,13 +960,13 @@
           "processing_system7_0/FCLK_CLK0",
           "BreakValueCounter_0/clk",
           "ClauseTable_0/clk",
-          "Heuristic_Selector_0/clk",
           "UNSAT_Clause_Buffer_0/clk",
           "Variable_Table_0/clk",
           "Clause_Register_0/clk",
           "lfsr_prng_0/clk",
-          "Address_Translation_0/clk",
           "Temporal_Buffer_0/clk",
+          "Heuristic_Selector_0/clk",
+          "Address_Translation_0/clk",
           "Clause_Evaluator_2/clk",
           "Clause_Evaluator_3/clk"
         ]
@@ -968,12 +976,12 @@
           "processing_system7_0/FCLK_RESET0_N",
           "ClauseTable_0/reset",
           "BreakValueCounter_0/reset",
-          "Heuristic_Selector_0/reset",
           "UNSAT_Clause_Buffer_0/reset",
           "Clause_Register_0/reset",
           "lfsr_prng_0/reset",
-          "Address_Translation_0/reset",
           "Temporal_Buffer_0/reset",
+          "Heuristic_Selector_0/reset",
+          "Address_Translation_0/reset",
           "Clause_Evaluator_2/reset",
           "Clause_Evaluator_3/reset"
         ]

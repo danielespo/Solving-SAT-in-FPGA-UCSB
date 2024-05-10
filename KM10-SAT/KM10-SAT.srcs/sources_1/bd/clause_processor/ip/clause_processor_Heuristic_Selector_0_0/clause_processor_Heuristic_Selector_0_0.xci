@@ -49,6 +49,8 @@
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
         "break_value_i": [ { "direction": "in", "size_left": "4", "size_right": "0" } ],
+        "current_flip_i": [ { "direction": "in", "size_left": "1", "size_right": "0" } ],
+        "random_i": [ { "direction": "in" } ],
         "selected_flip_o": [ { "direction": "out", "size_left": "1", "size_right": "0" } ]
       },
       "interfaces": {
