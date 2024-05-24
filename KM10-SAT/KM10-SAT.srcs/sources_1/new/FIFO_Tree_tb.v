@@ -51,10 +51,11 @@ initial begin
 
 // Read test data from files
 // note: the paper says that there will be a max of 12 valid clauses per FIFO input
-$readmemb("FIFO_tb_clauses.dat", clauses_i);
-$readmemb("FIFO_tb_clause_valid.dat", clause_valid_i);
+$readmemb("FIFO_tb_clauses.mem", clauses_i);
+$readmemb("FIFO_tb_clause_valid.mem", clause_valid_i);
 $display("FIFO Tree Testbench: Begin Simulation");
 
+// load the clauses into the test array
 index = 0;
 for(i = 0; i < 20; i = i + 1) begin
     $display("Clause %d: %b", i, clauses_i[i]);
