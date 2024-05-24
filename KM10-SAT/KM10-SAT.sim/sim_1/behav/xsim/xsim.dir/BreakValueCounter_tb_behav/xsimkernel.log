@@ -1,0 +1,4 @@
+Running: xsim.dir/BreakValueCounter_tb_behav/xsimk.exe -simmode gui -wdb BreakValueCounter_tb_behav.wdb -simrunnum 0 -socket 52430
+Design successfully loaded
+Design Loading Memory Usage: 26516 KB (Peak: 26516 KB)
+Design Loading CPU Usage: 46 ms
