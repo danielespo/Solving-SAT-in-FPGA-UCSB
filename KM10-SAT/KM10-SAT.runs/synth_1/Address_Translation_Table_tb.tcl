@@ -106,6 +106,8 @@ read_xdc {{Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/PYNQ dependancies/
 set_property used_in_implementation false [get_files {{Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/PYNQ dependancies/base.xdc}}]
 
 set_param ips.enableIPCacheLiteLoad 1
+
+read_checkpoint -auto_incremental -incremental Z:/Documents/ECE-Reaserch/Solving-SAT-in-FPGA-UCSB/KM10-SAT/KM10-SAT.srcs/utils_1/imports/synth_1/Address_Translation_Table_tb.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }

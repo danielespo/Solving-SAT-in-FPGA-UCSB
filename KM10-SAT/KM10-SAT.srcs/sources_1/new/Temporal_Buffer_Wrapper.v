@@ -6,7 +6,7 @@ module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11,
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter NSAT_BITS = 2)
+    parameter NSAT_BITS = $clog2(NSAT)
 )(
     input                               clk,                    // Clock signal
     input                               reset,                  // Reset signal

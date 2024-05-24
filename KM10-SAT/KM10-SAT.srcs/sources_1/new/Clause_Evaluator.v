@@ -30,6 +30,42 @@ module Clause_Evaluator #(
     output reg  [LITERAL_ADDRESS_WIDTH:0]         rest_clause_temp_buffer_o       [0:MAX_CLAUSES_PER_VARIABLE - 1] [NSAT-2:0]
 );
 
+
+    reg [LITERAL_ADDRESS_WIDTH:0] clause_table_data_store [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
+    wire clause_table_negation_bits [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
+    reg [MAX_CLAUSES_PER_VARIABLE-1:0] clause_mask_store;
+    
+    genvar i, j;
+    generate
+        for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
+            for (j = 0; j < NSAT-1; j = j + 1) begin
+                assign var_table_address_o[i][j]= clause_table_i[i][j][LITERAL_ADDRESS_WIDTH-1:0]; // Creates and sends address from table CT to VT
+                assign clause_table_negation_bits[i][j] = clause_table_i[i][j][LITERAL_ADDRESS_WIDTH];
+            end
+        end
+    endgenerate
+    
+    
+    
+    always @(posedge clk) begin
+        if (reset) begin
+            clause_table_data_store <= clause_table_i;
+        end else begin
+            //isBroken <= ~(leftXOR | rightXOR);
+        end
+    end
+
+
+
+
+
+
+
+
+
+
+
+
     // Wire arrays for XOR outputs
     wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsLeft;
     wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsRight;
