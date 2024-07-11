@@ -1,0 +1,2 @@
+# This file is automatically written.  Do not modify.
+proc gen_USERPARAMETER_BRAM_ADDR_WIDTH_ENABLEMENT {BRAM_CTRL_ROUTE } {expr $BRAM_CTRL_ROUTE == "yes"}
