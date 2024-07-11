@@ -47,9 +47,12 @@
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
         "clause_table_i": [ { "direction": "in", "size_left": "479", "size_right": "0" } ],
+        "clause_table_mask_i": [ { "direction": "in", "size_left": "19", "size_right": "0" } ],
         "var_table_address_o": [ { "direction": "out", "size_left": "439", "size_right": "0" } ],
         "var_table_data_i": [ { "direction": "in", "size_left": "39", "size_right": "0" } ],
-        "isBroken": [ { "direction": "out", "size_left": "19", "size_right": "0" } ]
+        "isBroken": [ { "direction": "out", "size_left": "19", "size_right": "0" } ],
+        "flipped_literal_temp_buffer_o": [ { "direction": "out", "size_left": "239", "size_right": "0" } ],
+        "rest_clause_temp_buffer_o": [ { "direction": "out", "size_left": "479", "size_right": "0" } ]
       },
       "interfaces": {
         "reset": {

@@ -25,7 +25,7 @@ reg [LITERAL_ADDRESS_WIDTH:0] clause_table [NUM_ROWS-1:0][MAX_CLAUSES_PER_VARIAB
 integer i, j, k;
 
 // Output the addressed 
-// assuming synchronous read, which may be incorrect.
+// assuming synchronous read
 always @(posedge clk) begin
     if (reset) begin
         for (i=0; i < NUM_ROWS; i = i + 1) begin

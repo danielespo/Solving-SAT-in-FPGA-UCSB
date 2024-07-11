@@ -9,14 +9,20 @@
     "parameters": {
       "component_parameters": {
         "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "DATA_WIDTH": [ { "value": "36", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "BUFFER_SIZE": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "FIRST_LEVEL_PARALLEL": [ { "value": "5", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "TREE_LEAVES": [ { "value": "4", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "TREE_DEPTH": [ { "value": "3", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "Component_Name": [ { "value": "clause_processor_FIFO_tree_0_0", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
         "MAX_CLAUSES_PER_VARIABLE": [ { "value": "20", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "LITERAL_ADDRESS_WIDTH": [ { "value": "11", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "NSAT": [ { "value": "3", "resolve_type": "generated", "format": "long", "usage": "all" } ]
+        "DATA_WIDTH": [ { "value": "36", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "BUFFER_SIZE": [ { "value": "32", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "FIRST_LEVEL_PARALLEL": [ { "value": "5", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "TREE_LEAVES": [ { "value": "4", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "TREE_DEPTH": [ { "value": "3", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
         "ARCHITECTURE": [ { "value": "zynq" } ],
@@ -47,6 +53,8 @@
         "clk": [ { "direction": "in" } ],
         "reset": [ { "direction": "in" } ],
         "clauses_i": [ { "direction": "in", "size_left": "719", "size_right": "0" } ],
+        "clause_valid_i": [ { "direction": "in", "size_left": "19", "size_right": "0" } ],
+        "write_en_i": [ { "direction": "in" } ],
         "clause_o": [ { "direction": "out", "size_left": "35", "size_right": "0" } ]
       },
       "interfaces": {
