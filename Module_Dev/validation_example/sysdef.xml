@@ -12,17 +12,17 @@
 	</File>
 	<File Type="BDA" Name="validation_example.bda" src_db="validation_example.hwdef">
 	</File>
-	<File Type="PS_FSBL_INIT" Name="ps7_init.c" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_FSBL_INIT" Name="ps7_init.c" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
-	<File Type="PS_FSBL_INIT" Name="ps7_init.h" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_FSBL_INIT" Name="ps7_init.h" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
-	<File Type="PS_FSBL_INIT_GPL" Name="ps7_init_gpl.c" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_FSBL_INIT_GPL" Name="ps7_init_gpl.c" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
-	<File Type="PS_FSBL_INIT_GPL" Name="ps7_init_gpl.h" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_FSBL_INIT_GPL" Name="ps7_init_gpl.h" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
-	<File Type="PS_INIT_HELP" Name="ps7_init.html" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_INIT_HELP" Name="ps7_init.html" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
-	<File Type="PS_XMD_INIT" Name="ps7_init.tcl" src_db="validation_example_processing_system7_0_0.hwdef">
+	<File Type="PS_XMD_INIT" Name="ps7_init.tcl" src_db="validation_example_processing_system7_0_1.hwdef">
 	</File>
 	<File Type="BIT" Name="validation_example_wrapper.bit" src_db="temp.hdf">
 	</File>
@@ -36,6 +36,6 @@
 			<File PATH="drivers/Module_Validation_Platform_v1_0/src/Module_Validation_Platform_selftest.c"/>
 		</DRIVER>
 	</DRIVERS>
-	<USEDRESOURCES LUT="575" FF="607" BRAM="4" DSP="0"/>
+	<USEDRESOURCES LUT="1419" FF="1576" BRAM="2" DSP="0"/>
 </Project>
 

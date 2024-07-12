@@ -1,41 +1,52 @@
 {
    "ActiveEmotionalView":"Default View",
-   "Default View_ScaleFactor":"1.08392",
-   "Default View_TopLeft":"-42,-38",
+   "Default View_ScaleFactor":"1.03774",
+   "Default View_TopLeft":"233,32",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.7.1 2023-07-26 3bc4126617 VDI=43 GEI=38 GUI=JA:21.0
 #  -string -flagsOSRD
-preplace port DDR -pg 1 -lvl 5 -x 1250 -y 50 -defaultsOSRD
-preplace port FIXED_IO -pg 1 -lvl 5 -x 1250 -y 80 -defaultsOSRD
-preplace portBus leds_4bits_tri_o -pg 1 -lvl 5 -x 1250 -y 310 -defaultsOSRD
-preplace portBus btns_4bits_tri_i -pg 1 -lvl 0 -x 0 -y 430 -defaultsOSRD
-preplace inst processing_system7_0 -pg 1 -lvl 1 -x 220 -y 110 -defaultsOSRD
-preplace inst MVP -pg 1 -lvl 3 -x 890 -y 210 -defaultsOSRD
-preplace inst ps7_0_axi_periph -pg 1 -lvl 2 -x 580 -y 200 -defaultsOSRD
-preplace inst rst_ps7_0_100M -pg 1 -lvl 1 -x 220 -y 330 -defaultsOSRD
-preplace inst Module_Validation_Pl_0_bram -pg 1 -lvl 4 -x 1130 -y 210 -defaultsOSRD
-preplace inst xlslice_0 -pg 1 -lvl 4 -x 1130 -y 310 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 2 -x 580 -y 440 -defaultsOSRD
-preplace inst xlconstant_0 -pg 1 -lvl 1 -x 220 -y 490 -defaultsOSRD
-preplace netloc processing_system7_0_FCLK_CLK0 1 0 3 30 220 430 70 730
-preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 2 20 0 410
-preplace netloc rst_ps7_0_100M_peripheral_aresetn 1 1 2 440 320 750
-preplace netloc Module_Validation_Pl_0_perph_o 1 3 1 1030J 230n
-preplace netloc xlslice_0_Dout 1 4 1 NJ 310
-preplace netloc xlconcat_0_dout 1 2 1 740 200n
-preplace netloc In0_0_1 1 0 2 NJ 430 NJ
-preplace netloc xlconstant_0_dout 1 1 1 410J 450n
-preplace netloc Module_Validation_Pl_0_BRAM_PORTA 1 3 1 1030J 190n
-preplace netloc processing_system7_0_DDR 1 1 4 420J 50 NJ 50 NJ 50 NJ
-preplace netloc processing_system7_0_FIXED_IO 1 1 4 NJ 80 NJ 80 NJ 80 NJ
-preplace netloc processing_system7_0_M_AXI_GP0 1 1 1 440 120n
-preplace netloc ps7_0_axi_periph_M00_AXI 1 2 1 720 180n
-levelinfo -pg 1 0 220 580 890 1130 1250
-pagesize -pg 1 -db -bbox -sgen -170 -100 1430 550
+preplace port DDR -pg 1 -lvl 5 -x 1300 -y 420 -defaultsOSRD
+preplace port FIXED_IO -pg 1 -lvl 5 -x 1300 -y 450 -defaultsOSRD
+preplace portBus leds_4bits_tri_o -pg 1 -lvl 5 -x 1300 -y 560 -defaultsOSRD
+preplace portBus btns_4bits_tri_i -pg 1 -lvl 0 -x 0 -y 580 -defaultsOSRD
+preplace inst MVP -pg 1 -lvl 3 -x 890 -y 530 -defaultsOSRD
+preplace inst ps7_0_axi_periph -pg 1 -lvl 2 -x 580 -y 280 -defaultsOSRD
+preplace inst rst_ps7_0_100M -pg 1 -lvl 1 -x 220 -y 250 -defaultsOSRD
+preplace inst Module_Validation_Pl_0_bram -pg 1 -lvl 4 -x 1180 -y 290 -defaultsOSRD
+preplace inst xlslice_0 -pg 1 -lvl 4 -x 1180 -y 560 -defaultsOSRD
+preplace inst xlconcat_0 -pg 1 -lvl 2 -x 580 -y 590 -defaultsOSRD
+preplace inst xlconstant_0 -pg 1 -lvl 1 -x 220 -y 640 -defaultsOSRD
+preplace inst axi_bram_ctrl -pg 1 -lvl 3 -x 890 -y 310 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 1 -x 220 -y 470 -defaultsOSRD
+preplace inst xlslice_1 -pg 1 -lvl 3 -x 890 -y 160 -defaultsOSRD
+preplace inst xlslice_2 -pg 1 -lvl 3 -x 890 -y 60 -defaultsOSRD
+preplace netloc In0_0_1 1 0 2 NJ 580 NJ
+preplace netloc Module_Validation_Pl_0_perph_o 1 3 1 NJ 560
+preplace netloc processing_system7_0_FCLK_CLK0 1 0 3 20 350 440 450 740
+preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 2 30 360 410
+preplace netloc rst_ps7_0_100M_peripheral_aresetn 1 1 2 430 140 720
+preplace netloc xlconcat_0_dout 1 2 1 730 520n
+preplace netloc xlconstant_0_dout 1 1 1 440J 600n
+preplace netloc xlslice_0_Dout 1 4 1 NJ 560
+preplace netloc axi_bram_ctrl_bram_addr_a 1 2 2 740 220 1040
+preplace netloc MVP_bram_addr_a 1 2 2 730 230 1050
+preplace netloc xlslice_2_Dout 1 3 1 1080J 60n
+preplace netloc xlslice_1_Dout 1 3 1 1060J 160n
+preplace netloc Module_Validation_Pl_0_BRAM_PORTA 1 3 1 1070 260n
+preplace netloc processing_system7_0_DDR 1 1 4 NJ 420 NJ 420 NJ 420 NJ
+preplace netloc processing_system7_0_FIXED_IO 1 1 4 NJ 440 NJ 440 1060J 450 NJ
+preplace netloc processing_system7_0_M_AXI_GP0 1 1 1 420 200n
+preplace netloc ps7_0_axi_periph_M00_AXI 1 2 1 730 270n
+preplace netloc ps7_0_axi_periph_M01_AXI 1 2 1 N 290
+preplace netloc axi_bram_ctrl_BRAM_PORTA 1 3 1 N 300
+levelinfo -pg 1 0 220 580 890 1180 1300
+pagesize -pg 1 -db -bbox -sgen -170 0 1480 700
 "
 }
 {
-   "da_axi4_cnt":"1",
-   "da_bram_cntlr_cnt":"2",
-   "da_ps7_cnt":"1"
+   "da_axi4_cnt":"3",
+   "da_board_cnt":"1",
+   "da_bram_cntlr_cnt":"4",
+   "da_clkrst_cnt":"1",
+   "da_ps7_cnt":"3"
 }

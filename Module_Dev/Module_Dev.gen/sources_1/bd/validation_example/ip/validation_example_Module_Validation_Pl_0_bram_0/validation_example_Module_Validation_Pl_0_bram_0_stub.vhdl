@@ -2,7 +2,7 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
--- Date        : Wed Jul 10 17:25:16 2024
+-- Date        : Thu Jul 11 19:24:26 2024
 -- Host        : Barry-Home-PC running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
 --               c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_Module_Validation_Pl_0_bram_0/validation_example_Module_Validation_Pl_0_bram_0_stub.vhdl
@@ -20,7 +20,13 @@ entity validation_example_Module_Validation_Pl_0_bram_0 is
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 31 downto 0 );
-    douta : out STD_LOGIC_VECTOR ( 31 downto 0 )
+    douta : out STD_LOGIC_VECTOR ( 31 downto 0 );
+    clkb : in STD_LOGIC;
+    enb : in STD_LOGIC;
+    web : in STD_LOGIC_VECTOR ( 3 downto 0 );
+    addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
+    dinb : in STD_LOGIC_VECTOR ( 31 downto 0 );
+    doutb : out STD_LOGIC_VECTOR ( 31 downto 0 )
   );
 
 end validation_example_Module_Validation_Pl_0_bram_0;
@@ -29,7 +35,7 @@ architecture stub of validation_example_Module_Validation_Pl_0_bram_0 is
 attribute syn_black_box : boolean;
 attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
-attribute black_box_pad_pin of stub : architecture is "clka,ena,wea[3:0],addra[11:0],dina[31:0],douta[31:0]";
+attribute black_box_pad_pin of stub : architecture is "clka,ena,wea[3:0],addra[11:0],dina[31:0],douta[31:0],clkb,enb,web[3:0],addrb[11:0],dinb[31:0],doutb[31:0]";
 attribute x_core_info : string;
 attribute x_core_info of stub : architecture is "blk_mem_gen_v8_4_8,Vivado 2024.1";
 begin

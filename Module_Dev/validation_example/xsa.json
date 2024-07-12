@@ -53,10 +53,10 @@
                 "type": "clc_region",
                 "numComputeUnits": "60",
                 "availableResources": {
-                    "bramCount": "136",
+                    "bramCount": "138",
                     "dspCount": "220",
-                    "lutCount": "52625",
-                    "registerCount": "105793"
+                    "lutCount": "51781",
+                    "registerCount": "104824"
                 }
             }
         }
@@ -85,15 +85,15 @@
     "generatedChangeList": "5076996",
     "generatedIpChangeList": "5075265",
     "generatedSharedDataChangeList": "5076995",
-    "generatedTimestamp": "Wed Jul 10 17:55:05 2024",
+    "generatedTimestamp": "Thu Jul 11 19:28:21 2024",
     "idCode": "03727093",
     "designIDs": {
-        "designID": "257625617"
+        "designID": "1228364369"
     },
     "resources": [
         {
             "type": "REG",
-            "count": "105793"
+            "count": "104824"
         }
     ]
 }

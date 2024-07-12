@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date         : Wed Jul 10 17:44:55 2024
+| Date         : Thu Jul 11 18:53:43 2024
 | Host         : Barry-Home-PC running 64-bit major release  (build 9200)
 | Command      : report_utilization -file validation_example_Module_Validation_Pl_0_0_utilization_synth.rpt -pb validation_example_Module_Validation_Pl_0_0_utilization_synth.pb
 | Design       : validation_example_Module_Validation_Pl_0_0

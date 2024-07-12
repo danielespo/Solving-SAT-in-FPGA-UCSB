@@ -57,7 +57,11 @@ if {$::dispatch::connected} {
 
 OPTRACE "synth_1" START { ROLLUP_AUTO }
 set_param chipscope.maxJobs 5
+set_param checkpoint.writeSynthRtdsInDcp 1
 set_msg_config -id {HDL-1065} -limit 10000
+set_msg_config -id {Synth 8-256} -limit 10000
+set_msg_config -id {Synth 8-638} -limit 10000
+set_msg_config  -id {17-179}  -suppress 
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7z020clg400-1
 
@@ -78,13 +82,16 @@ set_property ip_output_repo c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Mo
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-read_verilog -library xil_defaultlib c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/hdl/validation_example_wrapper.v
+read_verilog -library xil_defaultlib C:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/hdl/validation_example_wrapper.v
 add_files C:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.srcs/sources_1/bd/validation_example/validation_example.bd
-set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_processing_system7_0_0/validation_example_processing_system7_0_0.xdc]
+set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_xbar_0/validation_example_xbar_0_ooc.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_rst_ps7_0_100M_0/validation_example_rst_ps7_0_100M_0_board.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_rst_ps7_0_100M_0/validation_example_rst_ps7_0_100M_0.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_rst_ps7_0_100M_0/validation_example_rst_ps7_0_100M_0_ooc.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_Module_Validation_Pl_0_bram_0/validation_example_Module_Validation_Pl_0_bram_0_ooc.xdc]
+set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_axi_bram_ctrl_0_0/validation_example_axi_bram_ctrl_0_0_ooc.xdc]
+set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_processing_system7_0_1/validation_example_processing_system7_0_1.xdc]
+set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_auto_pc_1/validation_example_auto_pc_1_ooc.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_auto_pc_0/validation_example_auto_pc_0_ooc.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/validation_example_ooc.xdc]
 

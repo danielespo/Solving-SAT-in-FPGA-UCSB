@@ -57,7 +57,11 @@ if {$::dispatch::connected} {
 
 OPTRACE "validation_example_Module_Validation_Pl_0_0_synth_1" START { ROLLUP_AUTO }
 set_param chipscope.maxJobs 5
+set_param checkpoint.writeSynthRtdsInDcp 1
 set_msg_config -id {HDL-1065} -limit 10000
+set_msg_config -id {Synth 8-256} -limit 10000
+set_msg_config -id {Synth 8-638} -limit 10000
+set_msg_config  -id {17-179}  -suppress 
 set_param project.vivado.isBlockSynthRun true
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7z020clg400-1

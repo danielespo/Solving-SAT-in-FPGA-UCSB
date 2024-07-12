@@ -6,11 +6,11 @@
 # Block Designs: bd/validation_example/validation_example.bd
 set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example || ORIG_REF_NAME==validation_example} -quiet] -quiet
 
-# IP: bd/validation_example/ip/validation_example_processing_system7_0_0/validation_example_processing_system7_0_0.xci
-set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_processing_system7_0_0 || ORIG_REF_NAME==validation_example_processing_system7_0_0} -quiet] -quiet
-
 # IP: bd/validation_example/ip/validation_example_Module_Validation_Pl_0_0/validation_example_Module_Validation_Pl_0_0.xci
 set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_Module_Validation_Pl_0_0 || ORIG_REF_NAME==validation_example_Module_Validation_Pl_0_0} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_xbar_0/validation_example_xbar_0.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_xbar_0 || ORIG_REF_NAME==validation_example_xbar_0} -quiet] -quiet
 
 # IP: bd/validation_example/ip/validation_example_ps7_0_axi_periph_0/validation_example_ps7_0_axi_periph_0.xci
 set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_ps7_0_axi_periph_0 || ORIG_REF_NAME==validation_example_ps7_0_axi_periph_0} -quiet] -quiet
@@ -29,6 +29,21 @@ set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_
 
 # IP: bd/validation_example/ip/validation_example_xlconstant_0_0/validation_example_xlconstant_0_0.xci
 set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_xlconstant_0_0 || ORIG_REF_NAME==validation_example_xlconstant_0_0} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_axi_bram_ctrl_0_0/validation_example_axi_bram_ctrl_0_0.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_axi_bram_ctrl_0_0 || ORIG_REF_NAME==validation_example_axi_bram_ctrl_0_0} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_processing_system7_0_1/validation_example_processing_system7_0_1.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_processing_system7_0_1 || ORIG_REF_NAME==validation_example_processing_system7_0_1} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_xlslice_1_0/validation_example_xlslice_1_0.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_xlslice_1_0 || ORIG_REF_NAME==validation_example_xlslice_1_0} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_xlslice_1_1/validation_example_xlslice_1_1.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_xlslice_1_1 || ORIG_REF_NAME==validation_example_xlslice_1_1} -quiet] -quiet
+
+# IP: bd/validation_example/ip/validation_example_auto_pc_1/validation_example_auto_pc_1.xci
+set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_auto_pc_1 || ORIG_REF_NAME==validation_example_auto_pc_1} -quiet] -quiet
 
 # IP: bd/validation_example/ip/validation_example_auto_pc_0/validation_example_auto_pc_0.xci
 set_property KEEP_HIERARCHY SOFT [get_cells -hier -filter {REF_NAME==validation_example_auto_pc_0 || ORIG_REF_NAME==validation_example_auto_pc_0} -quiet] -quiet

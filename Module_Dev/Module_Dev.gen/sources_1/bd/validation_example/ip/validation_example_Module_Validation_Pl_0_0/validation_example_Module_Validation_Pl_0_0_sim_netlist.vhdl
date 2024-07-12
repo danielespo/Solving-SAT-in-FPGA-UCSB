@@ -2,7 +2,7 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
--- Date        : Wed Jul 10 17:44:55 2024
+-- Date        : Thu Jul 11 18:53:43 2024
 -- Host        : Barry-Home-PC running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
 --               c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_Module_Validation_Pl_0_0/validation_example_Module_Validation_Pl_0_0_sim_netlist.vhdl
@@ -3067,8 +3067,8 @@ entity validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   port (
     S_AXI_WREADY : out STD_LOGIC;
     S_AXI_AWREADY : out STD_LOGIC;
+    bram_addr_a : out STD_LOGIC_VECTOR ( 13 downto 0 );
     s00_axi_aresetn_0 : out STD_LOGIC;
-    bram_addr_a : out STD_LOGIC_VECTOR ( 11 downto 0 );
     perph_o : out STD_LOGIC_VECTOR ( 31 downto 0 );
     bram_en_a : out STD_LOGIC;
     S_AXI_ARREADY : out STD_LOGIC;
@@ -3210,13 +3210,13 @@ architecture STRUCTURE of validation_example_Module_Validation_Pl_0_0_Module_Val
   signal \axi_rdata[9]_i_6_n_0\ : STD_LOGIC;
   signal axi_rvalid_i_1_n_0 : STD_LOGIC;
   signal axi_wready0 : STD_LOGIC;
-  signal \^bram_addr_a\ : STD_LOGIC_VECTOR ( 11 downto 0 );
+  signal \^bram_addr_a\ : STD_LOGIC_VECTOR ( 13 downto 0 );
   signal \^bram_en_a\ : STD_LOGIC;
   signal p_0_in_0 : STD_LOGIC_VECTOR ( 2 downto 0 );
   signal \^s00_axi_aresetn_0\ : STD_LOGIC;
   signal \^s00_axi_bvalid\ : STD_LOGIC;
   signal \^s00_axi_rvalid\ : STD_LOGIC;
-  signal slv_reg0 : STD_LOGIC_VECTOR ( 31 downto 0 );
+  signal slv_reg0 : STD_LOGIC_VECTOR ( 31 downto 14 );
   signal \slv_reg0[13]_i_1_n_0\ : STD_LOGIC;
   signal \slv_reg0[23]_i_1_n_0\ : STD_LOGIC;
   signal \slv_reg0[31]_i_1_n_0\ : STD_LOGIC;
@@ -3269,7 +3269,7 @@ begin
   S_AXI_ARREADY <= \^s_axi_arready\;
   S_AXI_AWREADY <= \^s_axi_awready\;
   S_AXI_WREADY <= \^s_axi_wready\;
-  bram_addr_a(11 downto 0) <= \^bram_addr_a\(11 downto 0);
+  bram_addr_a(13 downto 0) <= \^bram_addr_a\(13 downto 0);
   bram_en_a <= \^bram_en_a\;
   s00_axi_aresetn_0 <= \^s00_axi_aresetn_0\;
   s00_axi_bvalid <= \^s00_axi_bvalid\;
@@ -3308,8 +3308,8 @@ Platform_IO_inst: entity work.validation_example_Module_Validation_Pl_0_0_Platfo
       D(2) => Platform_IO_inst_n_29,
       D(1) => Platform_IO_inst_n_30,
       D(0) => Platform_IO_inst_n_31,
-      Q(2) => \^bram_addr_a\(1),
-      Q(1 downto 0) => slv_reg0(1 downto 0),
+      Q(2) => \^bram_addr_a\(3),
+      Q(1 downto 0) => \^bram_addr_a\(1 downto 0),
       SR(0) => \^s00_axi_aresetn_0\,
       axi_araddr(2 downto 0) => axi_araddr(4 downto 2),
       \axi_rdata_reg[0]\ => \axi_rdata[31]_i_3_n_0\,
@@ -3601,8 +3601,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(0),
       I1 => perph_i(8),
       I2 => perph_i(24),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(16),
       O => \axi_rdata[0]_i_3_n_0\
     );
@@ -3614,7 +3614,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => slv_reg3(0),
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => slv_reg0(0),
+      I3 => \^bram_addr_a\(0),
       O => \axi_rdata[0]_i_6_n_0\
     );
 \axi_rdata[10]_i_3\: unisim.vcomponents.LUT6
@@ -3625,8 +3625,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(18),
       I1 => perph_i(10),
       I2 => perph_i(26),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(2),
       O => \axi_rdata[10]_i_3_n_0\
     );
@@ -3638,7 +3638,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[10]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(8),
+      I3 => \^bram_addr_a\(10),
       O => \axi_rdata[10]_i_6_n_0\
     );
 \axi_rdata[11]_i_3\: unisim.vcomponents.LUT6
@@ -3649,8 +3649,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(11),
       I1 => perph_i(19),
       I2 => perph_i(3),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(27),
       O => \axi_rdata[11]_i_3_n_0\
     );
@@ -3662,7 +3662,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[11]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(9),
+      I3 => \^bram_addr_a\(11),
       O => \axi_rdata[11]_i_6_n_0\
     );
 \axi_rdata[12]_i_3\: unisim.vcomponents.LUT6
@@ -3673,8 +3673,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(12),
       I1 => perph_i(20),
       I2 => perph_i(4),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(28),
       O => \axi_rdata[12]_i_3_n_0\
     );
@@ -3686,7 +3686,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[12]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(10),
+      I3 => \^bram_addr_a\(12),
       O => \axi_rdata[12]_i_6_n_0\
     );
 \axi_rdata[13]_i_3\: unisim.vcomponents.LUT6
@@ -3697,8 +3697,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(21),
       I1 => perph_i(13),
       I2 => perph_i(29),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(5),
       O => \axi_rdata[13]_i_3_n_0\
     );
@@ -3710,7 +3710,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[13]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(11),
+      I3 => \^bram_addr_a\(13),
       O => \axi_rdata[13]_i_6_n_0\
     );
 \axi_rdata[14]_i_3\: unisim.vcomponents.LUT6
@@ -3721,8 +3721,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(22),
       I1 => perph_i(14),
       I2 => perph_i(30),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(6),
       O => \axi_rdata[14]_i_3_n_0\
     );
@@ -3745,8 +3745,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(23),
       I1 => perph_i(15),
       I2 => perph_i(31),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(7),
       O => \axi_rdata[15]_i_3_n_0\
     );
@@ -3769,8 +3769,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(24),
       I1 => perph_i(16),
       I2 => perph_i(8),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(0),
       O => \axi_rdata[16]_i_3_n_0\
     );
@@ -3793,8 +3793,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(17),
       I1 => perph_i(25),
       I2 => perph_i(9),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(1),
       O => \axi_rdata[17]_i_3_n_0\
     );
@@ -3817,8 +3817,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(26),
       I1 => perph_i(18),
       I2 => perph_i(10),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(2),
       O => \axi_rdata[18]_i_3_n_0\
     );
@@ -3841,8 +3841,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(27),
       I1 => perph_i(19),
       I2 => perph_i(3),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(11),
       O => \axi_rdata[19]_i_3_n_0\
     );
@@ -3865,8 +3865,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(9),
       I1 => perph_i(1),
       I2 => perph_i(25),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(17),
       O => \axi_rdata[1]_i_3_n_0\
     );
@@ -3878,7 +3878,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => slv_reg3(1),
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => slv_reg0(1),
+      I3 => \^bram_addr_a\(1),
       O => \axi_rdata[1]_i_6_n_0\
     );
 \axi_rdata[20]_i_3\: unisim.vcomponents.LUT6
@@ -3889,8 +3889,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(20),
       I1 => perph_i(28),
       I2 => perph_i(12),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(4),
       O => \axi_rdata[20]_i_3_n_0\
     );
@@ -3913,8 +3913,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(29),
       I1 => perph_i(21),
       I2 => perph_i(5),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(13),
       O => \axi_rdata[21]_i_3_n_0\
     );
@@ -3937,8 +3937,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(22),
       I1 => perph_i(30),
       I2 => perph_i(14),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(6),
       O => \axi_rdata[22]_i_3_n_0\
     );
@@ -3961,8 +3961,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(31),
       I1 => perph_i(23),
       I2 => perph_i(15),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(7),
       O => \axi_rdata[23]_i_3_n_0\
     );
@@ -3985,8 +3985,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(0),
       I1 => perph_i(24),
       I2 => perph_i(8),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(16),
       O => \axi_rdata[24]_i_3_n_0\
     );
@@ -4009,8 +4009,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(17),
       I1 => perph_i(9),
       I2 => perph_i(25),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(1),
       O => \axi_rdata[25]_i_3_n_0\
     );
@@ -4033,8 +4033,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(2),
       I1 => perph_i(26),
       I2 => perph_i(18),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(10),
       O => \axi_rdata[26]_i_3_n_0\
     );
@@ -4057,8 +4057,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(27),
       I1 => perph_i(3),
       I2 => perph_i(19),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(11),
       O => \axi_rdata[27]_i_3_n_0\
     );
@@ -4081,8 +4081,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(4),
       I1 => perph_i(28),
       I2 => perph_i(12),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(20),
       O => \axi_rdata[28]_i_3_n_0\
     );
@@ -4105,8 +4105,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(5),
       I1 => perph_i(29),
       I2 => perph_i(13),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(21),
       O => \axi_rdata[29]_i_3_n_0\
     );
@@ -4129,8 +4129,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(10),
       I1 => perph_i(2),
       I2 => perph_i(26),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(18),
       O => \axi_rdata[2]_i_3_n_0\
     );
@@ -4142,7 +4142,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[2]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(0),
+      I3 => \^bram_addr_a\(2),
       O => \axi_rdata[2]_i_6_n_0\
     );
 \axi_rdata[30]_i_3\: unisim.vcomponents.LUT6
@@ -4153,8 +4153,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(6),
       I1 => perph_i(30),
       I2 => perph_i(14),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(22),
       O => \axi_rdata[30]_i_3_n_0\
     );
@@ -4186,8 +4186,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(7),
       I1 => perph_i(31),
       I2 => perph_i(15),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(23),
       O => \axi_rdata[31]_i_4_n_0\
     );
@@ -4210,8 +4210,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(11),
       I1 => perph_i(3),
       I2 => perph_i(19),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(27),
       O => \axi_rdata[3]_i_3_n_0\
     );
@@ -4223,8 +4223,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(12),
       I1 => perph_i(4),
       I2 => perph_i(20),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(28),
       O => \axi_rdata[4]_i_3_n_0\
     );
@@ -4236,7 +4236,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[4]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(2),
+      I3 => \^bram_addr_a\(4),
       O => \axi_rdata[4]_i_6_n_0\
     );
 \axi_rdata[5]_i_3\: unisim.vcomponents.LUT6
@@ -4247,8 +4247,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(13),
       I1 => perph_i(5),
       I2 => perph_i(29),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(21),
       O => \axi_rdata[5]_i_3_n_0\
     );
@@ -4260,7 +4260,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[5]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(3),
+      I3 => \^bram_addr_a\(5),
       O => \axi_rdata[5]_i_6_n_0\
     );
 \axi_rdata[6]_i_3\: unisim.vcomponents.LUT6
@@ -4271,8 +4271,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(6),
       I1 => perph_i(14),
       I2 => perph_i(30),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(22),
       O => \axi_rdata[6]_i_3_n_0\
     );
@@ -4284,7 +4284,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[6]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(4),
+      I3 => \^bram_addr_a\(6),
       O => \axi_rdata[6]_i_6_n_0\
     );
 \axi_rdata[7]_i_3\: unisim.vcomponents.LUT6
@@ -4295,8 +4295,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(15),
       I1 => perph_i(7),
       I2 => perph_i(31),
-      I3 => slv_reg0(0),
-      I4 => slv_reg0(1),
+      I3 => \^bram_addr_a\(0),
+      I4 => \^bram_addr_a\(1),
       I5 => perph_i(23),
       O => \axi_rdata[7]_i_3_n_0\
     );
@@ -4308,7 +4308,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[7]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(5),
+      I3 => \^bram_addr_a\(7),
       O => \axi_rdata[7]_i_6_n_0\
     );
 \axi_rdata[8]_i_3\: unisim.vcomponents.LUT6
@@ -4319,8 +4319,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(16),
       I1 => perph_i(8),
       I2 => perph_i(24),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(0),
       O => \axi_rdata[8]_i_3_n_0\
     );
@@ -4332,7 +4332,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[8]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(6),
+      I3 => \^bram_addr_a\(8),
       O => \axi_rdata[8]_i_6_n_0\
     );
 \axi_rdata[9]_i_3\: unisim.vcomponents.LUT6
@@ -4343,8 +4343,8 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => perph_i(17),
       I1 => perph_i(9),
       I2 => perph_i(25),
-      I3 => slv_reg0(1),
-      I4 => slv_reg0(0),
+      I3 => \^bram_addr_a\(1),
+      I4 => \^bram_addr_a\(0),
       I5 => perph_i(1),
       O => \axi_rdata[9]_i_3_n_0\
     );
@@ -4356,7 +4356,7 @@ axi_bvalid_reg: unisim.vcomponents.FDRE
       I0 => \slv_reg3_reg_n_0_[9]\,
       I1 => axi_araddr(3),
       I2 => axi_araddr(2),
-      I3 => \^bram_addr_a\(7),
+      I3 => \^bram_addr_a\(9),
       O => \axi_rdata[9]_i_6_n_0\
     );
 \axi_rdata_reg[0]\: unisim.vcomponents.FDRE
@@ -4729,7 +4729,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(0),
-      Q => slv_reg0(0),
+      Q => \^bram_addr_a\(0),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[10]\: unisim.vcomponents.FDRE
@@ -4737,7 +4737,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(10),
-      Q => \^bram_addr_a\(8),
+      Q => \^bram_addr_a\(10),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[11]\: unisim.vcomponents.FDRE
@@ -4745,7 +4745,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(11),
-      Q => \^bram_addr_a\(9),
+      Q => \^bram_addr_a\(11),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[12]\: unisim.vcomponents.FDRE
@@ -4753,7 +4753,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(12),
-      Q => \^bram_addr_a\(10),
+      Q => \^bram_addr_a\(12),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[13]\: unisim.vcomponents.FDRE
@@ -4761,7 +4761,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(13),
-      Q => \^bram_addr_a\(11),
+      Q => \^bram_addr_a\(13),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[14]\: unisim.vcomponents.FDRE
@@ -4817,7 +4817,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(1),
-      Q => slv_reg0(1),
+      Q => \^bram_addr_a\(1),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[20]\: unisim.vcomponents.FDRE
@@ -4905,7 +4905,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(2),
-      Q => \^bram_addr_a\(0),
+      Q => \^bram_addr_a\(2),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[30]\: unisim.vcomponents.FDRE
@@ -4929,7 +4929,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(3),
-      Q => \^bram_addr_a\(1),
+      Q => \^bram_addr_a\(3),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[4]\: unisim.vcomponents.FDRE
@@ -4937,7 +4937,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(4),
-      Q => \^bram_addr_a\(2),
+      Q => \^bram_addr_a\(4),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[5]\: unisim.vcomponents.FDRE
@@ -4945,7 +4945,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(5),
-      Q => \^bram_addr_a\(3),
+      Q => \^bram_addr_a\(5),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[6]\: unisim.vcomponents.FDRE
@@ -4953,7 +4953,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(6),
-      Q => \^bram_addr_a\(4),
+      Q => \^bram_addr_a\(6),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[7]\: unisim.vcomponents.FDRE
@@ -4961,7 +4961,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[7]_i_1_n_0\,
       D => s00_axi_wdata(7),
-      Q => \^bram_addr_a\(5),
+      Q => \^bram_addr_a\(7),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[8]\: unisim.vcomponents.FDRE
@@ -4969,7 +4969,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(8),
-      Q => \^bram_addr_a\(6),
+      Q => \^bram_addr_a\(8),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg0_reg[9]\: unisim.vcomponents.FDRE
@@ -4977,7 +4977,7 @@ bram_we_a_INST_0: unisim.vcomponents.LUT6
       C => s00_axi_aclk,
       CE => \slv_reg0[13]_i_1_n_0\,
       D => s00_axi_wdata(9),
-      Q => \^bram_addr_a\(7),
+      Q => \^bram_addr_a\(9),
       R => \^s00_axi_aresetn_0\
     );
 \slv_reg3[15]_i_1\: unisim.vcomponents.LUT5
@@ -5329,9 +5329,9 @@ entity validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   port (
     S_AXI_WREADY : out STD_LOGIC;
     S_AXI_AWREADY : out STD_LOGIC;
+    Q : out STD_LOGIC_VECTOR ( 13 downto 0 );
     SR : out STD_LOGIC_VECTOR ( 0 to 0 );
-    bram_addr_a : out STD_LOGIC_VECTOR ( 11 downto 0 );
-    Q : out STD_LOGIC_VECTOR ( 7 downto 0 );
+    \write_buffer_reg[0][7]\ : out STD_LOGIC_VECTOR ( 7 downto 0 );
     \write_buffer_reg[1][7]\ : out STD_LOGIC_VECTOR ( 7 downto 0 );
     \write_buffer_reg[2][7]\ : out STD_LOGIC_VECTOR ( 7 downto 0 );
     \write_buffer_reg[3][7]\ : out STD_LOGIC_VECTOR ( 7 downto 0 );
@@ -5367,7 +5367,7 @@ Module_Validation_Platform_v1_0_S00_AXI_inst: entity work.validation_example_Mod
       S_AXI_ARREADY => S_AXI_ARREADY,
       S_AXI_AWREADY => S_AXI_AWREADY,
       S_AXI_WREADY => S_AXI_WREADY,
-      bram_addr_a(11 downto 0) => bram_addr_a(11 downto 0),
+      bram_addr_a(13 downto 0) => Q(13 downto 0),
       bram_en_a => bram_en_a,
       bram_rddata_a(31 downto 0) => bram_rddata_a(31 downto 0),
       bram_we_a => bram_we_a,
@@ -5376,7 +5376,7 @@ Module_Validation_Platform_v1_0_S00_AXI_inst: entity work.validation_example_Mod
       perph_o(31 downto 24) => \write_buffer_reg[3][7]\(7 downto 0),
       perph_o(23 downto 16) => \write_buffer_reg[2][7]\(7 downto 0),
       perph_o(15 downto 8) => \write_buffer_reg[1][7]\(7 downto 0),
-      perph_o(7 downto 0) => Q(7 downto 0),
+      perph_o(7 downto 0) => \write_buffer_reg[0][7]\(7 downto 0),
       s00_axi_aclk => s00_axi_aclk,
       s00_axi_araddr(2 downto 0) => s00_axi_araddr(2 downto 0),
       s00_axi_aresetn => s00_axi_aresetn,
@@ -5403,7 +5403,7 @@ entity validation_example_Module_Validation_Pl_0_0 is
     clk_o : out STD_LOGIC;
     perph_o : out STD_LOGIC_VECTOR ( 31 downto 0 );
     perph_i : in STD_LOGIC_VECTOR ( 31 downto 0 );
-    bram_addr_a : out STD_LOGIC_VECTOR ( 11 downto 0 );
+    bram_addr_a : out STD_LOGIC_VECTOR ( 13 downto 0 );
     bram_clk_a : out STD_LOGIC;
     bram_wrdata_a : out STD_LOGIC_VECTOR ( 31 downto 0 );
     bram_rddata_a : in STD_LOGIC_VECTOR ( 31 downto 0 );
@@ -5454,7 +5454,7 @@ architecture STRUCTURE of validation_example_Module_Validation_Pl_0_0 is
   attribute X_INTERFACE_PARAMETER : string;
   attribute X_INTERFACE_PARAMETER of bram_we_a : signal is "XIL_INTERFACENAME BRAM_PORTA, MEM_SIZE 8192, MEM_WIDTH 32, MEM_ECC NONE, MASTER_TYPE OTHER, READ_LATENCY 1";
   attribute X_INTERFACE_INFO of s00_axi_aclk : signal is "xilinx.com:signal:clock:1.0 S00_AXI_CLK CLK";
-  attribute X_INTERFACE_PARAMETER of s00_axi_aclk : signal is "XIL_INTERFACENAME S00_AXI_CLK, ASSOCIATED_BUSIF S00_AXI, ASSOCIATED_RESET s00_axi_aresetn, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_0_FCLK_CLK0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of s00_axi_aclk : signal is "XIL_INTERFACENAME S00_AXI_CLK, ASSOCIATED_BUSIF S00_AXI, ASSOCIATED_RESET s00_axi_aresetn, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_1_FCLK_CLK0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s00_axi_aresetn : signal is "xilinx.com:signal:reset:1.0 S00_AXI_RST RST";
   attribute X_INTERFACE_PARAMETER of s00_axi_aresetn : signal is "XIL_INTERFACENAME S00_AXI_RST, POLARITY ACTIVE_LOW, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s00_axi_arready : signal is "xilinx.com:interface:aximm:1.0 S00_AXI ARREADY";
@@ -5464,7 +5464,7 @@ architecture STRUCTURE of validation_example_Module_Validation_Pl_0_0 is
   attribute X_INTERFACE_INFO of s00_axi_bready : signal is "xilinx.com:interface:aximm:1.0 S00_AXI BREADY";
   attribute X_INTERFACE_INFO of s00_axi_bvalid : signal is "xilinx.com:interface:aximm:1.0 S00_AXI BVALID";
   attribute X_INTERFACE_INFO of s00_axi_rready : signal is "xilinx.com:interface:aximm:1.0 S00_AXI RREADY";
-  attribute X_INTERFACE_PARAMETER of s00_axi_rready : signal is "XIL_INTERFACENAME S00_AXI, WIZ_DATA_WIDTH 32, WIZ_NUM_REG 8, SUPPORTS_NARROW_BURST 0, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 5, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, NUM_READ_OUTSTANDING 8, NUM_WRITE_OUTSTANDING 8, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_0_FCLK_CLK0, NUM_READ_THREADS 4, NUM_WRITE_THREADS 4, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of s00_axi_rready : signal is "XIL_INTERFACENAME S00_AXI, WIZ_DATA_WIDTH 32, WIZ_NUM_REG 8, SUPPORTS_NARROW_BURST 0, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 5, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, NUM_READ_OUTSTANDING 8, NUM_WRITE_OUTSTANDING 8, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_1_FCLK_CLK0, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s00_axi_rvalid : signal is "xilinx.com:interface:aximm:1.0 S00_AXI RVALID";
   attribute X_INTERFACE_INFO of s00_axi_wready : signal is "xilinx.com:interface:aximm:1.0 S00_AXI WREADY";
   attribute X_INTERFACE_INFO of s00_axi_wvalid : signal is "xilinx.com:interface:aximm:1.0 S00_AXI WVALID";
@@ -5495,12 +5495,11 @@ GND: unisim.vcomponents.GND
     );
 inst: entity work.validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1_0
      port map (
-      Q(7 downto 0) => perph_o(7 downto 0),
+      Q(13 downto 0) => bram_addr_a(13 downto 0),
       SR(0) => bram_rst_a,
       S_AXI_ARREADY => s00_axi_arready,
       S_AXI_AWREADY => s00_axi_awready,
       S_AXI_WREADY => s00_axi_wready,
-      bram_addr_a(11 downto 0) => bram_addr_a(11 downto 0),
       bram_en_a => bram_en_a,
       bram_rddata_a(31 downto 0) => bram_rddata_a(31 downto 0),
       bram_we_a => bram_we_a,
@@ -5520,6 +5519,7 @@ inst: entity work.validation_example_Module_Validation_Pl_0_0_Module_Validation_
       s00_axi_wdata(31 downto 0) => \^s00_axi_wdata\(31 downto 0),
       s00_axi_wstrb(3 downto 0) => s00_axi_wstrb(3 downto 0),
       s00_axi_wvalid => s00_axi_wvalid,
+      \write_buffer_reg[0][7]\(7 downto 0) => perph_o(7 downto 0),
       \write_buffer_reg[1][7]\(7 downto 0) => perph_o(15 downto 8),
       \write_buffer_reg[2][7]\(7 downto 0) => perph_o(23 downto 16),
       \write_buffer_reg[3][7]\(7 downto 0) => perph_o(31 downto 24)

@@ -2,7 +2,7 @@
 // Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-// Date        : Wed Jul 10 17:44:55 2024
+// Date        : Thu Jul 11 18:53:43 2024
 // Host        : Barry-Home-PC running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
 //               c:/Users/barry/Documents/Solving-SAT-in-FPGA-UCSB/Module_Dev/Module_Dev.gen/sources_1/bd/validation_example/ip/validation_example_Module_Validation_Pl_0_0/validation_example_Module_Validation_Pl_0_0_sim_netlist.v
@@ -50,14 +50,14 @@ module validation_example_Module_Validation_Pl_0_0
   output clk_o;
   output [31:0]perph_o;
   input [31:0]perph_i;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *) output [11:0]bram_addr_a;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *) output [13:0]bram_addr_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK" *) output bram_clk_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN" *) output [31:0]bram_wrdata_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA DOUT" *) input [31:0]bram_rddata_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA EN" *) output bram_en_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA RST" *) output bram_rst_a;
   (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA WE" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME BRAM_PORTA, MEM_SIZE 8192, MEM_WIDTH 32, MEM_ECC NONE, MASTER_TYPE OTHER, READ_LATENCY 1" *) output bram_we_a;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 S00_AXI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S00_AXI_CLK, ASSOCIATED_BUSIF S00_AXI, ASSOCIATED_RESET s00_axi_aresetn, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_0_FCLK_CLK0, INSERT_VIP 0" *) input s00_axi_aclk;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 S00_AXI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S00_AXI_CLK, ASSOCIATED_BUSIF S00_AXI, ASSOCIATED_RESET s00_axi_aresetn, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_1_FCLK_CLK0, INSERT_VIP 0" *) input s00_axi_aclk;
   (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 S00_AXI_RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S00_AXI_RST, POLARITY ACTIVE_LOW, INSERT_VIP 0" *) input s00_axi_aresetn;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI AWADDR" *) input [4:0]s00_axi_awaddr;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI AWPROT" *) input [2:0]s00_axi_awprot;
@@ -77,10 +77,10 @@ module validation_example_Module_Validation_Pl_0_0
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI RDATA" *) output [31:0]s00_axi_rdata;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI RRESP" *) output [1:0]s00_axi_rresp;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI RVALID" *) output s00_axi_rvalid;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI RREADY" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S00_AXI, WIZ_DATA_WIDTH 32, WIZ_NUM_REG 8, SUPPORTS_NARROW_BURST 0, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 5, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, NUM_READ_OUTSTANDING 8, NUM_WRITE_OUTSTANDING 8, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_0_FCLK_CLK0, NUM_READ_THREADS 4, NUM_WRITE_THREADS 4, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *) input s00_axi_rready;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S00_AXI RREADY" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S00_AXI, WIZ_DATA_WIDTH 32, WIZ_NUM_REG 8, SUPPORTS_NARROW_BURST 0, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 5, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, NUM_READ_OUTSTANDING 8, NUM_WRITE_OUTSTANDING 8, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN validation_example_processing_system7_0_1_FCLK_CLK0, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *) input s00_axi_rready;
 
   wire \<const0> ;
-  wire [11:0]bram_addr_a;
+  wire [13:0]bram_addr_a;
   wire bram_en_a;
   wire [31:0]bram_rddata_a;
   wire bram_rst_a;
@@ -115,12 +115,11 @@ module validation_example_Module_Validation_Pl_0_0
   GND GND
        (.G(\<const0> ));
   validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1_0 inst
-       (.Q(perph_o[7:0]),
+       (.Q(bram_addr_a),
         .SR(bram_rst_a),
         .S_AXI_ARREADY(s00_axi_arready),
         .S_AXI_AWREADY(s00_axi_awready),
         .S_AXI_WREADY(s00_axi_wready),
-        .bram_addr_a(bram_addr_a),
         .bram_en_a(bram_en_a),
         .bram_rddata_a(bram_rddata_a),
         .bram_we_a(bram_we_a),
@@ -140,6 +139,7 @@ module validation_example_Module_Validation_Pl_0_0
         .s00_axi_wdata(s00_axi_wdata),
         .s00_axi_wstrb(s00_axi_wstrb),
         .s00_axi_wvalid(s00_axi_wvalid),
+        .\write_buffer_reg[0][7] (perph_o[7:0]),
         .\write_buffer_reg[1][7] (perph_o[15:8]),
         .\write_buffer_reg[2][7] (perph_o[23:16]),
         .\write_buffer_reg[3][7] (perph_o[31:24]));
@@ -149,9 +149,9 @@ endmodule
 module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1_0
    (S_AXI_WREADY,
     S_AXI_AWREADY,
-    SR,
-    bram_addr_a,
     Q,
+    SR,
+    \write_buffer_reg[0][7] ,
     \write_buffer_reg[1][7] ,
     \write_buffer_reg[2][7] ,
     \write_buffer_reg[3][7] ,
@@ -177,9 +177,9 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
     s00_axi_rready);
   output S_AXI_WREADY;
   output S_AXI_AWREADY;
+  output [13:0]Q;
   output [0:0]SR;
-  output [11:0]bram_addr_a;
-  output [7:0]Q;
+  output [7:0]\write_buffer_reg[0][7] ;
   output [7:0]\write_buffer_reg[1][7] ;
   output [7:0]\write_buffer_reg[2][7] ;
   output [7:0]\write_buffer_reg[3][7] ;
@@ -204,12 +204,11 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   input s00_axi_bready;
   input s00_axi_rready;
 
-  wire [7:0]Q;
+  wire [13:0]Q;
   wire [0:0]SR;
   wire S_AXI_ARREADY;
   wire S_AXI_AWREADY;
   wire S_AXI_WREADY;
-  wire [11:0]bram_addr_a;
   wire bram_en_a;
   wire [31:0]bram_rddata_a;
   wire bram_we_a;
@@ -229,6 +228,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   wire [31:0]s00_axi_wdata;
   wire [3:0]s00_axi_wstrb;
   wire s00_axi_wvalid;
+  wire [7:0]\write_buffer_reg[0][7] ;
   wire [7:0]\write_buffer_reg[1][7] ;
   wire [7:0]\write_buffer_reg[2][7] ;
   wire [7:0]\write_buffer_reg[3][7] ;
@@ -237,13 +237,13 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.S_AXI_ARREADY(S_AXI_ARREADY),
         .S_AXI_AWREADY(S_AXI_AWREADY),
         .S_AXI_WREADY(S_AXI_WREADY),
-        .bram_addr_a(bram_addr_a),
+        .bram_addr_a(Q),
         .bram_en_a(bram_en_a),
         .bram_rddata_a(bram_rddata_a),
         .bram_we_a(bram_we_a),
         .clk_o(clk_o),
         .perph_i(perph_i),
-        .perph_o({\write_buffer_reg[3][7] ,\write_buffer_reg[2][7] ,\write_buffer_reg[1][7] ,Q}),
+        .perph_o({\write_buffer_reg[3][7] ,\write_buffer_reg[2][7] ,\write_buffer_reg[1][7] ,\write_buffer_reg[0][7] }),
         .s00_axi_aclk(s00_axi_aclk),
         .s00_axi_araddr(s00_axi_araddr),
         .s00_axi_aresetn(s00_axi_aresetn),
@@ -265,8 +265,8 @@ endmodule
 module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1_0_S00_AXI
    (S_AXI_WREADY,
     S_AXI_AWREADY,
-    s00_axi_aresetn_0,
     bram_addr_a,
+    s00_axi_aresetn_0,
     perph_o,
     bram_en_a,
     S_AXI_ARREADY,
@@ -290,8 +290,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
     s00_axi_rready);
   output S_AXI_WREADY;
   output S_AXI_AWREADY;
+  output [13:0]bram_addr_a;
   output s00_axi_aresetn_0;
-  output [11:0]bram_addr_a;
   output [31:0]perph_o;
   output bram_en_a;
   output S_AXI_ARREADY;
@@ -428,7 +428,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   wire \axi_rdata[9]_i_6_n_0 ;
   wire axi_rvalid_i_1_n_0;
   wire axi_wready0;
-  wire [11:0]bram_addr_a;
+  wire [13:0]bram_addr_a;
   wire bram_en_a;
   wire [31:0]bram_rddata_a;
   wire bram_we_a;
@@ -451,7 +451,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
   wire [31:0]s00_axi_wdata;
   wire [3:0]s00_axi_wstrb;
   wire s00_axi_wvalid;
-  wire [31:0]slv_reg0;
+  wire [31:14]slv_reg0;
   wire \slv_reg0[13]_i_1_n_0 ;
   wire \slv_reg0[23]_i_1_n_0 ;
   wire \slv_reg0[31]_i_1_n_0 ;
@@ -496,7 +496,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
 
   validation_example_Module_Validation_Pl_0_0_Platform_IO Platform_IO_inst
        (.D({Platform_IO_inst_n_0,Platform_IO_inst_n_1,Platform_IO_inst_n_2,Platform_IO_inst_n_3,Platform_IO_inst_n_4,Platform_IO_inst_n_5,Platform_IO_inst_n_6,Platform_IO_inst_n_7,Platform_IO_inst_n_8,Platform_IO_inst_n_9,Platform_IO_inst_n_10,Platform_IO_inst_n_11,Platform_IO_inst_n_12,Platform_IO_inst_n_13,Platform_IO_inst_n_14,Platform_IO_inst_n_15,Platform_IO_inst_n_16,Platform_IO_inst_n_17,Platform_IO_inst_n_18,Platform_IO_inst_n_19,Platform_IO_inst_n_20,Platform_IO_inst_n_21,Platform_IO_inst_n_22,Platform_IO_inst_n_23,Platform_IO_inst_n_24,Platform_IO_inst_n_25,Platform_IO_inst_n_26,Platform_IO_inst_n_27,Platform_IO_inst_n_28,Platform_IO_inst_n_29,Platform_IO_inst_n_30,Platform_IO_inst_n_31}),
-        .Q({bram_addr_a[1],slv_reg0[1:0]}),
+        .Q({bram_addr_a[3],bram_addr_a[1:0]}),
         .SR(s00_axi_aresetn_0),
         .axi_araddr(axi_araddr),
         .\axi_rdata_reg[0] (\axi_rdata[31]_i_3_n_0 ),
@@ -739,8 +739,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[0]),
         .I1(perph_i[8]),
         .I2(perph_i[24]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[16]),
         .O(\axi_rdata[0]_i_3_n_0 ));
   LUT4 #(
@@ -749,7 +749,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(slv_reg3[0]),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(slv_reg0[0]),
+        .I3(bram_addr_a[0]),
         .O(\axi_rdata[0]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -757,8 +757,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[18]),
         .I1(perph_i[10]),
         .I2(perph_i[26]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[2]),
         .O(\axi_rdata[10]_i_3_n_0 ));
   LUT4 #(
@@ -767,7 +767,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[10] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[8]),
+        .I3(bram_addr_a[10]),
         .O(\axi_rdata[10]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0033550FFF3355)) 
@@ -775,8 +775,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[11]),
         .I1(perph_i[19]),
         .I2(perph_i[3]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[27]),
         .O(\axi_rdata[11]_i_3_n_0 ));
   LUT4 #(
@@ -785,7 +785,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[11] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[9]),
+        .I3(bram_addr_a[11]),
         .O(\axi_rdata[11]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0033550FFF3355)) 
@@ -793,8 +793,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[12]),
         .I1(perph_i[20]),
         .I2(perph_i[4]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[28]),
         .O(\axi_rdata[12]_i_3_n_0 ));
   LUT4 #(
@@ -803,7 +803,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[12] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[10]),
+        .I3(bram_addr_a[12]),
         .O(\axi_rdata[12]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -811,8 +811,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[21]),
         .I1(perph_i[13]),
         .I2(perph_i[29]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[5]),
         .O(\axi_rdata[13]_i_3_n_0 ));
   LUT4 #(
@@ -821,7 +821,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[13] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[11]),
+        .I3(bram_addr_a[13]),
         .O(\axi_rdata[13]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -829,8 +829,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[22]),
         .I1(perph_i[14]),
         .I2(perph_i[30]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[6]),
         .O(\axi_rdata[14]_i_3_n_0 ));
   LUT4 #(
@@ -847,8 +847,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[23]),
         .I1(perph_i[15]),
         .I2(perph_i[31]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[7]),
         .O(\axi_rdata[15]_i_3_n_0 ));
   LUT4 #(
@@ -865,8 +865,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[24]),
         .I1(perph_i[16]),
         .I2(perph_i[8]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[0]),
         .O(\axi_rdata[16]_i_3_n_0 ));
   LUT4 #(
@@ -883,8 +883,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[17]),
         .I1(perph_i[25]),
         .I2(perph_i[9]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[1]),
         .O(\axi_rdata[17]_i_3_n_0 ));
   LUT4 #(
@@ -901,8 +901,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[26]),
         .I1(perph_i[18]),
         .I2(perph_i[10]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[2]),
         .O(\axi_rdata[18]_i_3_n_0 ));
   LUT4 #(
@@ -919,8 +919,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[27]),
         .I1(perph_i[19]),
         .I2(perph_i[3]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[11]),
         .O(\axi_rdata[19]_i_3_n_0 ));
   LUT4 #(
@@ -937,8 +937,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[9]),
         .I1(perph_i[1]),
         .I2(perph_i[25]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[17]),
         .O(\axi_rdata[1]_i_3_n_0 ));
   LUT4 #(
@@ -947,7 +947,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(slv_reg3[1]),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(slv_reg0[1]),
+        .I3(bram_addr_a[1]),
         .O(\axi_rdata[1]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0033550FFF3355)) 
@@ -955,8 +955,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[20]),
         .I1(perph_i[28]),
         .I2(perph_i[12]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[4]),
         .O(\axi_rdata[20]_i_3_n_0 ));
   LUT4 #(
@@ -973,8 +973,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[29]),
         .I1(perph_i[21]),
         .I2(perph_i[5]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[13]),
         .O(\axi_rdata[21]_i_3_n_0 ));
   LUT4 #(
@@ -991,8 +991,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[22]),
         .I1(perph_i[30]),
         .I2(perph_i[14]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[6]),
         .O(\axi_rdata[22]_i_3_n_0 ));
   LUT4 #(
@@ -1009,8 +1009,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[31]),
         .I1(perph_i[23]),
         .I2(perph_i[15]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[7]),
         .O(\axi_rdata[23]_i_3_n_0 ));
   LUT4 #(
@@ -1027,8 +1027,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[0]),
         .I1(perph_i[24]),
         .I2(perph_i[8]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[16]),
         .O(\axi_rdata[24]_i_3_n_0 ));
   LUT4 #(
@@ -1045,8 +1045,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[17]),
         .I1(perph_i[9]),
         .I2(perph_i[25]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[1]),
         .O(\axi_rdata[25]_i_3_n_0 ));
   LUT4 #(
@@ -1063,8 +1063,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[2]),
         .I1(perph_i[26]),
         .I2(perph_i[18]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[10]),
         .O(\axi_rdata[26]_i_3_n_0 ));
   LUT4 #(
@@ -1081,8 +1081,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[27]),
         .I1(perph_i[3]),
         .I2(perph_i[19]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[11]),
         .O(\axi_rdata[27]_i_3_n_0 ));
   LUT4 #(
@@ -1099,8 +1099,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[4]),
         .I1(perph_i[28]),
         .I2(perph_i[12]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[20]),
         .O(\axi_rdata[28]_i_3_n_0 ));
   LUT4 #(
@@ -1117,8 +1117,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[5]),
         .I1(perph_i[29]),
         .I2(perph_i[13]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[21]),
         .O(\axi_rdata[29]_i_3_n_0 ));
   LUT4 #(
@@ -1135,8 +1135,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[10]),
         .I1(perph_i[2]),
         .I2(perph_i[26]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[18]),
         .O(\axi_rdata[2]_i_3_n_0 ));
   LUT4 #(
@@ -1145,7 +1145,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[2] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[0]),
+        .I3(bram_addr_a[2]),
         .O(\axi_rdata[2]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -1153,8 +1153,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[6]),
         .I1(perph_i[30]),
         .I2(perph_i[14]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[22]),
         .O(\axi_rdata[30]_i_3_n_0 ));
   LUT4 #(
@@ -1178,8 +1178,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[7]),
         .I1(perph_i[31]),
         .I2(perph_i[15]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[23]),
         .O(\axi_rdata[31]_i_4_n_0 ));
   LUT4 #(
@@ -1196,8 +1196,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[11]),
         .I1(perph_i[3]),
         .I2(perph_i[19]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[27]),
         .O(\axi_rdata[3]_i_3_n_0 ));
   LUT6 #(
@@ -1206,8 +1206,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[12]),
         .I1(perph_i[4]),
         .I2(perph_i[20]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[28]),
         .O(\axi_rdata[4]_i_3_n_0 ));
   LUT4 #(
@@ -1216,7 +1216,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[4] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[2]),
+        .I3(bram_addr_a[4]),
         .O(\axi_rdata[4]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0055330FFF5533)) 
@@ -1224,8 +1224,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[13]),
         .I1(perph_i[5]),
         .I2(perph_i[29]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[21]),
         .O(\axi_rdata[5]_i_3_n_0 ));
   LUT4 #(
@@ -1234,7 +1234,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[5] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[3]),
+        .I3(bram_addr_a[5]),
         .O(\axi_rdata[5]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0033550FFF3355)) 
@@ -1242,8 +1242,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[6]),
         .I1(perph_i[14]),
         .I2(perph_i[30]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[22]),
         .O(\axi_rdata[6]_i_3_n_0 ));
   LUT4 #(
@@ -1252,7 +1252,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[6] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[4]),
+        .I3(bram_addr_a[6]),
         .O(\axi_rdata[6]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h0F0055330FFF5533)) 
@@ -1260,8 +1260,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[15]),
         .I1(perph_i[7]),
         .I2(perph_i[31]),
-        .I3(slv_reg0[0]),
-        .I4(slv_reg0[1]),
+        .I3(bram_addr_a[0]),
+        .I4(bram_addr_a[1]),
         .I5(perph_i[23]),
         .O(\axi_rdata[7]_i_3_n_0 ));
   LUT4 #(
@@ -1270,7 +1270,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[7] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[5]),
+        .I3(bram_addr_a[7]),
         .O(\axi_rdata[7]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -1278,8 +1278,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[16]),
         .I1(perph_i[8]),
         .I2(perph_i[24]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[0]),
         .O(\axi_rdata[8]_i_3_n_0 ));
   LUT4 #(
@@ -1288,7 +1288,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[8] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[6]),
+        .I3(bram_addr_a[8]),
         .O(\axi_rdata[8]_i_6_n_0 ));
   LUT6 #(
     .INIT(64'h00550F33FF550F33)) 
@@ -1296,8 +1296,8 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(perph_i[17]),
         .I1(perph_i[9]),
         .I2(perph_i[25]),
-        .I3(slv_reg0[1]),
-        .I4(slv_reg0[0]),
+        .I3(bram_addr_a[1]),
+        .I4(bram_addr_a[0]),
         .I5(perph_i[1]),
         .O(\axi_rdata[9]_i_3_n_0 ));
   LUT4 #(
@@ -1306,7 +1306,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.I0(\slv_reg3_reg_n_0_[9] ),
         .I1(axi_araddr[3]),
         .I2(axi_araddr[2]),
-        .I3(bram_addr_a[7]),
+        .I3(bram_addr_a[9]),
         .O(\axi_rdata[9]_i_6_n_0 ));
   FDRE \axi_rdata_reg[0] 
        (.C(s00_axi_aclk),
@@ -1586,31 +1586,31 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[0]),
-        .Q(slv_reg0[0]),
+        .Q(bram_addr_a[0]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[10] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[10]),
-        .Q(bram_addr_a[8]),
+        .Q(bram_addr_a[10]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[11] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[11]),
-        .Q(bram_addr_a[9]),
+        .Q(bram_addr_a[11]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[12] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[12]),
-        .Q(bram_addr_a[10]),
+        .Q(bram_addr_a[12]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[13] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[13]),
-        .Q(bram_addr_a[11]),
+        .Q(bram_addr_a[13]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[14] 
        (.C(s00_axi_aclk),
@@ -1652,7 +1652,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[1]),
-        .Q(slv_reg0[1]),
+        .Q(bram_addr_a[1]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[20] 
        (.C(s00_axi_aclk),
@@ -1718,7 +1718,7 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[2]),
-        .Q(bram_addr_a[0]),
+        .Q(bram_addr_a[2]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[30] 
        (.C(s00_axi_aclk),
@@ -1736,43 +1736,43 @@ module validation_example_Module_Validation_Pl_0_0_Module_Validation_Platform_v1
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[3]),
-        .Q(bram_addr_a[1]),
+        .Q(bram_addr_a[3]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[4] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[4]),
-        .Q(bram_addr_a[2]),
+        .Q(bram_addr_a[4]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[5] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[5]),
-        .Q(bram_addr_a[3]),
+        .Q(bram_addr_a[5]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[6] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[6]),
-        .Q(bram_addr_a[4]),
+        .Q(bram_addr_a[6]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[7] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[7]_i_1_n_0 ),
         .D(s00_axi_wdata[7]),
-        .Q(bram_addr_a[5]),
+        .Q(bram_addr_a[7]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[8] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[8]),
-        .Q(bram_addr_a[6]),
+        .Q(bram_addr_a[8]),
         .R(s00_axi_aresetn_0));
   FDRE \slv_reg0_reg[9] 
        (.C(s00_axi_aclk),
         .CE(\slv_reg0[13]_i_1_n_0 ),
         .D(s00_axi_wdata[9]),
-        .Q(bram_addr_a[7]),
+        .Q(bram_addr_a[9]),
         .R(s00_axi_aresetn_0));
   LUT5 #(
     .INIT(32'h00004000)) 
