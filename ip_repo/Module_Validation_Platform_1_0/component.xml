@@ -337,7 +337,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>01744d6e</spirit:value>
+            <spirit:value>1f69954a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -353,7 +353,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>01744d6e</spirit:value>
+            <spirit:value>1f69954a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -472,7 +472,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.BRAM_ADDR_WIDTH&apos;)) - 3)">11</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.BRAM_ADDR_WIDTH&apos;)) - 1)">13</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -957,7 +957,7 @@
       <spirit:file>
         <spirit:name>hdl/Module_Validation_Platform_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_d7fd7b98</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_8b3a5084</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -1126,18 +1126,18 @@
       <xilinx:displayName>Module Validation Platform</xilinx:displayName>
       <xilinx:vendorDisplayName>UCSB Computer Engineering Strukov Group</xilinx:vendorDisplayName>
       <xilinx:vendorURL>https://sites.google.com/site/strukov/</xilinx:vendorURL>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:coreRevision>3</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:Module_Validation_Platform:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-07-11T00:43:44Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-07-12T01:52:21Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2024.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b7392249"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="20d6b603"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="461da7fa"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="845fac99"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="581c5ef3"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="01a63b10"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="ac5c7d5e"/>
     </xilinx:packagingInfo>

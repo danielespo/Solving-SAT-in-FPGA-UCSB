@@ -36,10 +36,10 @@ class MvpDriver(DefaultIP):
             raise TypeError("Clock mode must be of type string")
         if mode == "global":
             config = self._get_config()
-            self.write(self._MVP_CONFIG, config | self._CAPTURE)
+            self.write(self._MVP_CONFIG, config & ~self._CLK_MODE)
         elif mode == "reg":
             config = self._get_config()
-            self.write(self._MVP_CONFIG, config & ~self._CAPTURE)
+            self.write(self._MVP_CONFIG, config | self._CLK_MODE)
         else:
             raise ValueError("Clock mode is either \"global\" or \"reg\"")
             
@@ -154,8 +154,12 @@ class MvpDriver(DefaultIP):
         vlaue.
         The address must be 4-byte aligned.
         """
+        config = self._get_config()
+        self.set_clk_mode("global")
         self.set_memory_mode("bram")
-        return self.read_mem(addr)
+        ret_data = self.read_mem(addr)
+        self.write(self._MVP_CONFIG, config)
+        return ret_data
     
     def write_oreg(self, addr:int, val:int):
         """
@@ -169,8 +173,11 @@ class MvpDriver(DefaultIP):
         This function writes to the BRAM memory space.
         The address must be 4-byte aligned.
         """
+        config = self._get_config()
+        self.set_clk_mode("global")
         self.set_memory_mode("bram")
-        return self.write_mem(addr, val)
+        self.write_mem(addr, val)
+        self.write(self._MVP_CONFIG, config)
     
     def read_captured_input(self, addr:int)->int:
         """

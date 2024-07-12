@@ -2,10 +2,10 @@
 <Root MajorVersion="0" MinorVersion="43">
   <CompositeFile CompositeFileTopName="validation_example" CanBeSetAsTop="false" CanDisplayChildGraph="true">
     <Description>Composite Fileset</Description>
-    <Generation Name="SYNTHESIS" State="GENERATED" Timestamp="1720658637"/>
-    <Generation Name="SIMULATION" State="GENERATED" Timestamp="1720658637"/>
-    <Generation Name="IMPLEMENTATION" State="GENERATED" Timestamp="1720658637"/>
-    <Generation Name="HW_HANDOFF" State="GENERATED" Timestamp="1720658637"/>
+    <Generation Name="SYNTHESIS" State="GENERATED" Timestamp="1720750996"/>
+    <Generation Name="SIMULATION" State="GENERATED" Timestamp="1720750996"/>
+    <Generation Name="IMPLEMENTATION" State="GENERATED" Timestamp="1720750996"/>
+    <Generation Name="HW_HANDOFF" State="GENERATED" Timestamp="1720750996"/>
     <FileCollection Name="SOURCES" Type="SOURCES">
       <File Name="synth\validation_example.v" Type="Verilog">
         <Properties IsEditable="false" IsVisible="true" IsNetlistSimulation="false" Timestamp="0" IsTrackable="false" IsStatusTracked="false"/>
@@ -17,6 +17,13 @@
       <File Name="sim\validation_example.v" Type="Verilog">
         <Properties IsEditable="false" IsVisible="true" IsNetlistSimulation="false" Timestamp="0" IsTrackable="false" IsStatusTracked="false"/>
         <Library Name="xil_defaultlib"/>
+        <UsedIn Val="SIMULATION"/>
+        <ProcessingOrder Val="NORMAL"/>
+      </File>
+      <File Name="validation_example.bmm" Type="BMM">
+        <Properties IsEditable="false" IsVisible="true" IsNetlistSimulation="false" Timestamp="0" IsTrackable="false" IsStatusTracked="false"/>
+        <Library Name="xil_defaultlib"/>
+        <UsedIn Val="IMPLEMENTATION"/>
         <UsedIn Val="SIMULATION"/>
         <ProcessingOrder Val="NORMAL"/>
       </File>
