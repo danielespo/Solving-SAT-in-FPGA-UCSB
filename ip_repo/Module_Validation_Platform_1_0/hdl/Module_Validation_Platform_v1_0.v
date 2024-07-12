@@ -20,7 +20,7 @@
         output wire [(2 ** WRITE_BUFFER_ADDR_WIDTH) * 8 - 1 : 0]  perph_o,
         input  wire [(2 ** READ_BUFFER_ADDR_WIDTH) * 8  - 1 : 0]  perph_i,
         
-        output wire [BRAM_ADDR_WIDTH - 3:0] bram_addr_a,
+        output wire [BRAM_ADDR_WIDTH - 1:0] bram_addr_a,
         output wire bram_clk_a,
         output wire [31:0] bram_wrdata_a,
         input  wire [31:0] bram_rddata_a,
@@ -67,7 +67,7 @@
         .clk_o(clk_o),
         .perph_i(perph_i),
         .perph_o(perph_o),
-        .bram_addr_a({bram_addr_a, 2'b00}),
+        .bram_addr_a(bram_addr_a),
         .bram_clk_a(bram_clk_a),
         .bram_wrdata_a(bram_wrdata_a),
         .bram_rddata_a(bram_rddata_a),
