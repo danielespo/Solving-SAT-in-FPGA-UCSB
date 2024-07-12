@@ -1,24 +1,18 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 04/26/2024 12:40:52 AM
-// Design Name: 
-// Module Name: Clause_Register
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*
+Clause_Register.v
+Author: Ben Richardson [confirm?]
 
+Create Date: 04/26/2024 12:40:52 AM
+
+Description: 
+A simple clocked register to hold the current candidate clause
+
+Notes:
+
+Testing:
+- hopefully no testing needed as this is a simple register
+*/
 
 module Clause_Register# (
     parameter NSAT = 3,

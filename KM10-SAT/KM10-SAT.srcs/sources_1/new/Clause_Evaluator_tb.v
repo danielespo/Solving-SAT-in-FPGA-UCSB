@@ -1,3 +1,12 @@
+/* 
+Clause_Evaluator_tb.v
+Author: Dan Espinosa
+
+Description:
+Testbench file for Clause_Evaluator.v
+
+Status:
+*/
 `timescale 1ns / 1ps
 
 module Clause_Evaluator_tb;

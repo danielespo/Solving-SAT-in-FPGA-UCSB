@@ -1,17 +1,25 @@
+/*
+Clause_Evaluator.v
+Author: Ben Richardson
 
-/************ ClauseEvaluator 1 ***********
-    In this module, we will be evaluating the clauses that are associated with a given variable. 
-    This module is desiged to have all of the clause evaluators running in parallel, 
-    in one module and should not be instantiated multiple times in a one thread implementation.
+Description:
+In this module, we will be evaluating the clauses that are associated with a given variable. 
+This module is desiged to have all of the clause evaluators running in parallel, 
+in one module and should not be instantiated multiple times in a one thread implementation.
 
-    The clause evaluator will take in the address of the variable that was flipped, and retrive values from the varTable,
-    and then evaluate the clauses that are associated with that variable in parallel.
+The clause evaluator will take in the address of the variable that was flipped, and retrive values from the varTable,
+and then evaluate the clauses that are associated with that variable in parallel.
 
-    It then outputs a MAX_CLAUSES_PER_VARIABLE wide isBroken signal, 
-    which will be high if the clause at that index was broken by the flip.
+It then outputs a MAX_CLAUSES_PER_VARIABLE wide isBroken signal, 
+which will be high if the clause at that index was broken by the flip.
 
-    ALERT [TODO] - This module is not done yet, and the addressing for the varTable is not setup yetVariable_Table (Variable_Table.v).
-    NOTE: Clause Evaluator takes 2 CLOCK CYCLES as it needs to call on the variable table.
+Notes: 
+- Clause Evaluator takes 2 CLOCK CYCLES as it needs to call on the variable table.
+- [TODO] - This module is not done yet, and the addressing for the varTable is not setup yetVariable_Table (Variable_Table.v).
+
+Testing:
+- testbench file created 5/2/24
+- 
 */
 
 module Clause_Evaluator #(

@@ -1,6 +1,8 @@
 /*
 Parallel_to_Serial.v
+Author: Zeiler Randall-Reed
 
+Description:
 This module contains the implementation of a parallel to serial converter. It consists
 of a small buffer that stores the data from the parallel inputs and outputs the data
 one by one in subsequent clock cycles. 
@@ -13,6 +15,14 @@ in the buffer one by one.
 The module does have a data_valid signal that is high when there is data to output and low
 when there is no data to output. It also accepts data_valid signals for each of the parallel 
 inputs and only stores parallel data when the data_valid signal is high.
+
+Notes:
+- this is a parallel to serial converter that is fully parameterized and is not specific to 
+    this project. The default parameters are set so it can be used in FIFO_Tree.v
+
+Testing:
+- this module is simple enough that its functionality should be apparent during tests for 
+    the FIFO tree
 */
 
 module Parallel_to_Serial #(

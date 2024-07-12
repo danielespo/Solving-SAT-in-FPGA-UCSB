@@ -1,6 +1,8 @@
 /*
 FIFO_Buffer.v
+Author: Zeiler Randall-Reed
 
+Description:
 This module contains the implementation of a single FIFO buffer used in the FIFO tree. 
 The buffer is implemented as a circular buffer with a fixed size. It supports read and
 write operations. 
@@ -13,9 +15,14 @@ If the buffer is full, write operations are ignored. If the buffer is empty, rea
 operations are ignored. No flags are set to indicate this, but the empty and full 
 signals can be used to determine the state of the buffer.
 
-NOTE: if, during testing, data is being lost in the FIFO tree, it is possible that the
-buffers are full and the data is being ignored. This can be fixed by increasing the 
-buffer size but Kanazawa's paper claims that a buffer size of 32 is sufficient.
+Notes: 
+- if, during testing, data is being lost in the FIFO tree, it is possible that the
+    buffers are full and the data is being ignored. This can be fixed by increasing the 
+    buffer size but Kanazawa's paper claims that a buffer size of 32 is sufficient.
+
+Testing: 
+- this module is simple enough that its functionality is tested during the test of 
+    the FIFO tree module
 */
 
 module FIFO_Buffer #(

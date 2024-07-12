@@ -1,15 +1,24 @@
 /************ Clause Processor ************
- * The clause processor is one of the two main modules in the SAT solver.
- * It interfaces with the Clause Selector module to receive clauses for processing.
- * Internally, the clause processor contains instances of the following modules:
- * - Clause_Evaluator
- * - Break_Value_Counter
- * - Address_Translation_Table
- * - Clause_Table
- * - Heuristic_Selector
- * - Temporal_Buffer
- * - FIFO_Tree
- *
+Clause_Processor.v
+Author: Zeiler Randall-Reed
+
+Description:
+The clause processor is one of the two main modules in the SAT solver.
+It interfaces with the Clause Selector module to receive clauses for processing.
+Internally, the clause processor contains instances of the following modules:
+- Clause_Evaluator
+- Break_Value_Counter
+- Address_Translation_Table
+- Clause_Table
+- Heuristic_Selector
+- Temporal_Buffer
+- FIFO_Tree
+
+Notes:
+- currently unused due to block diagram construction in Vivado
+- may be helpful to keep the two sub-top modules (this and Clause_Selector.v) in some form for pipelining
+
+Testing: N/A
 */
 
 module clause_processor #(
