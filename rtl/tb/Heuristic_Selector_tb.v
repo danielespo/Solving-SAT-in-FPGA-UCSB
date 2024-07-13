@@ -71,11 +71,11 @@ reg [2-1:0] out [0:20];
 initial begin
 
 // load data
-$readmemh("Heuristic_Selector_tb_memfiles/HS_tb_f0.mem", f0);
-$readmemh("Heuristic_Selector_tb_memfiles/HS_tb_f1.mem", f1);
-$readmemh("Heuristic_Selector_tb_memfiles/HS_tb_f2.mem", f2);
-$readmemh("Heuristic_Selector_tb_memfiles/HS_tb_ri.mem", random);
-$readmemh("Heuristic_Selector_tb_memfiles/HS_tb_xout.mem", out);
+$readmemh("HS_tb_f0.mem", f0);
+$readmemh("HS_tb_f1.mem", f1);
+$readmemh("HS_tb_f2.mem", f2);
+$readmemh("HS_tb_ri.mem", random);
+$readmemh("HS_tb_xout.mem", out);
 
 $display("Heuristic Selector Testbench: Begin Simulation");
 

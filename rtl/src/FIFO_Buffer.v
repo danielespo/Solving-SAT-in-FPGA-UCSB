@@ -26,8 +26,8 @@ Testing:
 */
 
 module FIFO_Buffer #(
-    parameter DATA_WIDTH = 36
-    parameter BUFFER_SIZE = 32
+    parameter DATA_WIDTH = 36,
+    parameter BUFFER_SIZE = 32,
     parameter BUFFER_BITS = $clog2(BUFFER_SIZE)
 )(
     input                       clk,            // Clock signal
