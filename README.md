@@ -25,7 +25,7 @@ vivado -source rebuild.tcl
 
 # Making Changes
 The `rebuild.tcl` does not automatically update when changes to the project organization are made. To update the `rebuild.tcl` script, you must run the following command in the Vivado tcl terminal:
-`write_project_tcl rebuild`
+```write_project_tcl rebuild```
 This command creates a new `rebuild.tcl` file (you may have to delete the old one), and must be run after any changes are made to the project organization:
 - files being added or removed from the project directory
 - adding or removing sources from the project
