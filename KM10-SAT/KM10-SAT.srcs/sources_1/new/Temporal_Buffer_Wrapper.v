@@ -1,5 +1,16 @@
 /*
 Temporal_Buffer_Wrapper.v
+Author: Zeiler Randall-Reed
+
+Description: 
+This module provides a way to procedurally generate temporal buffer modules and interface with 
+a parameterizable number of them.
+
+Notes:
+- 
+
+Testing:
+- testbench created 5/10/24 but is incomplete
 */
 
 module Temporal_Buffer_Wrapper #(

@@ -1,4 +1,21 @@
-// SKELETON FILE FOR TEMPORAL_BUFFER MODULE
+/*
+Temporal_Buffer.v
+Author: Zeiler Randall-Reed
+
+Description:
+For each variable in the SAT problem (3), there is a row of the temporal buffer. Each row stores 
+the clauses that are affected by one of the literal flips. One of the flips is determined by the
+heuristic selector, and the corresponding clause is sent to the output. 
+This module works interfaces with the rest of the design through the temporal buffer wrapper.
+
+Notes:
+- [TODO] figure out how the data about whether there is a clause, if it is broken or not, and more
+    is stored and transfered. This will likely mean changes to either the temporal buffer wrapper 
+    or the FIFO tree (probably the former).
+
+Testing:
+- This module will be tested with the Temporal Buffer Wrapper
+*/
 
 module Temporal_Buffer #(
     parameter NSAT = 3,

@@ -1,3 +1,11 @@
+/*
+Address_Translation_Table_tb.v
+Author: Dan Espinosa
+
+Testbench file for Address_Translation_Table.v
+
+Status:
+*/
 `timescale 1ns / 1ps
 
 module Address_Translation_Table_tb;

@@ -1,9 +1,15 @@
+/*
+FIFO_Tree_tb.v
+Author: initially Dan Espinosa, major rework by Zeiler Randall-Reed
+
+Description:
+Testbench file for FIFO_Tree.v
+
+Status: Test passed
+*/
+
 `timescale 1ns / 1ps
-// SKELETON FILE FOR THE FIFO TREE TESTBENCH
-// NEED ZEILERPHONE'S CHECK ON THE DIFFERENT PARTS, change fully
-
 `define SIM
-
 `define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $error($sformatf MESSAGE); end
 
 module FIFO_Tree_tb;

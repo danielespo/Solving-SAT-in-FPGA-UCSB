@@ -1,3 +1,15 @@
+/*
+Temporal_Buffer_Wrapper_tb.v
+Author: 
+
+Description: 
+Testbench file for Temporal_Buffer_Wrapper.v
+
+Notes:
+- Seems to be entirely unimplemented
+
+Status: testbench construction in progress
+*/
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 

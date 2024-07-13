@@ -1,12 +1,20 @@
-// break_value_counter_tb.v
-// tests the BreakValueCounter module
+/* 
+Break_Value_Counter_tb.v
+Author: Zeiler Randall-Reed
+
+Description:
+Testbench file for Break_Value_Counter.v
+
+Status:
+Complete
+*/
 `timescale 1ns / 1ps
 
 `define SIM
 
-`define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $error($sformatf MESSAGE); end
+`define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $display(MESSAGE); end
 
-module BreakValueCounter_tb;
+module Break_Value_Counter_tb;
 
 parameter NUM_CLAUSES = 20;
 parameter NUM_ROWS = 3;
@@ -19,13 +27,13 @@ reg clk = 1;
 always #5 clk <= ~clk;
 reg reset;
 
-reg clause_status_i [NUM_CLAUSES-1:0];
+reg [NUM_CLAUSES-1:0] clause_status_i;
 
 // outputs
 wire [NUM_CLAUSES_BITS-1:0] break_value_o;
 
 // Instantiate the Unit Under Test (UUT)
-BreakValueCounter #(
+Break_Value_Counter #(
     .NUM_CLAUSES(NUM_CLAUSES),
     .NUM_ROWS(NUM_ROWS),
     .NUM_CLAUSES_BITS(NUM_CLAUSES_BITS)
@@ -43,8 +51,8 @@ integer i, test_index;
 
 // 4 tests right now, various random bit streams
 initial begin
-    $readmemb("BreakValueCounter_tb_clauses.mem", clause_status);
-    $readmemb("BreakValueCounter_tb_break_value.mem", break_value);
+    $readmemb("Break_Value_Counter_tb_status.mem", clause_status);
+    $readmemh("Break_Value_Counter_tb_value.mem", break_value);
     $display("Break Value Counter Testbench: Begin Simulation");
 
     // reset the system
@@ -56,15 +64,18 @@ initial begin
     test_index = 0;
     for(test_index = 0; test_index < NUM_TESTS; test_index = test_index + 1) begin        
         // load test values into the clause_status input
-        for(i = 0; i < NUM_CLAUSES; i = i + 1) begin 
-            clause_status_i[i] = clause_status[test_index][i];
-        end 
+        clause_status_i = clause_status[test_index];
+        // $display("Clause status: %b", clause_status_i);
+        // for(i = 0; i < NUM_CLAUSES; i = i + 1) begin 
+        //     clause_status_i[i] = clause_status[test_index][i];
+        // end 
 
         // wait for the output to be ready
         @(negedge clk);
 
         // check if the output matches the expected value
-        `ASSERT(break_value_o == break_value[test_index], ("Break Value Counter Testbench: Test failed"));
+        if(break_value_o != break_value[test_index]) $display("Test failed: Got %d, expected %d", break_value_o, break_value[test_index]);
+        //`ASSERT(break_value_o == break_value[test_index], ("Break Value Counter Testbench: Test failed"));
     end 
     
     $display("Break Value Counter Testbench: End Simulation");

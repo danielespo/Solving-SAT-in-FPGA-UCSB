@@ -1,6 +1,8 @@
 /*
 FIFO_Tree.v
+Author: Zeiler Randall-Reed
 
+Description:
 This module contains the FIFO Tree implementation. The FIFO tree is a tree of FIFO buffers 
 connected via parallel to serial converters. The tree is used to store the clauses that are
 left unsatisfied after a flip in the SAT solver. The tree is used primarily to consolidate
@@ -11,6 +13,11 @@ level of parallelism. The tree depth is currently fixed at 3 and the parameter i
 
 The tree has inputs for the clauses and whether they are valid. It also has an input to 
 write the data to the tree. The tree outputs a single clause at a time. 
+
+Notes:
+
+Testing:
+- testbench created 5/2/24
 */
 
 module FIFO_tree #(

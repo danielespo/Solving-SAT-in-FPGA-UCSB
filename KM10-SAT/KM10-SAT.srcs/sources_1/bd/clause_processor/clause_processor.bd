@@ -27,13 +27,13 @@
       "Temporal_Buffer_0": ""
     },
     "ports": {
-      "clause": {
-        "direction": "O"
-      },
       "var_table_address_o": {
         "direction": "O",
         "left": "439",
         "right": "0"
+      },
+      "clause": {
+        "direction": "O"
       }
     },
     "components": {
@@ -41,7 +41,7 @@
         "vlnv": "xilinx.com:module_ref:ClauseTable:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_ClauseTable_0_0",
-        "xci_path": "ip\\clause_processor_ClauseTable_0_0\\clause_processor_ClauseTable_0_0.xci",
+        "xci_path": "ip/clause_processor_ClauseTable_0_0/clause_processor_ClauseTable_0_0.xci",
         "inst_hier_path": "ClauseTable_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -79,7 +79,7 @@
         "vlnv": "xilinx.com:module_ref:BreakValueCounter:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_BreakValueCounter_0_0",
-        "xci_path": "ip\\clause_processor_BreakValueCounter_0_0\\clause_processor_BreakValueCounter_0_0.xci",
+        "xci_path": "ip/clause_processor_BreakValueCounter_0_0/clause_processor_BreakValueCounter_0_0.xci",
         "inst_hier_path": "BreakValueCounter_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -117,7 +117,7 @@
         "vlnv": "xilinx.com:module_ref:Clause_Evaluator:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Clause_Evaluator_0_0",
-        "xci_path": "ip\\clause_processor_Clause_Evaluator_0_0\\clause_processor_Clause_Evaluator_0_0.xci",
+        "xci_path": "ip/clause_processor_Clause_Evaluator_0_0/clause_processor_Clause_Evaluator_0_0.xci",
         "inst_hier_path": "Clause_Evaluator_1",
         "reference_info": {
           "ref_type": "hdl",
@@ -180,7 +180,7 @@
         "vlnv": "xilinx.com:ip:processing_system7:5.5",
         "ip_revision": "6",
         "xci_name": "clause_processor_processing_system7_0_1",
-        "xci_path": "ip\\clause_processor_processing_system7_0_1\\clause_processor_processing_system7_0_1.xci",
+        "xci_path": "ip/clause_processor_processing_system7_0_1/clause_processor_processing_system7_0_1.xci",
         "inst_hier_path": "processing_system7_0",
         "interface_ports": {
           "M_AXI_GP0": {
@@ -317,7 +317,7 @@
         "vlnv": "xilinx.com:module_ref:Heuristic_Selector:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Heuristic_Selector_0_0",
-        "xci_path": "ip\\clause_processor_Heuristic_Selector_0_0\\clause_processor_Heuristic_Selector_0_0.xci",
+        "xci_path": "ip/clause_processor_Heuristic_Selector_0_0/clause_processor_Heuristic_Selector_0_0.xci",
         "inst_hier_path": "Heuristic_Selector_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -363,7 +363,7 @@
         "vlnv": "xilinx.com:module_ref:FIFO_tree:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_FIFO_tree_0_0",
-        "xci_path": "ip\\clause_processor_FIFO_tree_0_0\\clause_processor_FIFO_tree_0_0.xci",
+        "xci_path": "ip/clause_processor_FIFO_tree_0_0/clause_processor_FIFO_tree_0_0.xci",
         "inst_hier_path": "FIFO_tree_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -409,7 +409,7 @@
         "vlnv": "xilinx.com:module_ref:UNSAT_Clause_Buffer:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_UNSAT_Clause_Buffer_0_0",
-        "xci_path": "ip\\clause_processor_UNSAT_Clause_Buffer_0_0\\clause_processor_UNSAT_Clause_Buffer_0_0.xci",
+        "xci_path": "ip/clause_processor_UNSAT_Clause_Buffer_0_0/clause_processor_UNSAT_Clause_Buffer_0_0.xci",
         "inst_hier_path": "UNSAT_Clause_Buffer_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -447,7 +447,7 @@
         "vlnv": "xilinx.com:module_ref:Variable_Table:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Variable_Table_0_1",
-        "xci_path": "ip\\clause_processor_Variable_Table_0_1\\clause_processor_Variable_Table_0_1.xci",
+        "xci_path": "ip/clause_processor_Variable_Table_0_1/clause_processor_Variable_Table_0_1.xci",
         "inst_hier_path": "Variable_Table_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -503,7 +503,7 @@
         "vlnv": "xilinx.com:module_ref:Clause_Register:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Clause_Register_0_0",
-        "xci_path": "ip\\clause_processor_Clause_Register_0_0\\clause_processor_Clause_Register_0_0.xci",
+        "xci_path": "ip/clause_processor_Clause_Register_0_0/clause_processor_Clause_Register_0_0.xci",
         "inst_hier_path": "Clause_Register_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -550,7 +550,7 @@
         "vlnv": "xilinx.com:module_ref:Clause_Evaluator:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Clause_Evaluator_0_1",
-        "xci_path": "ip\\clause_processor_Clause_Evaluator_0_1\\clause_processor_Clause_Evaluator_0_1.xci",
+        "xci_path": "ip/clause_processor_Clause_Evaluator_0_1/clause_processor_Clause_Evaluator_0_1.xci",
         "inst_hier_path": "Clause_Evaluator_2",
         "parameters": {
           "MAX_CLAUSES_PER_VARIABLE": {
@@ -621,7 +621,7 @@
         "vlnv": "xilinx.com:module_ref:Clause_Evaluator:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Clause_Evaluator_2_0",
-        "xci_path": "ip\\clause_processor_Clause_Evaluator_2_0\\clause_processor_Clause_Evaluator_2_0.xci",
+        "xci_path": "ip/clause_processor_Clause_Evaluator_2_0/clause_processor_Clause_Evaluator_2_0.xci",
         "inst_hier_path": "Clause_Evaluator_3",
         "parameters": {
           "MAX_CLAUSES_PER_VARIABLE": {
@@ -692,7 +692,7 @@
         "vlnv": "xilinx.com:module_ref:lfsr_prng:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_lfsr_prng_0_0",
-        "xci_path": "ip\\clause_processor_lfsr_prng_0_0\\clause_processor_lfsr_prng_0_0.xci",
+        "xci_path": "ip/clause_processor_lfsr_prng_0_0/clause_processor_lfsr_prng_0_0.xci",
         "inst_hier_path": "lfsr_prng_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -725,7 +725,7 @@
         "vlnv": "xilinx.com:module_ref:Address_Translation_Table:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Address_Translation_0_0",
-        "xci_path": "ip\\clause_processor_Address_Translation_0_0\\clause_processor_Address_Translation_0_0.xci",
+        "xci_path": "ip/clause_processor_Address_Translation_0_0/clause_processor_Address_Translation_0_0.xci",
         "inst_hier_path": "Address_Translation_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -768,7 +768,7 @@
         "vlnv": "xilinx.com:ip:xlconcat:2.1",
         "ip_revision": "5",
         "xci_name": "clause_processor_xlconcat_0_0",
-        "xci_path": "ip\\clause_processor_xlconcat_0_0\\clause_processor_xlconcat_0_0.xci",
+        "xci_path": "ip/clause_processor_xlconcat_0_0/clause_processor_xlconcat_0_0.xci",
         "inst_hier_path": "xlconcat_0",
         "parameters": {
           "IN0_WIDTH": {
@@ -783,7 +783,7 @@
         "vlnv": "xilinx.com:module_ref:Temporal_Buffer:1.0",
         "ip_revision": "1",
         "xci_name": "clause_processor_Temporal_Buffer_0_0",
-        "xci_path": "ip\\clause_processor_Temporal_Buffer_0_0\\clause_processor_Temporal_Buffer_0_0.xci",
+        "xci_path": "ip/clause_processor_Temporal_Buffer_0_0/clause_processor_Temporal_Buffer_0_0.xci",
         "inst_hier_path": "Temporal_Buffer_0",
         "reference_info": {
           "ref_type": "hdl",
@@ -865,8 +865,8 @@
       "Clause_Evaluator_0_var_table_address_o": {
         "ports": [
           "Clause_Evaluator_1/var_table_address_o",
-          "var_table_address_o",
-          "Variable_Table_0/clause_evaluator_address_i"
+          "Variable_Table_0/clause_evaluator_address_i",
+          "var_table_address_o"
         ]
       },
       "Clause_Evaluator_2_var_table_address_o": {
@@ -902,8 +902,8 @@
       "FIFO_tree_0_clause_o": {
         "ports": [
           "FIFO_tree_0/clause_o",
-          "clause",
-          "UNSAT_Clause_Buffer_0/clause_i"
+          "UNSAT_Clause_Buffer_0/clause_i",
+          "clause"
         ]
       },
       "Heuristic_Selector_0_selected_flip_o": {
@@ -914,14 +914,14 @@
       },
       "Net": {
         "ports": [
-          "FIFO_tree_0/clk",
-          "Clause_Evaluator_1/clk"
+          "Clause_Evaluator_1/clk",
+          "FIFO_tree_0/clk"
         ]
       },
       "Net1": {
         "ports": [
-          "FIFO_tree_0/reset",
-          "Clause_Evaluator_1/reset"
+          "Clause_Evaluator_1/reset",
+          "FIFO_tree_0/reset"
         ]
       },
       "Temporal_Buffer_0_clause_o": {
@@ -962,13 +962,13 @@
           "ClauseTable_0/clk",
           "UNSAT_Clause_Buffer_0/clk",
           "Variable_Table_0/clk",
-          "Clause_Register_0/clk",
           "lfsr_prng_0/clk",
-          "Temporal_Buffer_0/clk",
-          "Heuristic_Selector_0/clk",
           "Address_Translation_0/clk",
+          "Heuristic_Selector_0/clk",
+          "Clause_Register_0/clk",
           "Clause_Evaluator_2/clk",
-          "Clause_Evaluator_3/clk"
+          "Clause_Evaluator_3/clk",
+          "Temporal_Buffer_0/clk"
         ]
       },
       "reset_0_1": {
@@ -977,13 +977,13 @@
           "ClauseTable_0/reset",
           "BreakValueCounter_0/reset",
           "UNSAT_Clause_Buffer_0/reset",
-          "Clause_Register_0/reset",
           "lfsr_prng_0/reset",
-          "Temporal_Buffer_0/reset",
-          "Heuristic_Selector_0/reset",
           "Address_Translation_0/reset",
+          "Heuristic_Selector_0/reset",
+          "Clause_Register_0/reset",
           "Clause_Evaluator_2/reset",
-          "Clause_Evaluator_3/reset"
+          "Clause_Evaluator_3/reset",
+          "Temporal_Buffer_0/reset"
         ]
       },
       "xlconcat_0_dout": {

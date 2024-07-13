@@ -1,3 +1,12 @@
+/* 
+Clause_Evaluator_tb.v
+Author: Dan Espinosa
+
+Description:
+Testbench file for Clause_Evaluator.v
+
+Status:
+*/
 `timescale 1ns / 1ps
 // Note, this still needs to interface with the Variable Table somehow and I have no idea currently (5/02/24) how to do this, help later
 // thanks, -Dan
