@@ -1,6 +1,0 @@
-vhdl xil_defaultlib  \
-"../../../bd/validation_example/ip/validation_example_rst_ps7_0_100M_0/sim/validation_example_rst_ps7_0_100M_0.vhd" \
-"../../../bd/validation_example/ip/validation_example_axi_bram_ctrl_0_0/sim/validation_example_axi_bram_ctrl_0_0.vhd" \
-
-# Do not sort compile order
-nosort
