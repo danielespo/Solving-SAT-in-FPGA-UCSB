@@ -1,5 +1,18 @@
+# OSX nonsense
 .DS_Store
+
+# Generated Project
 KM10-SAT-Z/
-vivado.jou
-vivado.log
+
+# Generated Block Designs
+rtl/bd/*/*
+!rtl/bd/*/hdl
+
+
+# Vivado logs
+*.jou
+*.log
 vivado_*.str
+
+# Generated reports
+NA
