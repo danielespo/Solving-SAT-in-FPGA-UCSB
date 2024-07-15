@@ -64,7 +64,59 @@ def packing_algorithm(literal_memberships):
 
     return packed_literal_array, masks
 
-# Barry: is this the kind of converting you want?
+def packing_algorithm_20_as_max(literal_memberships):
+    """Simple big-small packing algorithm with a max pack size of 20. Sorts one list, then uses elements of sorted list to find elements of
+    another list. Then finds the smallest element, pops both, etc.
+
+    Returns:
+       packed_literal_array: an array of the form [[[literal_a, literal_b], [membership of literal_a, membership of literal_b]], ...]
+       masks: a list of tuples indicating the start and end positions for each literal within the packed array (1-based indexing)
+    """
+    literal_memberships.pop(0)  # Remove 1-based indexing trick
+    num_vars = len(literal_memberships)
+    
+    packed_literal_array = []
+    size_unsorted_arr = [len(i) for i in literal_memberships]
+    size_sorted_arr = sorted(enumerate(size_unsorted_arr), key=lambda x: x[1])
+
+    masks = [(0, 0)] * (num_vars + 1)
+    current_mask_position = 0
+
+    while len(size_sorted_arr) > 1:
+        small_index, current_size_small = size_sorted_arr.pop(0)  # get first
+        small = literal_memberships[small_index]
+
+        big_index, current_size_big = size_sorted_arr.pop()  # get last
+        big = literal_memberships[big_index]
+
+        # If last is bigger than 20, raise error
+        if current_size_big > 20:
+            raise ValueError(f"Literal at index {big_index} has size {current_size_big}, which exceeds the maximum of 20")
+
+        # If last is exactly 20, pack it by itself and then go to next
+        if current_size_big == 20:
+            big = literal_memberships[big_index]
+            packed_literal_array.append([[big_index + 1], big])
+            masks[big_index + 1] = (current_mask_position, current_mask_position + len(big) - 1)
+            current_mask_position += len(big)
+            continue
+
+        current_pack_array = [[big_index + 1, small_index + 1], big + small]
+        packed_literal_array.append(current_pack_array)
+
+        masks[big_index + 1] = (current_mask_position, current_mask_position + len(big) - 1)
+        masks[small_index + 1] = (current_mask_position + len(big), current_mask_position + len(big) + len(small) - 1)
+        current_mask_position += len(big) + len(small)
+
+    if size_sorted_arr:
+        remaining_index, remaining_size = size_sorted_arr.pop()
+        remaining = literal_memberships[remaining_index]
+        packed_literal_array.append([[remaining_index + 1], remaining])
+        masks[remaining_index + 1] = (current_mask_position, current_mask_position + len(remaining) - 1)
+
+    return packed_literal_array, masks
+
+# Barry: is this the kind of converting you want? - Dan
 def convert_to_uint32_list(packed_literal_array, masks, depth=4096):
     """
     Convert packed literal array and masks to uint32 list format.
