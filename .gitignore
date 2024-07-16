@@ -2,7 +2,7 @@
 .DS_Store
 
 # Generated Project
-KM10-SAT-Z/
+KMSAT/
 
 # Generated Block Designs
 rtl/bd/*/*
