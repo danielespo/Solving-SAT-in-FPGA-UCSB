@@ -1,107 +1,77 @@
-/*
+/* ----------------------------------------------------
+Version: 2.0
 Clause_Evaluator.v
-Author: Ben Richardson
+
+V1.0 Author: Ben Richardson
+V2.0 Author: Barry Wang
 
 Description:
-In this module, we will be evaluating the clauses that are associated with a given variable. 
-This module is desiged to have all of the clause evaluators running in parallel, 
-in one module and should not be instantiated multiple times in a one thread implementation.
-
-The clause evaluator will take in the address of the variable that was flipped, and retrive values from the varTable,
-and then evaluate the clauses that are associated with that variable in parallel.
-
-It then outputs a MAX_CLAUSES_PER_VARIABLE wide isBroken signal, 
-which will be high if the clause at that index was broken by the flip.
+    This is a singular Clause Evaluator with i/o
+    buffer configurations. 
 
 Notes: 
-- Clause Evaluator takes 2 CLOCK CYCLES as it needs to call on the variable table.
-- [TODO] - This module is not done yet, and the addressing for the varTable is not setup yetVariable_Table (Variable_Table.v).
+    This module is defaulted to input buffered
+    (clocked at input).
 
 Testing:
-- testbench file created 5/2/24
-- 
-*/
+    2024/05/24 V1.0 testbench file created
+    2024/07/16 V1.0 testbench invalidated
+    V2.0 testbench not created
+
+Change Log:
+
+2024/07/16 - Barry Wang
+    Make Version 2 and update description
+
+-----------------------------------------------------*/
 
 module Clause_Evaluator #(
-    parameter MAX_CLAUSES_PER_VARIABLE = 20, // Maximum number of clauses that can be associated with a single variable (determines # of clause evaluators)
-    parameter NSAT = 3, // Number of Variables and Var Tables being evaluated for each clause
-    parameter LITERAL_ADDRESS_WIDTH = 11 // Width of the incoming flipped variable address (11 bits for 2048 variables)
+    // Number of Variables and Var Tables being evaluated for each clause
+    parameter NSAT = 3, 
+    // Implementation (gated I/O)
+    // "INPUT_GATED" / "OUTPUT_GATED"
+    parameter IMPLEMENTATION = "INPUT_GATED"
 )(
-    input                                         clk,          // Clock signal
-    input                                         reset,        // Reset signal
-    input  [LITERAL_ADDRESS_WIDTH:0]              clause_table_i [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause table input
-    input  [MAX_CLAUSES_PER_VARIABLE-1:0]           clause_table_mask_i,
-    output [LITERAL_ADDRESS_WIDTH-1:0]            var_table_address_o [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0],    // clause output
-    input                                         var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [NSAT-2:0],
-    output reg  [MAX_CLAUSES_PER_VARIABLE-1:0]    isBroken, // Outputs high when the evaluated candidate clause was BROKEN by the flip
-    output reg  [LITERAL_ADDRESS_WIDTH:0]         flipped_literal_temp_buffer_o   [0:MAX_CLAUSES_PER_VARIABLE - 1],
-    output reg  [LITERAL_ADDRESS_WIDTH:0]         rest_clause_temp_buffer_o       [0:MAX_CLAUSES_PER_VARIABLE - 1] [NSAT-2:0]
+    // Clock signal
+    input   wire    clk_i,
+    // Reset signal
+    input   wire    reset_i,
+    // Variable values and negation
+    input   wire    [NSAT - 1 : 0]  var_val_i,
+    input   wire    [NSAT - 1 : 0]  var_neg_i,
+    output  wire    break_o
 );
 
-
-    reg [LITERAL_ADDRESS_WIDTH:0] clause_table_data_store [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
-    wire clause_table_negation_bits [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
-    reg [MAX_CLAUSES_PER_VARIABLE-1:0] clause_mask_store;
-    
-    genvar i, j;
-    generate
-        for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
-            for (j = 0; j < NSAT-1; j = j + 1) begin
-                assign var_table_address_o[i][j]= clause_table_i[i][j][LITERAL_ADDRESS_WIDTH-1:0]; // Creates and sends address from table CT to VT
-                assign clause_table_negation_bits[i][j] = clause_table_i[i][j][LITERAL_ADDRESS_WIDTH];
-            end
-        end
-    endgenerate
-    
-    
-    
-    always @(posedge clk) begin
-        if (reset) begin
-            clause_table_data_store <= clause_table_i;
-        end else begin
-            //isBroken <= ~(leftXOR | rightXOR);
-        end
-    end
-
-
-
-
-
-
-
-
-
-
-
-
-    // Wire arrays for XOR outputs
-    wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsLeft;
-    wire [MAX_CLAUSES_PER_VARIABLE-1:0] negBitsRight;
-
-    // Continuous assignment using generate block for conditional compiling
-    // I changed this from just the forloop because I was getting syntax errors, Ben - Daniel
-    genvar i;
-    generate
-        for (i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin : gen_negBits
-//            assign negBitsLeft[i] = negationBitLitL_in[i];
-//            assign negBitsRight[i] = negationBitLitR_in[i];
-        end
-    endgenerate
-
-//    // This is the clause evaluator logic
-//    //Xor all of the left sides 0-MAX_CLAUSES_PER_VARIABLE
-//    wire [MAX_CLAUSES_PER_VARIABLE-1:0] leftXOR = negBitsLeft ^ alt_negationBitLitL_in;
-//    //Xor all of the right sides 0-MAX_CLAUSES_PER_VARIABLE
-//    wire [MAX_CLAUSES_PER_VARIABLE-1:0] rightXOR = negBitsRight ^ alt_negationBitLitR_in;
-
-    // NOR the two sides together
-    always @(posedge clk) begin
-        if (reset) begin
-            isBroken <= {MAX_CLAUSES_PER_VARIABLE{1'b0}};
-        end else begin
-            //isBroken <= ~(leftXOR | rightXOR);
-        end
-    end
-
+if (IMPLEMENTATION == "INPUT_GATED")
+begin
+    reg [NSAT - 1 : 0] var_val;
+    reg [NSAT - 1 : 0] var_neg;
+    assign wire [NSAT - 1 : 0] negated = var_val ^ var_neg;
+    assign break_o = ~|negated
+    always @ (posedge clk_i)
+      begin
+        if (reset)
+          begin
+            var_val <= 0;
+            var_neg <= 0;
+          end else begin
+            var_val <= var_val_i;
+            var_neg <= var_neg_i;
+          end
+      end
+end else begin
+    reg [NSAT - 1 : 0] break;
+    assign break_o = break;
+    assign wire [NSAT - 1 : 0] negated = var_val_i ^ var_neg_i;
+    always @ (posedge clk_i)
+      begin
+        if (reset)
+          begin
+            break <= 1'b0;
+          end else begin
+            break <= ~|negated;
+          end
+      end
+end
 
 endmodule

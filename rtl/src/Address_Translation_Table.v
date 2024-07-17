@@ -16,7 +16,9 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments: Testbench made 05/02/2024 passed
-// 
+// 			
+// 		-- This file is deserted due to ip replacement --
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module Address_Translation_Table # (
