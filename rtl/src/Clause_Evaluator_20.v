@@ -43,16 +43,16 @@ genvar i;
 generate
     for (i = 0; i < CLUSTER_SIZE; i = i + 1)
       begin
-        Clause_Evaluator ce # (
+        Clause_Evaluator # (
             .NSAT(NSAT),
             .IMPLEMENTATION(IMPLEMENTATION)
-        )(
+        ) ce (
             .clk_i(clk_i),
             .reset_i(reset_i),
             .var_val_i(var_val_i[i * NSAT +: NSAT]),
             .var_neg_i(var_neg_i[i * NSAT +: NSAT]),
             .break_o(break_o[i])
-        )
+        );
       end
 endgenerate
 

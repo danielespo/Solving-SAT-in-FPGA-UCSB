@@ -46,11 +46,11 @@ if (IMPLEMENTATION == "INPUT_GATED")
 begin
     reg [NSAT - 1 : 0] var_val;
     reg [NSAT - 1 : 0] var_neg;
-    assign wire [NSAT - 1 : 0] negated = var_val ^ var_neg;
-    assign break_o = ~|negated
+    wire [NSAT - 1 : 0] negated = var_val ^ var_neg;
+    assign break_o = ~|negated;
     always @ (posedge clk_i)
       begin
-        if (reset)
+        if (reset_i)
           begin
             var_val <= 0;
             var_neg <= 0;
@@ -62,10 +62,10 @@ begin
 end else begin
     reg [NSAT - 1 : 0] break;
     assign break_o = break;
-    assign wire [NSAT - 1 : 0] negated = var_val_i ^ var_neg_i;
+    wire [NSAT - 1 : 0] negated = var_val_i ^ var_neg_i;
     always @ (posedge clk_i)
       begin
-        if (reset)
+        if (reset_i)
           begin
             break <= 1'b0;
           end else begin
