@@ -12,7 +12,7 @@ Notes:
     (clocked at input).
 
 Testing:
-    V1.0 testbench not created
+    2024/07/17 V1.0 testbench passed
 
 Change Log:
 

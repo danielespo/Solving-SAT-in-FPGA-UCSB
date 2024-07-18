@@ -12,16 +12,21 @@ Description:
 Notes: 
     This module is defaulted to input buffered
     (clocked at input).
+    Reset will set the next break output to all
+    zeros (next clock rising edge).
 
 Testing:
     2024/05/24 V1.0 testbench file created
     2024/07/16 V1.0 testbench invalidated
-    V2.0 testbench not created
+    2024/07/17 V2.0 tested as a submodule in Clause_Evaluator_20
 
 Change Log:
 
 2024/07/16 - Barry Wang
     Make Version 2 and update description
+2024/07/17 - Barry Wang
+    Fixed reset behavior
+    Passed testbench
 
 -----------------------------------------------------*/
 
@@ -52,7 +57,7 @@ begin
       begin
         if (reset_i)
           begin
-            var_val <= 0;
+            var_val <= {(NSAT){1'b1}};
             var_neg <= 0;
           end else begin
             var_val <= var_val_i;

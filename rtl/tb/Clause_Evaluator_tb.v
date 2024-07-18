@@ -1,77 +1,93 @@
 /* 
+Version: 2.0
 Clause_Evaluator_tb.v
-Author: Dan Espinosa
+
+V1.0 Author: Dan Espinosa
+V2.0 Author: Barry Wang
 
 Description:
-Testbench file for Clause_Evaluator.v
+    This is the test bench for one clause evaluator
 
-Status:
+Notes:
+
+Change Log:
+
+2024/07/17 - Barry Wang
+    Reworked test bench
 */
-`timescale 1ns / 1ps
-// Note, this still needs to interface with the Variable Table somehow and I have no idea currently (5/02/24) how to do this, help later
-// thanks, -Dan
 module Clause_Evaluator_tb;
-parameter MAX_CLAUSES_PER_VARIABLE = 20;
+parameter CLUSTER_SIZE = 20;
 parameter NSAT = 3;
-parameter LITERAL_ADDRESS_WIDTH = 11;
+parameter IMPLEMENTATION = "INPUT_GATED";
 
-// Inputs
+// IO
 reg clk;
 reg reset;
-reg [LITERAL_ADDRESS_WIDTH:0] clause_table_i [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
-reg [LITERAL_ADDRESS_WIDTH-1:0] var_table_data_i [0:MAX_CLAUSES_PER_VARIABLE - 1] [0:NSAT-2];
+reg [(NSAT * CLUSTER_SIZE - 1) : 0] var_val_mem [0:19];
+reg [(NSAT * CLUSTER_SIZE - 1) : 0] var_val_i;
+reg [(NSAT * CLUSTER_SIZE - 1) : 0] var_neg_mem [0:19];
+reg [(NSAT * CLUSTER_SIZE - 1) : 0] var_neg_i;
+reg     [CLUSTER_SIZE - 1 : 0] break_mem [0:19];
+wire    [CLUSTER_SIZE - 1 : 0] break_o;
+reg     [CLUSTER_SIZE - 1 : 0] break;
+reg     [CLUSTER_SIZE - 1 : 0] expected;
 
-// Outputs
-wire [MAX_CLAUSES_PER_VARIABLE-1:0] isBroken;
-
-// Start
-Clause_Evaluator #(
-    .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
+// HW
+Clause_Evaluator_Cluster #(
+    .CLUSTER_SIZE(CLUSTER_SIZE),
     .NSAT(NSAT),
-    .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
-) uut (
-    .clk(clk),
-    .reset(reset),
-    .clause_table_i(clause_table_i),
-    .var_table_data_i(var_table_data_i),
-    .isBroken(isBroken)
+    .IMPLEMENTATION(IMPLEMENTATION)
+) evaluator (
+    .clk_i(clk),
+    .reset_i(reset),
+    .var_val_i(var_val_i),
+    .var_neg_i(var_neg_i),
+    .break_o(break_o)
 );
 
-// Clock
+integer i;
+
+// Memory reading and generate clk
 initial begin
+    $readmemh("Clause_Evaluator_var_val.mem", var_val_mem);
+    $readmemh("Clause_Evaluator_var_neg.mem", var_neg_mem);
+    $readmemh("Clause_Evaluator_break.mem", break_mem);
+    reset = 0;
+    var_val_i <= var_val_mem[0];
+    var_neg_i <= var_neg_mem[0]; 
     clk = 0;
     forever #5 clk = ~clk; // 100 MHz Clock
 end
 
+// Output capture
+always @ (posedge clk)
+begin
+    break <= break_o;
+end
+
 // Ins and test cases
 initial begin
-    // Ins
-    reset = 1;
-    clause_table_i = 0;
-    var_table_data_i = 0;
-    
-    // Reset test
-    #10;
-    reset = 0;
-    #10;
+    $display("Clause Evaluator Testbench: Begin Simulation");
+    #20;
+    $display("Clause Evaluator Testbench: Reset Test");
     reset = 1;
     #10;
     reset = 0;
     #10;
-    // Test cases
-    clause_table_i[0][0] = 'h1A; // Example address for first clause
-    clause_table_i[0][1] = 'h1B; // Example address for second clause
 
-    var_table_data_i[0][0] = 'h3; // Example data for first variable
-    var_table_data_i[0][1] = 'h4; // Example data for second variable
+    $display("Clause Evaluator Testbench: Running Test Cases");
+    for (i = 0; i < 10; i = i + 1)
+      begin
+        var_val_i <= var_val_mem[i];
+        var_neg_i <= var_neg_mem[i];
+        #6;
+        $display("Time %0t, Got 0x%15h, Expected 0x%15h", $time, break_o, break_mem[i]);
+        #4;
+      end
 
-    // More initialization and test cases can be added here
-    
-    #100;
+    #10;
     reset = 1;
-    
-    // Monitor output
-    $monitor("Time = %t, isBroken = %b", $time, isBroken);
+    #10;
 end
 
 endmodule
