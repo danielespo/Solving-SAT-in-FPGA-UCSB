@@ -11,6 +11,7 @@ Notes:
 
 Testing:
 - testbench created 5/10/24 but is incomplete
+- testing started 7/17/24
 */
 
 module Temporal_Buffer_Wrapper #(
@@ -30,36 +31,30 @@ module Temporal_Buffer_Wrapper #(
     output [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_multi_o // output clause with selected flip if broken
 );
 
-// convert packed inputs to array signals
-integer j,k;
-wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal_array [MAX_CLAUSES_PER_VARIABLE-1:0];
-wire [LITERAL_ADDRESS_WIDTH:0] clause_table_literals_array [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-2:0];
-wire [LITERAL_ADDRESS_WIDTH:0] output_clause_array [MAX_CLAUSES_PER_VARIABLE-1:0][NSAT-1:0];
-for(j = 0; j < MAX_CLAUSES_PER_VARIABLE; j = j + 1) begin
-    flipped_literal_array[j] = flipped_literal_multi_i[(j+1)*(LITERAL_ADDRESS_WIDTH+1)-1:j*(LITERAL_ADDRESS_WIDTH+1)]
-    for(k = 0; k < NSAT-1; j++)begin
-        clause_table_literals_array[j][k] = [((j+1)*(NSAT-1)+k+1)*(LITERAL_ADDRESS_WIDTH+1)-1:(j*(NSAT-1)+k)*(LITERAL_ADDRESS_WIDTH+1)]
-    end
-    for(k = 0; k < NSAT; k++) begin
-        output_clause_array[j][k] = [((j+1)*NSAT+k+1)*(LITERAL_ADDRESS_WIDTH+1)-1:(j*NSAT+k)*(LITERAL_ADDRESS_WIDTH+1)]
-    end
-end
+// signals 
+genvar index,k;
+wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal;
+wire [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals;
+wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause;
 
-genvar i;
 generate
-    for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin: clause_generate
+    // convert packed inputs to array signals
+    for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin 
+        assign flipped_literal = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_table_literals = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+        assign output_clause = clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)];
         Temporal_Buffer #(
-            .NSAT,
-            .LITERAL_ADDRESS_WIDTH,
-            .NSAT_BITS
+            .NSAT(NSAT),
+            .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH),
+            .NSAT_BITS(NSAT_BITS)
         ) TB (
             .clk(clk),
             .reset(reset),
             .write_index_i(write_index_i),
-            .flipped_literal_i(flipped_literal_array[i]),
-            .clause_table_literals_i({clause_table_literals_array[i][0], clause_table_literals_array[i][0]}),
+            .flipped_literal_i(flipped_literal[index]),
+            .clause_table_literals_i(clause_table_literals),
             .read_index_i(read_index_i),
-            .clause_o({output_clause_array[i][0], output_clause_array[i][1], output_clause_array[i][2]})
+            .clause_o(output_clause)
         );
     end
 endgenerate

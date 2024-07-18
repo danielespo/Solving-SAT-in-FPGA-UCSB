@@ -12,6 +12,7 @@ Notes:
 - [TODO] figure out how the data about whether there is a clause, if it is broken or not, and more
     is stored and transfered. This will likely mean changes to either the temporal buffer wrapper 
     or the FIFO tree (probably the former).
+- INSTEAD -> this module only deals with data. a controller will set valid flags.
 
 Testing:
 - This module will be tested with the Temporal Buffer Wrapper
@@ -34,31 +35,36 @@ module Temporal_Buffer #(
 );
 
 // convert inputs to packed arrays
-integer i;
-wire [LITERAL_ADDRESS_WIDTH:0] clause_table_literals_packed [NSAT-2:0]
-for(i = 0; i < NSAT-1; i++) begin
-    clause_table_literals_packed[i] = clause_table_literals_i[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)];
-end
+genvar index;
+wire [LITERAL_ADDRESS_WIDTH:0] clause_table_literals_packed [NSAT-2:0];
+generate 
+    for(index = 0; index < NSAT-1; index = index + 1) begin
+        assign clause_table_literals_packed[index] = clause_table_literals_i[index*(LITERAL_ADDRESS_WIDTH+1)+:LITERAL_ADDRESS_WIDTH+1];
+    end
+endgenerate 
 
 /* Internal Signals 
  * stored_clauses: register to store the clauses
  * * stored_clauses[i][j] can be used to access the jth literal of the ith flip
 */
 reg [LITERAL_ADDRESS_WIDTH:0] stored_clauses [NSAT-1:0][NSAT-1:0]; 
+integer i,j;
 
 /* Logic */
 always @(posedge clk) begin
     if(reset) begin
-        for(integer i = 0; i < NSAT; i = i + 1) begin
-            stored_clauses[i] <= 0;
+        for(i = 0; i < NSAT; i = i + 1) begin
+            for(j = 0; j < NSAT; j = j + 1) begin
+                stored_clauses[i][j] <= 0;
+            end
         end
     end else begin
         stored_clauses[write_index_i][0] <= flipped_literal_i;
-        for(integer i = 1; i < NSAT; i = i + 1) begin
+        for(i = 1; i < NSAT; i = i + 1) begin
             stored_clauses[write_index_i][i] <= clause_table_literals_packed[i-1];
         end
-        for(integer i = 0; i < NSAT; i = i + 1) begin
-            clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
+        for(i = 0; i < NSAT; i = i + 1) begin
+            clause_o[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
             // if(read_index_i != NSAT-1) clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
             // if(read_index_i == NSAT-1) clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= {flipped_literal_i, clause_table_literals_i};
         end
