@@ -58,7 +58,9 @@ always @(posedge clk) begin
             stored_clauses[write_index_i][i] <= clause_table_literals_packed[i-1];
         end
         for(integer i = 0; i < NSAT; i = i + 1) begin
-        clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] = stored_clauses[read_index_i][i];
+            clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
+            // if(read_index_i != NSAT-1) clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
+            // if(read_index_i == NSAT-1) clause_o[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] <= {flipped_literal_i, clause_table_literals_i};
         end
     end
 end
