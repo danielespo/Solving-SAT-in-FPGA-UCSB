@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER Clause_Buffer
+	OPTION supported_peripherals = (Clause_Buffer);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = Clause_Buffer;
+END DRIVER
