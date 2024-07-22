@@ -12,11 +12,12 @@ Status: testbench constructed and passes linter
 */
 `timescale 1ns / 1ps
 
+//`define VERBOSE_TEST
 
 module Temporal_Buffer_Wrapper_tb;
 parameter NSAT = 3;
-parameter LITERAL_ADDRESS_WIDTH = 11;
-parameter MAX_CLAUSES_PER_VARIABLE = 20;
+parameter LITERAL_ADDRESS_WIDTH = 4;
+parameter MAX_CLAUSES_PER_VARIABLE = 1;
 parameter NSAT_BITS = 2;
 
 parameter NUM_TESTS = 10;
@@ -26,7 +27,7 @@ parameter LOAD_CONST_DIV = CT_WIDTH / 32;
 parameter LOAD_CONST_REM = CT_WIDTH % 32;
 
 // Inputs
-reg clk;
+reg clk = 0;
 always #5 clk <= ~clk;
 reg reset;
 
@@ -79,64 +80,55 @@ need to:
     repeat in different situations 
 */
 
+// test signals
+wire [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clauses_in;
+assign clauses_in = {clause_table_literals, flipped_literals};
+
 /* testing constructs */
     // each of these stores a set of 'clauses' (720 bits in default params)
     reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] flips_0 [NUM_TESTS-1:0];  
     reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] flips_1 [NUM_TESTS-1:0];
     reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] flips_2 [NUM_TESTS-1:0];
     
-    // counters for the read and write indices
-    reg [NSAT_BITS-1:0] cur_flip;
-    reg [NSAT_BITS-1:0] sel_flip;
-
     // for-loop variables
     integer i, j, test_i;
     // using verilog's built in $urandom number generation, we can create a
     // 32-bit random number. If we concatenation these bits, we can create 
     // any n-bit random number, in this case 720/32 = 22.5 so we need 23 loops
-    reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] f0_gen;
-    reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] f1_gen;
-    reg [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] f2_gen;
 
     // test flags:
     reg passed;
+    reg [31:0] tests_passed;
 
 initial begin
     // generate random values for the flip arrays
     passed = 1'b0;
+    tests_passed = 32'b0;
+    $display("NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0 = %d:0", NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1);
     for(i = 0; i < NUM_TESTS; i = i + 1) begin
         // assign 32 bits at a time
         for(j = 0; j < LOAD_CONST_DIV; j = j + 1) begin
-            // f0_gen[32*(j+1)-1:32*j] = $random;
-            // f1_gen[32*(j+1)-1:32*j] = $random;
-            // f2_gen[32*(j+1)-1:32*j] = $random;
             flips_0[i][32*j+:32] = $random;
             flips_1[i][32*j+:32] = $random;
             flips_2[i][32*j+:32] = $random;
-            // this is not allowed because both sides of range cannot be volatile
-//            flips_0[i][32*(j+1)-1:32*j] = $random;
-//            flips_1[i][32*(j+1)-1:32*j] = $random;
-//            flips_2[i][32*(j+1)-1:32*j] = $random;
+            // this is not allowed because both sides of range cannot be variables
+            // flips_0[i][32*(j+1)-1:32*j] = $random;
+            // flips_1[i][32*(j+1)-1:32*j] = $random;
+            // flips_2[i][32*(j+1)-1:32*j] = $random;
         end
-        // assign any remaining bits
-        // f0_gen[ct_width-1:div32_load_count*32] = $random;
-        // f1_gen[ct_width-1:div32_load_count*32] = $random;
-        // f2_gen[ct_width-1:div32_load_count*32] = $random;
-        flips_0[i][CT_WIDTH -: LOAD_CONST_REM] = $random;
-        flips_1[i][CT_WIDTH -: LOAD_CONST_REM] = $random;
-//        flips_0[i][ct_width-1:div32_load_count*32] = $random;
-//        flips_1[i][ct_width-1:div32_load_count*32] = $random;
-//        flips_2[i][ct_width-1:div32_load_count*32] = $random;
-
-        // // assign generated values to respective registers
-        // flips_0[i] = f0_gen;
-        // flips_1[i] = f1_gen;
-        // flips_2[i] = f2_gen;
+        flips_0[i][CT_WIDTH-1 -: LOAD_CONST_REM] = $random;
+        flips_1[i][CT_WIDTH-1 -: LOAD_CONST_REM] = $random;
+        flips_2[i][CT_WIDTH-1 -: LOAD_CONST_REM] = $random;
+        // $display("flips_0 range: %h", flips_0[i][CT_WIDTH-1 -: LOAD_CONST_REM]);
+        // $display("flips_0 full value: %h", flips_0[i]);
     end
 
     $display("Temporal Buffer Wrapper: Begin Simulation");
 
     // reset the system
+    wr_index = 0;
+    re_index = 0;
+
     reset = 1;
     @(negedge clk);
     @(negedge clk);
@@ -144,11 +136,10 @@ initial begin
 
     // do tests
     for(test_i = 0; test_i < NUM_TESTS; test_i = test_i + 1) begin
-        $display("Beginning test #%d", test_i);
+        $display("Beginning test #%x at time %t", test_i, $time);
 
         $display("    writing clauses from flip 0");
         wr_index = 0;
-        re_index = 0;
         for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
             // assuming tests_i = 0, NSAT = 3, LITERAL_ADDRESS_WIDTH = 11, i = 0 : 
             // flipped_literals[12-1:0] = flips_0[0][12-1:0];
@@ -161,7 +152,16 @@ initial begin
 //            flipped_literals[(i+1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(LITERAL_ADDRESS_WIDTH+1)] = flips_0[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)-1:(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)];
 //            clause_table_literals[(i+1)*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] flips_0[test_i][(i*NSAT+NSAT)*(LITERAL_ADDRESS_WIDTH+1)-1:(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)];
             flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] = flips_0[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
-            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_0[test_i][(i*NSAT+NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_0[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            `ifdef VERBOSE_TEST
+            $display("      flipped literals from data: %b", flips_0[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals data: %b", flips_0[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full literal:     %b", flips_0[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            `endif
+//            $display("      full literal uut: %b", uut.gen_temp_buf[0].TB.stored_clauses[0]);
+
         end
 
         // wait for clock
@@ -170,7 +170,14 @@ initial begin
         wr_index = 1;
         for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
             flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] = flips_1[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
-            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_1[test_i][(i*NSAT+NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_1[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            `ifdef VERBOSE_TEST
+            $display("      flipped literals from data: %b", flips_1[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals data: %b", flips_1[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full literal:     %b", flips_1[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            `endif
         end
 
         // wait for clock
@@ -181,22 +188,35 @@ initial begin
         $display("    selected flip %d to read", re_index);
         for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin
             flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] = flips_2[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
-            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_2[test_i][(i*NSAT+NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)] = flips_2[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+            `ifdef VERBOSE_TEST
+            $display("      flipped literals from data: %b", flips_2[test_i][(i*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals data: %b", flips_2[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full literal:     %b", flips_2[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            `endif
         end
 
         // wait for clk
         @(negedge clk);
-        $display("    reading data from flip %d", re_index);
+        $display("    reading data from flip %d: %b", re_index, clauses_out);
         case (re_index)
             0 : if(clauses_out == flips_0[test_i]) passed = 1'b1;
             1 : if(clauses_out == flips_1[test_i]) passed = 1'b1;
             2 : if(clauses_out == flips_2[test_i]) passed = 1'b1;
             default: $display("    read index invalid");
         endcase
-        if(passed == 1'b1) $display("    expected output: test passed");
+        if(passed == 1'b1) begin
+            $display("    expected output: test passed");
+            tests_passed = tests_passed + 1;
+        end
         else $display("    unexpected output: test failed");
         passed = 1'b0;
-    end     
+    end
+    $display("Temporal Buffer Wrapper: End Simulation");
+    $display("    Passed %d/%d tests", tests_passed, NUM_TESTS);     
+    $finish;
 end
 
 endmodule

@@ -39,10 +39,10 @@ wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause;
 
 generate
     // convert packed inputs to array signals
-    for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin 
+    for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin : gen_temp_buf
         assign flipped_literal = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
         assign clause_table_literals = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
-        assign output_clause = clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)] = output_clause;
         Temporal_Buffer #(
             .NSAT(NSAT),
             .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH),
@@ -51,7 +51,7 @@ generate
             .clk(clk),
             .reset(reset),
             .write_index_i(write_index_i),
-            .flipped_literal_i(flipped_literal[index]),
+            .flipped_literal_i(flipped_literal),
             .clause_table_literals_i(clause_table_literals),
             .read_index_i(read_index_i),
             .clause_o(output_clause)
