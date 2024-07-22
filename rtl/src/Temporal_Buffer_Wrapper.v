@@ -33,16 +33,16 @@ module Temporal_Buffer_Wrapper #(
 
 // signals 
 genvar index,k;
-wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal;
-wire [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals;
-wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause;
+wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal [MAX_CLAUSES_PER_VARIABLE-1:0];
+wire [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals [MAX_CLAUSES_PER_VARIABLE-1:0];
+wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause [MAX_CLAUSES_PER_VARIABLE-1:0];
 
 generate
     // convert packed inputs to array signals
     for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin : gen_temp_buf
-        assign flipped_literal = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
-        assign clause_table_literals = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
-        assign clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)] = output_clause;
+        assign flipped_literal[index] = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_table_literals[index] = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)] = output_clause[index];
         Temporal_Buffer #(
             .NSAT(NSAT),
             .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH),
@@ -51,10 +51,10 @@ generate
             .clk(clk),
             .reset(reset),
             .write_index_i(write_index_i),
-            .flipped_literal_i(flipped_literal),
-            .clause_table_literals_i(clause_table_literals),
+            .flipped_literal_i(flipped_literal[index]),
+            .clause_table_literals_i(clause_table_literals[index]),
             .read_index_i(read_index_i),
-            .clause_o(output_clause)
+            .clause_o(output_clause[index])
         );
     end
 endgenerate

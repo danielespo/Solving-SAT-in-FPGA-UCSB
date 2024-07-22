@@ -16,11 +16,11 @@ Status: testbench constructed and passes linter
 
 module Temporal_Buffer_Wrapper_tb;
 parameter NSAT = 3;
-parameter LITERAL_ADDRESS_WIDTH = 4;
-parameter MAX_CLAUSES_PER_VARIABLE = 1;
+parameter LITERAL_ADDRESS_WIDTH = 11;
+parameter MAX_CLAUSES_PER_VARIABLE = 20;
 parameter NSAT_BITS = 2;
 
-parameter NUM_TESTS = 10;
+parameter NUM_TESTS = 30;
 
 parameter CT_WIDTH = NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1);
 parameter LOAD_CONST_DIV = CT_WIDTH / 32;
@@ -158,10 +158,8 @@ initial begin
             $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals data: %b", flips_0[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
-            $display("      full literal:     %b", flips_0[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full clause: %b", flips_0[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
             `endif
-//            $display("      full literal uut: %b", uut.gen_temp_buf[0].TB.stored_clauses[0]);
-
         end
 
         // wait for clock
@@ -176,7 +174,7 @@ initial begin
             $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals data: %b", flips_1[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
-            $display("      full literal:     %b", flips_1[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full clause: %b", flips_1[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
             `endif
         end
 
@@ -194,13 +192,23 @@ initial begin
             $display("      flipped literals from vari: %b", flipped_literals[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals data: %b", flips_2[test_i][(i*NSAT+1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
             $display("      clause table literals vari: %b", clause_table_literals[i*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)]);
-            $display("      full literal:     %b", flips_2[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
+            $display("      full clause: %b", flips_2[test_i][i*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)]);
             `endif
         end
 
+        `ifdef VERBOSE_TEST
+        $display("      flip 0 clauses: %b", flips_0[test_i]);
+        $display("      flip 1 clauses: %b", flips_1[test_i]);
+        $display("      flip 2 clauses: %b", flips_2[test_i]);
+        `endif
+
         // wait for clk
         @(negedge clk);
+        `ifdef VERBOSE_TEST
         $display("    reading data from flip %d: %b", re_index, clauses_out);
+        `else
+        $display("    reading data from flip %d", re_index);
+        `endif
         case (re_index)
             0 : if(clauses_out == flips_0[test_i]) passed = 1'b1;
             1 : if(clauses_out == flips_1[test_i]) passed = 1'b1;
