@@ -12,6 +12,7 @@ Notes:
 Testing:
 - testbench created 5/10/24 but is incomplete
 - testing started 7/17/24
+- testbench pass 7/21/24
 */
 
 module Temporal_Buffer_Wrapper #(
