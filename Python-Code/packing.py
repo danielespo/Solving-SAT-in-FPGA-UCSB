@@ -116,38 +116,40 @@ def packing_algorithm_20_as_max(literal_memberships):
 
     return packed_literal_array, masks
 
-# Barry: is this the kind of converting you want? - Dan
 def convert_to_uint32_list(packed_literal_array, masks, depth=4096):
     """
     Convert packed literal array and masks to uint32 list format.
-
     Args:
     packed_literal_array (list): The packed literal array.
     masks (list): The masks indicating start and end positions.
     depth (int): The depth of the uint32 array.
-
     Returns:
     uint32_list (list): The uint32 list representation of packed literals.
-    mask_bits (list): The bit-wise mask array.
+
+    Example:
+    literal address: 0x00 (depth = 2048 * 2 -> width = 12 bits)
+    literal clause table membership address: 11'b00000000001
+    literal clause table mask: 20b'11111000000000000000
+    Then the resulting data stored in 0th index of the array would be
+    31'b00000000001_11111000000000000000 
     """
-    
     uint32_list = [0] * depth
+    
+    membership_address_width = 11
+    clause_mask_width = 20
     
     current_index = 0
     for pack in packed_literal_array:
         literals, memberships = pack
-        # Flatten and store literals and memberships in the uint32 list
-        for membership in memberships:
+        for literal, membership in zip(literals, memberships):
             if current_index < depth:
-                uint32_list[current_index] = membership
+                # Extract membership address (11 bits) and clause mask (20 bits)
+                membership_address = literal & ((1 << membership_address_width) - 1)
+                clause_mask = membership & ((1 << clause_mask_width) - 1)
+                
+                # Combine them with a leading zero to make it 32 bits
+                combined_value = (membership_address << clause_mask_width) | clause_mask
+                uint32_list[current_index] = combined_value
                 current_index += 1
     
-    # Initialize the mask bits list
-    mask_bits = [0] * depth
-    
-    for start, end in masks:
-        if start != 0 or end != 0:  # Ignore the placeholder
-            mask_bits[start // 32] |= 1 << (start % 32)
-            mask_bits[end // 32] |= 1 << (end % 32)
-    
-    return uint32_list, mask_bits
+    return uint32_list
