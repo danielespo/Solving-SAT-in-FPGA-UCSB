@@ -31,7 +31,7 @@ module Unsat_Clause_Buffer # (
     output reg  [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0]    dout_a, dout_b
 );
     localparam CLAUSE_SIZE = (LITERAL_ADDRESS_WIDTH + 1);
-    reg [CLAUSE_SIZE * NSAT - 1 : 0] ram [0:DEPTH];
+    reg [CLAUSE_SIZE * NSAT - 1 : 0] ram [0 : DEPTH - 1];
     
     always @(posedge clk_a)
     begin
