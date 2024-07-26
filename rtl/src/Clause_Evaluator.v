@@ -27,7 +27,8 @@ Change Log:
 2024/07/17 - Barry Wang
     Fixed reset behavior
     Passed testbench
-
+2024/07/25 - Barry Wang
+    Changed default implementation to output gated
 -----------------------------------------------------*/
 
 module Clause_Evaluator #(
@@ -35,7 +36,7 @@ module Clause_Evaluator #(
     parameter NSAT = 3, 
     // Implementation (gated I/O)
     // "INPUT_GATED" / "OUTPUT_GATED"
-    parameter IMPLEMENTATION = "INPUT_GATED"
+    parameter IMPLEMENTATION = "OUTPUT_GATED"
 )(
     // Clock signal
     input   wire    clk_i,

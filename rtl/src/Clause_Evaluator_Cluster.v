@@ -18,6 +18,8 @@ Change Log:
 
 2024/07/16 - Barry Wang
     Created file Clause_Evaluator_20.v
+2024/07/25 - Barry Wang
+    Changed default implementation to output gated
 
 -----------------------------------------------------*/
 
@@ -27,7 +29,7 @@ module Clause_Evaluator_Cluster #(
     parameter NSAT = 3, 
     // Implementation (gated I/O)
     // "INPUT_GATED" / "OUTPUT_GATED"
-    parameter IMPLEMENTATION = "INPUT_GATED"
+    parameter IMPLEMENTATION = "OUTPUT_GATED"
 )(
     // Clock signal
     input   wire    clk_i,
