@@ -27,7 +27,8 @@ Change Log:
 2024/07/17 - Barry Wang
     Fixed reset behavior
     Passed testbench
-
+2024/07/25 - Barry Wang
+    Changed default implementation to output gated
 -----------------------------------------------------*/
 
 module Clause_Evaluator #(
@@ -35,48 +36,51 @@ module Clause_Evaluator #(
     parameter NSAT = 3, 
     // Implementation (gated I/O)
     // "INPUT_GATED" / "OUTPUT_GATED"
-    parameter IMPLEMENTATION = "INPUT_GATED"
+    parameter IMPLEMENTATION = "OUTPUT_GATED",
+    // REDUCE is the number of variables that are know
+    // to be unsat
+    parameter REDUCE = 1
 )(
     // Clock signal
     input   wire    clk_i,
     // Reset signal
     input   wire    reset_i,
     // Variable values and negation
-    input   wire    [NSAT - 1 : 0]  var_val_i,
-    input   wire    [NSAT - 1 : 0]  var_neg_i,
+    input   wire    [(NSAT - REDUCE) - 1 : 0]  var_val_i,
+    input   wire    [(NSAT - REDUCE) - 1 : 0]  var_neg_i,
     output  wire    break_o
 );
 
-if (IMPLEMENTATION == "INPUT_GATED")
-begin
-    reg [NSAT - 1 : 0] var_val;
-    reg [NSAT - 1 : 0] var_neg;
-    wire [NSAT - 1 : 0] negated = var_val ^ var_neg;
-    assign break_o = ~|negated;
-    always @ (posedge clk_i)
-      begin
-        if (reset_i)
+    if (IMPLEMENTATION == "INPUT_GATED")
+    begin
+        reg [(NSAT - REDUCE) - 1 : 0] var_val;
+        reg [(NSAT - REDUCE) - 1 : 0] var_neg;
+        wire [(NSAT - REDUCE) - 1 : 0] negated = var_val ^ var_neg;
+        assign break_o = ~|negated;
+        always @ (posedge clk_i)
           begin
-            var_val <= {(NSAT){1'b1}};
-            var_neg <= 0;
-          end else begin
-            var_val <= var_val_i;
-            var_neg <= var_neg_i;
+            if (reset_i)
+              begin
+                var_val <= {((NSAT - REDUCE)){1'b1}};
+                var_neg <= 0;
+              end else begin
+                var_val <= var_val_i;
+                var_neg <= var_neg_i;
+              end
           end
-      end
-end else begin
-    reg [NSAT - 1 : 0] break;
-    assign break_o = break;
-    wire [NSAT - 1 : 0] negated = var_val_i ^ var_neg_i;
-    always @ (posedge clk_i)
-      begin
-        if (reset_i)
+    end else begin
+        reg break;
+        assign break_o = break;
+        wire [(NSAT - REDUCE) - 1 : 0] negated = var_val_i ^ var_neg_i;
+        always @ (posedge clk_i)
           begin
-            break <= 1'b0;
-          end else begin
-            break <= ~|negated;
+            if (reset_i)
+              begin
+                break <= 1'b0;
+              end else begin
+                break <= ~|negated;
+              end
           end
-      end
-end
+    end
 
 endmodule

@@ -14,7 +14,6 @@ rtl/bd/*/*
 # IP repo
 ip_repo/*
 !ip_repo/Module_Validation_Platform_1_0
-!ip_repo/Clause_Buffer_1_0
 
 # Vivado logs
 *.jou
