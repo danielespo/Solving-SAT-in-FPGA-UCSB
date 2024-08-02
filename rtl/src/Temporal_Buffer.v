@@ -12,6 +12,7 @@ Notes:
 - [TODO] figure out how the data about whether there is a clause, if it is broken or not, and more
     is stored and transfered. This will likely mean changes to either the temporal buffer wrapper 
     or the FIFO tree (probably the former).
+- INSTEAD -> this module only deals with data. a controller will set valid flags.
 
 Testing:
 - This module will be tested with the Temporal Buffer Wrapper
@@ -20,48 +21,54 @@ Testing:
 module Temporal_Buffer #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11,
-    parameter NSAT_BITS = $clog2(NSAT)
+    parameter NSAT_BITS = 2
 )(
     input                               clk,                    // Clock signal
     input                               reset,                  // Reset signal
+
+    input [NSAT_BITS-1:0]               write_index_i,        // which flip is currently being evaluated
     input [LITERAL_ADDRESS_WIDTH:0]     flipped_literal_i,      // flipped input literal to be combined with clause_table literals 
-    input [LITERAL_ADDRESS_WIDTH:0]     clause_table_literals_i [NSAT-2:0], // clause_table literals input by literals because need to put selected literal together with clause_table literals
-    input                               isBroken_i,             // is the clause broken
+    input [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals_i, // clause_table literals input by literals because need to put selected literal together with clause_table literals
 
-    input [NSAT_BITS-1:0]               current_flip_i,        // which flip is currently being evaluated
-
-    input [NSAT_BITS-1:0]               heuristic_selection_i,  // which flip was selected by the heuristic selector
-
-    output reg [LITERAL_ADDRESS_WIDTH:0] clause_o [NSAT-1:0]    // output clause with selected flip if broken
+    input [NSAT_BITS-1:0]               read_index_i,  // which flip was selected by the heuristic selector
+    output reg [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_o    // output clause with selected flip if broken
 );
+
+// convert inputs to packed arrays
+genvar index;
+wire [LITERAL_ADDRESS_WIDTH:0] clause_table_literals_packed [NSAT-2:0];
+generate 
+    for(index = 0; index < NSAT-1; index = index + 1) begin
+        assign clause_table_literals_packed[index] = clause_table_literals_i[index*(LITERAL_ADDRESS_WIDTH+1)+:LITERAL_ADDRESS_WIDTH+1];
+    end
+endgenerate 
 
 /* Internal Signals 
  * stored_clauses: register to store the clauses
  * * stored_clauses[i][j] can be used to access the jth literal of the ith flip
 */
 reg [LITERAL_ADDRESS_WIDTH:0] stored_clauses [NSAT-1:0][NSAT-1:0]; 
+integer i,j;
 
 /* Logic */
-
 always @(posedge clk) begin
     if(reset) begin
-        for(integer i = 0; i < NSAT; i = i + 1) begin
-            stored_clauses[i] <= 0;
-        end
-    end else begin
-        if(isBroken_i) begin
-            stored_clauses[current_flip_i][0] <= flipped_literal_i;
-            for(integer i = 1; i < NSAT; i = i + 1) begin
-                stored_clauses[current_flip_i][i] <= clause_table_literals_i[i-1];
+        for(i = 0; i < NSAT; i = i + 1) begin
+            for(j = 0; j < NSAT; j = j + 1) begin
+                stored_clauses[i][j] <= 0;
             end
         end
-    end
-end
-
-/* Output Assignment */
-always @(heuristic_selection_i) begin
-    for(integer i = 0; i < NSAT; i = i + 1) begin
-        clause_o[i] = stored_clauses[heuristic_selection_i][i];
+    end else begin
+        stored_clauses[write_index_i][0] <= flipped_literal_i;
+        for(i = 1; i < NSAT; i = i + 1) begin
+            stored_clauses[write_index_i][i] <= clause_table_literals_packed[i-1];
+        end
+        for(i = 0; i < NSAT; i = i + 1) begin
+            // clause_o[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
+            if(read_index_i != NSAT-1) clause_o[i*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)] <= stored_clauses[read_index_i][i];
+            
+        end
+        if(read_index_i == NSAT-1) clause_o <= {clause_table_literals_i, flipped_literal_i};
     end
 end
 

@@ -11,43 +11,51 @@ Notes:
 
 Testing:
 - testbench created 5/10/24 but is incomplete
+- testing started 7/17/24
+- testbench pass 7/21/24
 */
 
 module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 11,
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter NSAT_BITS = $clog2(NSAT)
+    parameter NSAT_BITS = 2
 )(
     input                               clk,                    // Clock signal
     input                               reset,                  // Reset signal
-    input [LITERAL_ADDRESS_WIDTH:0]     flipped_literal_multi_i [MAX_CLAUSES_PER_VARIABLE-1:0],      // flipped input literal to be combined with clause_table literals 
-    input [LITERAL_ADDRESS_WIDTH:0]     clause_table_literals_multi_i [NSAT-2:0] [MAX_CLAUSES_PER_VARIABLE-1:0],   // clause_table input bus
-    input                               isBroken_multi_i [MAX_CLAUSES_PER_VARIABLE-1:0],  // is the clause broken
 
-    input [NSAT_BITS-1:0]               current_flip_i,        // which flip is currently being evaluated
+    input [NSAT_BITS-1:0]               write_index_i,        // which flip is currently being evaluated
+    input [MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] flipped_literal_multi_i,      // flipped input literal to be combined with clause_table literals 
+    input [(NSAT-1)*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals_multi_i,   // clause_table input bus
 
-    input [NSAT_BITS-1:0]               heuristic_selection_i,  // which flip was selected by the heuristic selector
-
-    output reg [LITERAL_ADDRESS_WIDTH:0] clause_multi_o [NSAT-1:0] [MAX_CLAUSES_PER_VARIABLE-1:0] // output clause with selected flip if broken
+    input [NSAT_BITS-1:0]               read_index_i,  // which flip was selected by the heuristic selector
+    output [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_multi_o // output clause with selected flip if broken
 );
 
-genvar i;
+// signals 
+genvar index,k;
+wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal [MAX_CLAUSES_PER_VARIABLE-1:0];
+wire [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals [MAX_CLAUSES_PER_VARIABLE-1:0];
+wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause [MAX_CLAUSES_PER_VARIABLE-1:0];
+
 generate
-    for(i = 0; i < MAX_CLAUSES_PER_VARIABLE; i = i + 1) begin: clause_generate
+    // convert packed inputs to array signals
+    for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin : gen_temp_buf
+        assign flipped_literal[index] = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_table_literals[index] = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
+        assign clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)] = output_clause[index];
         Temporal_Buffer #(
-            .NSAT,
-            .LITERAL_ADDRESS_WIDTH,
-            .NSAT_BITS
+            .NSAT(NSAT),
+            .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH),
+            .NSAT_BITS(NSAT_BITS)
         ) TB (
             .clk(clk),
             .reset(reset),
-            .flipped_literal_i(flipped_literal_i),
-            .clause_table_literals_i(flipped_literal_multi_i[i], clause_table_literals_multi_i[0][i], clause_table_literals_multi_i[1][i]),
-            .isBroken_i(isBroken_multi_i[i]),
-            .current_flip_i(current_flip_i),
-            .heuristic_selection_i(heuristic_selection_i),
-            .clause_o(clause_multi_o[0][i], clause_multi_o[1][i], clause_multi_o[2][i])
+            .write_index_i(write_index_i),
+            .flipped_literal_i(flipped_literal[index]),
+            .clause_table_literals_i(clause_table_literals[index]),
+            .read_index_i(read_index_i),
+            .clause_o(output_clause[index])
         );
     end
 endgenerate
