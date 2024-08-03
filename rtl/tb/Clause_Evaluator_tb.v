@@ -18,7 +18,7 @@ Change Log:
 module Clause_Evaluator_tb;
 parameter CLUSTER_SIZE = 20;
 parameter NSAT = 3;
-parameter IMPLEMENTATION = "INPUT_GATED";
+parameter IMPLEMENTATION = "OUTPUT_GATED";
 
 // IO
 reg clk;
@@ -36,7 +36,8 @@ reg     [CLUSTER_SIZE - 1 : 0] expected;
 Clause_Evaluator_Cluster #(
     .CLUSTER_SIZE(CLUSTER_SIZE),
     .NSAT(NSAT),
-    .IMPLEMENTATION(IMPLEMENTATION)
+    .IMPLEMENTATION(IMPLEMENTATION),
+    .REDUCE(0)
 ) evaluator (
     .clk_i(clk),
     .reset_i(reset),

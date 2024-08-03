@@ -38,14 +38,16 @@ module Parallel_to_Serial #(
     
     output reg [DATA_WIDTH-1:0] data_o,         // Data output
     output reg                  data_valid_o    // Data output valid flag
-)
+);
+
+integer i;
 
 reg [DATA_WIDTH-1:0] buffer [NUM_PARALLEL-1:0];
 reg [BITS_PARALLEL-1:0] counter, write_counter;
 
 always @ (posedge clk) begin
     if (reset) begin
-        for (int i = 0; i < NUM_PARALLEL; i = i + 1) begin
+        for (i = 0; i < NUM_PARALLEL; i = i + 1) begin
             buffer[i] <= 0;
         end
         counter <= 0;
@@ -55,14 +57,14 @@ always @ (posedge clk) begin
         if (write_en_i) begin               // when write enable is high, 
             counter <= 0;                   // reset counter
             write_counter <= 0;             // reset write counter
-            for (int i = 0; i < NUM_PARALLEL; i = i + 1) begin
+            for (i = 0; i < NUM_PARALLEL; i = i + 1) begin
                 if(data_valid_i[i]) begin   // if the data is valid
                     buffer[write_counter] <= data_i[i]; // input data to the buffer
                     write_counter <= write_counter + 1; // increment write counter
                 end
             end
             data_valid_o <= 1;              // signal that there is data to output
-            data_o <= buffer[0]             // output the first data in the buffer
+            data_o <= buffer[0];            // output the first data in the buffer
             counter <= counter + 1;         // increment counter
         end else if (counter <= NUM_PARALLEL) begin     // if the counter has not reached the end of the buffer
             data_valid_o <= 1;                          // signal that there is data to output
