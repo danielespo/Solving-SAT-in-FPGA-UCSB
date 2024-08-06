@@ -12,50 +12,45 @@ Notes:
 Testing:
 - testbench created 5/10/24 but is incomplete
 - testing started 7/17/24
-- testbench pass 7/21/24
+- testbench pass 7/21/24 (CHANGES MADE SINCE)
+- testbench pass 8/05/24
 */
 
 module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
-    parameter LITERAL_ADDRESS_WIDTH = 11,
-    parameter MAX_CLAUSES_PER_VARIABLE = 20,
+    parameter LAW = 11, // LAW - LITERAL_ADDRESS_WIDTH
+    parameter MCPV = 20, // MCPV - MAX_CLAUSES_PER_VARIABLE
     parameter NSAT_BITS = 2
 )(
-    input                               clk,                    // Clock signal
-    input                               reset,                  // Reset signal
+    input                                   clk,                // Clock signal
+    input                                   reset,              // Reset signal
 
-    input [NSAT_BITS-1:0]               write_index_i,        // which flip is currently being evaluated
-    input [MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] flipped_literal_multi_i,      // flipped input literal to be combined with clause_table literals 
-    input [(NSAT-1)*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals_multi_i,   // clause_table input bus
+    input   [NSAT_BITS-1:0]                 write_index_i,      // which flip is currently being evaluated
+    input                                   write_en_i,         // write enable signal
+    input   [(NSAT-1)*MCPV*(LAW+1)-1:0]     literals_multi_i,   // literals from clause table for each flip
 
-    input [NSAT_BITS-1:0]               read_index_i,  // which flip was selected by the heuristic selector
-    output [NSAT*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_multi_o // output clause with selected flip if broken
+    input   [NSAT_BITS-1:0]                 read_index_i,       // which flip was selected by the heuristic selector
+    output  [(NSAT-1)*MCPV*(LAW+1)-1:0]     literals_multi_o    // literals from clause table for selected flip
 );
 
 // signals 
-genvar index,k;
-wire [LITERAL_ADDRESS_WIDTH:0] flipped_literal [MAX_CLAUSES_PER_VARIABLE-1:0];
-wire [(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)-1:0] clause_table_literals [MAX_CLAUSES_PER_VARIABLE-1:0];
-wire [NSAT*(LITERAL_ADDRESS_WIDTH+1)-1:0] output_clause [MAX_CLAUSES_PER_VARIABLE-1:0];
+genvar index;
 
 generate
-    // convert packed inputs to array signals
-    for(index = 0; index < MAX_CLAUSES_PER_VARIABLE; index = index + 1) begin : gen_temp_buf
-        assign flipped_literal[index] = flipped_literal_multi_i[index*(LITERAL_ADDRESS_WIDTH+1)+:(LITERAL_ADDRESS_WIDTH+1)];
-        assign clause_table_literals[index] = clause_table_literals_multi_i[index*(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)+:(NSAT-1)*(LITERAL_ADDRESS_WIDTH+1)];
-        assign clause_multi_o[(index*NSAT)*(LITERAL_ADDRESS_WIDTH+1)+:NSAT*(LITERAL_ADDRESS_WIDTH+1)] = output_clause[index];
+    for(index = 0; index < MCPV; index = index + 1) begin : gen_temp_buf
         Temporal_Buffer #(
             .NSAT(NSAT),
-            .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH),
-            .NSAT_BITS(NSAT_BITS)
+            .LAW(LAW),
+            .NSAT_BITS(NSAT_BITS),
+            .SIZE(NSAT-1)
         ) TB (
             .clk(clk),
             .reset(reset),
             .write_index_i(write_index_i),
-            .flipped_literal_i(flipped_literal[index]),
-            .clause_table_literals_i(clause_table_literals[index]),
+            .write_en_i(write_en_i),
+            .literals_i(literals_multi_i[index*(NSAT-1)*(LAW+1)+:(NSAT-1)*(LAW+1)]),
             .read_index_i(read_index_i),
-            .clause_o(output_clause[index])
+            .literals_o(literals_multi_o[index*(NSAT-1)*(LAW+1)+:(NSAT-1)*(LAW+1)])
         );
     end
 endgenerate
