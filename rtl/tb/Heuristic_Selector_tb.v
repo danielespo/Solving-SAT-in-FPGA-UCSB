@@ -21,12 +21,14 @@ parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5;
 parameter NSAT_BITS = 2;
 parameter P = 268435455; // this value should mean there is a 1/16 chance to random walk 
 
+parameter NUMTESTS = 25;
+
 // Inputs
 reg clk = 1;
 always #5 clk <= ~clk;
 reg reset;
 
-reg [MAX_CLAUSES_PER_VARIABLE_BITS-1:0] break_value_i;
+reg [(NSAT*MAX_CLAUSES_PER_VARIABLE_BITS)-1:0] break_values;
 reg [NSAT_BITS-1:0] current_flip_i;
 reg [31:0] random_lsfr; // comes from lfsr_prng
 
@@ -44,10 +46,9 @@ Heuristic_Selector #(
 ) HS (
     .clk(clk),
     .reset(reset),
-    .break_value_i(break_value_i),
-    .current_flip_i(current_flip_i),
+    .break_values_i(break_values),
     .random_i(random_lsfr),
-    .selected_flip_o(selected_flip_o),
+    .select_o(selected_flip),
     .random_selection_o(random_selection_o)
 );
 
