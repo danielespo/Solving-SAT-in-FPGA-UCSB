@@ -66,7 +66,7 @@ module FIFO_tree #(
             FIFO_Buffer # (
                 .DATA_WIDTH(CLAUSE_WIDTH),
                 .BUFFER_ADDR_WIDTH($clog2(BUFFER_DEPTH))
-            )(
+            ) L0_FIFO (
                 .clk    (clk),
                 .reset  (reset),
                 .data_i (L0din[CW * i +: CW]),
@@ -95,7 +95,7 @@ module FIFO_tree #(
             FIFO_Buffer # (
                 .DATA_WIDTH(CLAUSE_WIDTH),
                 .BUFFER_ADDR_WIDTH($clog2(BUFFER_DEPTH))
-            )(
+            ) L1_FIFO (
                 .clk    (clk),
                 .reset  (reset),
                 .data_i (L1din[CW * i +: CW]),
