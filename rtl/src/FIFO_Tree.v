@@ -40,11 +40,11 @@ module FIFO_tree #(
     input reset,
     input [CLAUSE_WIDTH * CLAUSE_COUNT - 1 : 0] clauses_i,
     input [CLAUSE_COUNT - 1 : 0]                clause_valid_i,
-    input wren,
-    input rden,
-    input cOF,
-    output wire empty,
-    output reg  OF,
+    input wren,           // write enable
+    input rden,           // read enable
+    input cOF,            // clear overflow flag
+    output wire empty,    // empty flag
+    output reg  OF,       // overflow flag
     output [CLAUSE_WIDTH - 1 : 0] clause_o
 );
     localparam CW = CLAUSE_WIDTH;
@@ -180,7 +180,7 @@ module FIFO_tree #(
         for (j = 0; j < 2; j = j + 1)
           begin
             // toggle L1src if the target fifo is not empty
-            L1src[j]    <= L1src[j] ^ (~L0E[$abs(j) * 2 + ~L1src[j]]);
+            L1src[j]    <= L1src[j] ^ (~L0E[j * 2 + ~L1src[j]]);
             // if L0rden was high for either src buffer then write to L1 next rising edge
             L1wren[j]   <= |L0rden[j * 2 +: 2];
           end

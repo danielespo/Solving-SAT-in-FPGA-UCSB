@@ -1,7 +1,9 @@
 /*
+Version: 2.0
 FIFO_Buffer.v
-Author: Zeiler Randall-Reed
-        Barry Wang
+
+V1.0 Author: Zeiler Randall-Reed
+V2.0 Author: Barry Wang
 
 Description:
 This module contains the implementation of a single FIFO buffer used in the FIFO tree. 
@@ -19,8 +21,8 @@ Notes:
     buffer size but Kanazawa's paper claims that a buffer size of 32 is sufficient.
 
 Testing: 
-- this module is simple enough that its functionality is tested during the test of 
-    the FIFO tree module
+- V1.0 tested with FIFO_Tree_tb.v
+- V2.0 test file in progress
 */
 
 module FIFO_Buffer #(
@@ -34,8 +36,8 @@ module FIFO_Buffer #(
     input                       wren_i,     // Write signal
     
     output reg [DATA_WIDTH-1:0] data_o,         // Data output
-    output                      empty_o,        // Empty flag
-    output                      full_o          // Full flag
+    output                      empty_o,        // Empty flag (active low)
+    output                      full_o          // Full flag (active high)
 );
     
     reg [DATA_WIDTH - 1 : 0] buffer [BUFFER_ADDR_WIDTH ** 2 - 1 : 0];
@@ -62,7 +64,7 @@ module FIFO_Buffer #(
                 write_ptr           <= write_ptr + 1;       // increment write_ptr
                 counter             <= counter + 1;         // increment counter
             end
-            if (rden_i && !empty_o) begin                // if read enable is high and the buffer is not empty
+            if (rden_i && empty_o) begin                // if read enable is high and the buffer is not empty
                 data_o          <= buffer[read_ptr];        // output the data at the read_ptr index
                 read_ptr        <= read_ptr + 1;            // increment read_ptr
                 counter         <= counter - 1;             // decrement counter
