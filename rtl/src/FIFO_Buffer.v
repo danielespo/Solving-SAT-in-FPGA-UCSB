@@ -44,7 +44,7 @@ module FIFO_Buffer #(
     reg [BUFFER_ADDR_WIDTH - 1 : 0] read_ptr, write_ptr, counter;
     
     // We require a power of 2 address space.
-    assign empty_o  = |counter;
+    assign empty_o  = ~(|counter);
     assign full_o   = &counter;
     
     always @ (posedge clk) begin
@@ -64,7 +64,7 @@ module FIFO_Buffer #(
                 write_ptr           <= write_ptr + 1;       // increment write_ptr
                 counter             <= counter + 1;         // increment counter
             end
-            if (rden_i && empty_o) begin                // if read enable is high and the buffer is not empty
+            if (rden_i && !empty_o) begin                // if read enable is high and the buffer is not empty
                 data_o          <= buffer[read_ptr];        // output the data at the read_ptr index
                 read_ptr        <= read_ptr + 1;            // increment read_ptr
                 counter         <= counter - 1;             // decrement counter

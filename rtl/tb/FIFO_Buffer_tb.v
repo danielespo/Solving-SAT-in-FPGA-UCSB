@@ -30,8 +30,8 @@ parameter TEST_CYCLES = 3;
 localparam DW = DATA_WIDTH;
 localparam BA = BUFFER_ADDR_WIDTH;
 
-localparam DW_WORDS = DW / 32;
-localparam DW_REM = DW % 32;
+localparam D_WORDS = DW / 32;
+localparam D_REM = DW % 32;
 
 // Inputs
 reg clk = 1;
@@ -77,10 +77,10 @@ $display("FIFO Buffer Testbench: Begin Simulations");
 $display("> Generating test data...");
 for (i = 0; i < NUM_TESTS; i = i + 1) begin
     for (j = 0; j < TEST_CYCLES; j = j + 1) begin
-        for(k = 0; k < DW_WORDS; k = k + 1) begin
+        for(k = 0; k < D_WORDS; k = k + 1) begin
             data[j][i][k*32 +: 32] = $random;
         end
-        data[j][i][DW_WORDS*32 +: DW_REM] = $random;
+        data[j][i][D_WORDS*32 +: D_REM] = $random;
         $display("  * Test %0d, Cycle %0d: Data = %0h", i, j, data[j][i]);
     end
 end 

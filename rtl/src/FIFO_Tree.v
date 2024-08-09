@@ -83,7 +83,7 @@ module FIFO_tree #(
     wire [1:0] L1E, L1F, L1rden;
     reg  [1:0] L1wren;
     wire [CLAUSE_WIDTH * 2 - 1 : 0] L1dout, L1din;
-    reg  [0:0] L1src [0:1];
+    reg  [1:0] L1src;
     // L1 MUX generation
     for (i = 0; i < 2; i = i + 1)
     begin
@@ -174,16 +174,27 @@ module FIFO_tree #(
         assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1] && (L1src[i] ? 1 : L0E[i * 2]);
     end
     
+    reg test_signal_1, test_signal_2, test_signal_3;
     // L1 controls --------------------------------------------------
     always @ (posedge clk)
     begin
+      if(reset) begin
+        L1src <= 0;
+        test_signal_1 <= L1src[0] ^ (~L0E[~L1src[0]]);
+        test_signal_2 <= ~L0E[~L1src[0]];
+        test_signal_3 <= L1src[0];
+      end else begin
+        test_signal_1 <= L1src[0] ^ (~L0E[~L1src[0]]);
+        test_signal_2 <= ~L0E[~L1src[0]];
+        test_signal_3 <= L1src[0];
         for (j = 0; j < 2; j = j + 1)
           begin
             // toggle L1src if the target fifo is not empty
-            L1src[j]    <= L1src[j] ^ (~L0E[j * 2 + ~L1src[j]]);
+            L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
             // if L0rden was high for either src buffer then write to L1 next rising edge
             L1wren[j]   <= |L0rden[j * 2 +: 2];
           end
+      end
     end
     
     assign L1rden[0] = ~L1E[0] && (L2src ? L1E[1] : 1);
@@ -192,10 +203,14 @@ module FIFO_tree #(
     // L2 controls --------------------------------------------------
     always @ (posedge clk)
     begin
+      if(reset) begin
+                L2src <= 1'b0;
+      end else begin
         // toggle L2src if the target fifo is not empty
         L2src   <= L2src ^ (~L1E[~L2src]);
         // if L1rden was high for either src buffer then write to L2 next rising edge
         L2wren  <= |L1rden;
+      end
     end
     
     assign L2rden   = rden;

@@ -30,14 +30,17 @@ module FIFO_Tree_tb;
 
 // Parameters for the FIFO tree
 parameter CLAUSE_COUNT = 20;
-parameter CLAUSE_WIDTH = 36;
+parameter CLAUSE_WIDTH = 36;  
 parameter BUFFER_DEPTH = 32;
 // testing parameters
 parameter NUM_TESTS = 1;
-parameter TEST_CYCLES = 12;
+parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
 
 localparam CW = CLAUSE_WIDTH;
 localparam CC = CLAUSE_COUNT;
+
+localparam D_WORDS = (CC * CW) / 32;
+localparam D_REM = (CC * CW) % 32;
 
 // Inputs
 reg clk = 1;
@@ -89,6 +92,45 @@ integer num_valid;
 integer matched, mismatched;
 integer has_match;
 
+// monitor signals
+wire [3:0] uut_L0E, uut_L0F, uut_L0wren, uut_L0rden;
+assign uut_L0E = uut.L0E;
+assign uut_L0F = uut.L0F;
+assign uut_L0wren = uut.L0wren;
+assign uut_L0rden = uut.L0rden;
+wire [CLAUSE_WIDTH * 4 - 1 : 0] uut_L0dout, uut_L0din;
+assign uut_L0dout = uut.L0dout;
+assign uut_L0din = uut.L0din;
+wire [2:0] uut_L0src;
+assign uut_L0src = uut.L0src;
+
+wire [1:0] uut_L1E, uut_L1F, uut_L1rden, uut_L1wren;
+assign uut_L1E = uut.L1E;
+assign uut_L1F = uut.L1F;
+assign uut_L1rden = uut.L1rden;
+assign uut_L1wren = uut.L1wren;
+wire [CLAUSE_WIDTH * 2 - 1 : 0] uut_L1dout, uut_L1din;
+assign uut_L1dout = uut.L1dout;
+assign uut_L1din = uut.L1din;
+wire [1:0] uut_L1src;
+assign uut_L1src = uut.L1src;
+
+wire uut_L2E, uut_L2F, uut_L2rden, uut_L2wren;
+assign uut_L2E = uut.L2E;
+assign uut_L2F = uut.L2F;
+assign uut_L2rden = uut.L2rden;
+assign uut_L2wren = uut.L2wren;
+wire [CLAUSE_WIDTH - 1 : 0] uut_L2dout, uut_L2din;
+assign uut_L2dout = uut.L2dout;
+assign uut_L2din = uut.L2din;
+wire uut_L2src;
+assign uut_L2src = uut.L2src;
+
+wire uut_test_signal_1, uut_test_signal_2, uut_test_signal_3;
+assign uut_test_signal_1 = uut.test_signal_1;
+assign uut_test_signal_2 = uut.test_signal_2;
+assign uut_test_signal_3 = uut.test_signal_3;
+
 // temp signals 
 reg [CC - 1 : 0]    temp_valid_reg;
 integer             temp_valid_num;
@@ -127,20 +169,20 @@ Test Plan:
 initial begin
 $display("FIFO Tree Testbench: Begin Simulation");
 // generate test data using random number generation
-$display("> Generating test data...");
+$display("> Generating test data... ");
 for(i = 0; i < NUM_TESTS; i = i + 1) begin
     temp_valid_reg = $random;
     temp_valid_num = 0;
     for(j = 0; j < CC; j = j + 1) begin
-        for(k = 0; k < 22; k = k + 1) begin
-            clauses[i][32*k+:32] = $random;
+        for(k = 0; k < D_WORDS; k = k + 1) begin
+            clauses[i][32 * k +: 32] = $random;
         end
-        clauses[i][704+:16] = $random;
+        clauses[i][D_WORDS * 32 +: D_REM] = $random;
         if(temp_valid_reg[j] == 1) temp_valid_num = temp_valid_num + 1;
     end
-    if(temp_valid_num > 12) begin 
+    if(temp_valid_num > TEST_CYCLES) begin 
         temp_valid_reg = ~temp_valid_reg;
-        temp_valid_num = 20 - temp_valid_num;
+        temp_valid_num = CC - temp_valid_num;
     end
     valid_bits[i] = temp_valid_reg;
     $display("  * Test %d: %b, %d", i, temp_valid_reg, temp_valid_num);
@@ -150,7 +192,6 @@ end
 for(i = 0; i < CC; i = i + 1) begin
     valid_clauses_1[i] = 0;
 end
-
 
 // Test Phase 1
 $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
@@ -175,7 +216,7 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         // load correct data into valid_clauses_1
         for(j = 0; j < CC; j = j + 1) begin
             if(valid_bits[i][j] == 1) begin
-                valid_clauses_1[num_valid][CW - 1 : 0] = clauses[i][36*j+:36];
+                valid_clauses_1[num_valid][CW - 1 : 0] = clauses[i][CW * j +: CW];
                 valid_clauses_1[num_valid][CW] = 1;
                 num_valid = num_valid + 1;
             end
@@ -185,16 +226,19 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         clause_valid_i = valid_bits[i];
         wren = 1;
         // wait on data to sift to the bottom of the FIFO tree
-        // while(empty == 0) begin
-        //     @(negedge clk);
-        //     wren = 0;
-        // end
+        while(empty == 0) begin
+            @(negedge clk);
+            wren = 0;
+        end
         rden = 1;
         for(j = 0; j < TEST_CYCLES; j = j + 1) begin
             @(negedge clk);
             has_match = 0;
             for(k = 0; k < CC; k = k + 1) begin
                 if(valid_clauses_1[k][CW] == 1) begin
+                    `ifdef VERBOSE
+                    $display("  *>>> Test %d: Checking clause %d against %d", i, clause_o, valid_clauses_1[k][CW - 1 : 0]);
+                    `endif
                     if(clause_o == valid_clauses_1[k][CW - 1 : 0]) begin
                         matched = matched + 1;
                         has_match = 1;
