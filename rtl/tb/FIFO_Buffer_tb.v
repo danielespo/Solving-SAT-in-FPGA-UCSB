@@ -62,10 +62,14 @@ FIFO_Buffer #(
     .full_o(full_o)
 );
 
+// uut data
+wire [BUFFER_ADDR_WIDTH - 1 : 0] counter;
+assign counter = uut.counter;
+
 // internal data
 reg [DW - 1 : 0] data [TEST_CYCLES - 1 : 0] [NUM_TESTS - 1 : 0];
 integer matched;
-reg phase1_pass, phase2_pass;
+reg phase1_pass, phase2_pass, phase3_pass;
 
 
 // iterators
@@ -86,6 +90,7 @@ for (i = 0; i < NUM_TESTS; i = i + 1) begin
 end 
 phase1_pass = 1;
 phase2_pass = 1;
+phase3_pass = 1;
     
 // run tests
 $display("> Phase 1: Test that the FIFO buffer can write and read data");
@@ -179,17 +184,154 @@ $display("> Phase 2: Test that sequential writes and reads are okay");
         end
         @(negedge clk);
     end
-    $display("Results:");
-    if (phase1_pass == 1) begin
-        $display("  Phase 1: PASSED");
-    end else begin
-        $display("  Phase 1: FAILED");
+
+$display("> Phase 3: Test empty and full signals");
+    // initialize signals
+    data_i = 0;
+    rden_i = 0;
+    wren_i = 0;
+    // reset the system
+    reset = 1;
+    @(negedge clk);
+    @(negedge clk);
+    reset = 0;
+    // test
+    for(i = 0; i < NUM_TESTS; i = i + 1) begin
+    $display(" * Test %d", i);
+    // at start of test, buffer should be empty
+        $display(" *** Buffer empty");
+        $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+        // check empty signal
+        if (empty_o == 1) begin
+            $display("  **** Sig E correct");
+        end else begin
+            $display("  **** Sig E incorrect");
+            phase3_pass = 0;
+        end
+        // check full signal
+        if (full_o == 0) begin
+            $display("  **** Sig F correct");
+        end else begin
+            $display("  **** Sig F incorrect");
+            phase3_pass = 0;
+        end
+    // fill the buffer half way
+        wren_i = 1;
+        for(j = 0; j < BUFFER_DEPTH/2; j = j + 1) begin
+            data_i = j;
+            @(negedge clk);
+        end
+        $display(" *** Buffer half full");
+        $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+        // check empty signal
+        if (empty_o == 0) begin
+            $display("  **** Sig E correct");
+        end else begin
+            $display("  **** Sig E incorrect");
+            phase3_pass = 0;
+        end
+        // check full signal
+        if (full_o == 0) begin
+            $display("  **** Sig F correct");
+        end else begin
+            $display("  **** Sig F incorrect");
+            phase3_pass = 0;
+        end
+    // fill the buffer the rest of the way
+        for(j = BUFFER_DEPTH/2; j < BUFFER_DEPTH; j = j + 1) begin
+            data_i = j + BUFFER_DEPTH/2;
+            @(negedge clk);
+        end
+        $display(" *** Buffer full");
+        $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+        // check empty signal
+        if (empty_o == 0) begin
+            $display("  **** Sig E correct");
+        end else begin
+            $display("  **** Sig E incorrect");
+            phase3_pass = 0;
+        end
+        // check full signal
+        if (full_o == 1) begin
+            $display("  **** Sig F correct");
+        end else begin
+            $display("  **** Sig F incorrect");
+            phase3_pass = 0;
+        end
+    // empty the buffer half way
+        rden_i = 1;
+        for(j = 0; j < BUFFER_DEPTH / 2; j = j + 1) begin
+            @(negedge clk);
+        end
+        $display(" *** Buffer half empty");
+        $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+        // check empty signal
+        if (empty_o == 0) begin
+            $display("  **** Sig E correct");
+        end else begin
+            $display("  **** Sig E incorrect");
+            phase3_pass = 0;
+        end
+        // check full signal
+        if (full_o == 0) begin
+            $display("  **** Sig F correct");
+        end else begin
+            $display("  **** Sig F incorrect");
+            phase3_pass = 0;
+        end
+    // empty the buffer the rest of the way
+        for(j = 0; j < BUFFER_DEPTH / 2; j = j + 1) begin
+            @(negedge clk);
+        end
+        $display(" *** Buffer empty");
+        $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+        // check empty signal
+        if (empty_o == 1) begin
+            $display("  **** Sig E correct");
+        end else begin
+            $display("  **** Sig E incorrect");
+            phase3_pass = 0;
+        end
+        // check full signal
+        if (full_o == 0) begin
+            $display("  **** Sig F correct");
+        end else begin
+            $display("  **** Sig F incorrect");
+            phase3_pass = 0;
+        end
+    @(negedge clk);
     end
-    if (phase2_pass == 1) begin
-        $display("  Phase 2: PASSED");
-    end else begin
-        $display("  Phase 2: FAILED");
-    end
+
+$display("> Phase 3.5: analysis of empty/full")
+    // initialize signals
+    data_i = 0;
+    rden_i = 0;
+    wren_i = 0;
+    // reset the system
+    reset = 1;
+    @(negedge clk);
+    @(negedge clk);
+    reset = 0;
+    // test
+
+
+// display results
+$display("Results:");
+if (phase1_pass == 1) begin
+    $display("  Phase 1: PASSED");
+end else begin
+    $display("  Phase 1: FAILED");
+end
+if (phase2_pass == 1) begin
+    $display("  Phase 2: PASSED");
+end else begin
+    $display("  Phase 2: FAILED");
+end
+if (phase3_pass == 1) begin
+    $display("  Phase 3: PASSED");
+end else begin
+    $display("  Phase 3: FAILED");
+end
     
 $display("FIFO Buffer Testbench: End Simulations");
 $finish;

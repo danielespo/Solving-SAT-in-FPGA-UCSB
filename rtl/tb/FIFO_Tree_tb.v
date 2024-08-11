@@ -30,7 +30,7 @@ module FIFO_Tree_tb;
 
 // Parameters for the FIFO tree
 parameter CLAUSE_COUNT = 20;
-parameter CLAUSE_WIDTH = 36;  
+parameter CLAUSE_WIDTH = 9;  
 parameter BUFFER_DEPTH = 32;
 // testing parameters
 parameter NUM_TESTS = 1;
@@ -41,6 +41,10 @@ localparam CC = CLAUSE_COUNT;
 
 localparam D_WORDS = (CC * CW) / 32;
 localparam D_REM = (CC * CW) % 32;
+
+// loop variables
+genvar n;
+integer i, j, k;
 
 // Inputs
 reg clk = 1;
@@ -85,9 +89,10 @@ FIFO_tree #(
 // wire [CW - 1 : 0] L2din = uut.L2din;
 
 // internal data
-reg [CW * CC - 1 : 0]   clauses         [NUM_TESTS-1:0];
-reg [CC - 1 : 0]        valid_bits      [NUM_TESTS-1:0];
-reg [CW     : 0]        valid_clauses_1 [CC-1:0];
+reg [CW * CC - 1 : 0]   clauses         [NUM_TESTS - 1 : 0];
+reg [CC - 1 : 0]        valid_bits      [NUM_TESTS - 1 : 0];
+reg [CW - 1 : 0]        valid_clauses_1 [CC - 1 : 0];
+reg [CW - 1 : 0]        all_clauses_i   [CC - 1 : 0];
 integer num_valid;
 integer matched, mismatched;
 integer has_match;
@@ -98,9 +103,15 @@ assign uut_L0E = uut.L0E;
 assign uut_L0F = uut.L0F;
 assign uut_L0wren = uut.L0wren;
 assign uut_L0rden = uut.L0rden;
-wire [CLAUSE_WIDTH * 4 - 1 : 0] uut_L0dout, uut_L0din;
-assign uut_L0dout = uut.L0dout;
-assign uut_L0din = uut.L0din;
+// wire [CW * 4 - 1 : 0] uut_L0dout, uut_L0din;
+// assign uut_L0dout = uut.L0dout;
+// assign uut_L0din = uut.L0din;
+wire [CW - 1 : 0] uut_L0dout_packed [3:0];
+wire [CW - 1 : 0] uut_L0din_packed [3:0];
+for(n = 0; n < 4; n = n + 1) begin
+    assign uut_L0dout_packed[n] = uut.L0dout[CW * n +: CW];
+    assign uut_L0din_packed[n] = uut.L0din[CW * n +: CW];
+end
 wire [2:0] uut_L0src;
 assign uut_L0src = uut.L0src;
 
@@ -109,9 +120,15 @@ assign uut_L1E = uut.L1E;
 assign uut_L1F = uut.L1F;
 assign uut_L1rden = uut.L1rden;
 assign uut_L1wren = uut.L1wren;
-wire [CLAUSE_WIDTH * 2 - 1 : 0] uut_L1dout, uut_L1din;
-assign uut_L1dout = uut.L1dout;
-assign uut_L1din = uut.L1din;
+// wire [CW * 2 - 1 : 0] uut_L1dout, uut_L1din;
+// assign uut_L1dout = uut.L1dout;
+// assign uut_L1din = uut.L1din;
+wire [CW - 1 : 0] uut_L1dout_packed [1:0];
+wire [CW - 1 : 0] uut_L1din_packed [1:0];
+for(n = 0; n < 2; n = n + 1) begin
+    assign uut_L1dout_packed[n] = uut.L1dout[CW * n +: CW];
+    assign uut_L1din_packed[n] = uut.L1din[CW * n +: CW];
+end
 wire [1:0] uut_L1src;
 assign uut_L1src = uut.L1src;
 
@@ -120,23 +137,15 @@ assign uut_L2E = uut.L2E;
 assign uut_L2F = uut.L2F;
 assign uut_L2rden = uut.L2rden;
 assign uut_L2wren = uut.L2wren;
-wire [CLAUSE_WIDTH - 1 : 0] uut_L2dout, uut_L2din;
+wire [CW - 1 : 0] uut_L2dout, uut_L2din;
 assign uut_L2dout = uut.L2dout;
 assign uut_L2din = uut.L2din;
 wire uut_L2src;
 assign uut_L2src = uut.L2src;
 
-wire uut_test_signal_1, uut_test_signal_2, uut_test_signal_3;
-assign uut_test_signal_1 = uut.test_signal_1;
-assign uut_test_signal_2 = uut.test_signal_2;
-assign uut_test_signal_3 = uut.test_signal_3;
-
 // temp signals 
 reg [CC - 1 : 0]    temp_valid_reg;
 integer             temp_valid_num;
-
-// iterators
-integer index, i, j, k;
 
 /*
 Test Plan:
@@ -217,9 +226,10 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         for(j = 0; j < CC; j = j + 1) begin
             if(valid_bits[i][j] == 1) begin
                 valid_clauses_1[num_valid][CW - 1 : 0] = clauses[i][CW * j +: CW];
-                valid_clauses_1[num_valid][CW] = 1;
+                //valid_clauses_1[num_valid][CW] = 1;
                 num_valid = num_valid + 1;
             end
+            all_clauses_i[j] = clauses[i][CW * j +: CW];
         end
         // load the FIFO tree with data
         clauses_i = clauses[i];
@@ -230,20 +240,19 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
             @(negedge clk);
             wren = 0;
         end
+        wren=0;
         rden = 1;
-        for(j = 0; j < TEST_CYCLES; j = j + 1) begin
+        for(j = 0; j < TEST_CYCLES+10; j = j + 1) begin
             @(negedge clk);
             has_match = 0;
-            for(k = 0; k < CC; k = k + 1) begin
-                if(valid_clauses_1[k][CW] == 1) begin
-                    `ifdef VERBOSE
-                    $display("  *>>> Test %d: Checking clause %d against %d", i, clause_o, valid_clauses_1[k][CW - 1 : 0]);
-                    `endif
-                    if(clause_o == valid_clauses_1[k][CW - 1 : 0]) begin
-                        matched = matched + 1;
-                        has_match = 1;
-                        valid_clauses_1[k][CW] = 0;
-                    end
+            for(k = 0; k < num_valid; k = k + 1) begin
+                `ifdef VERBOSE
+                $display("  *>>> Test %d: Checking clause %d against %d", i, clause_o, valid_clauses_1[k][CW - 1 : 0]);
+                `endif
+                if(clause_o == valid_clauses_1[k][CW - 1 : 0]) begin
+                    matched = matched + 1;
+                    has_match = 1;
+                    valid_clauses_1[k][CW] = 0;
                 end
             end
             if(has_match == 0) begin

@@ -18,7 +18,7 @@ ip_repo/*
 # Vivado logs
 *.jou
 *.log
-vivado_*.str
+vivado_*.*
 
 # Generated reports
 NA
