@@ -63,8 +63,10 @@ FIFO_Buffer #(
 );
 
 // uut data
-wire [BUFFER_ADDR_WIDTH - 1 : 0] counter;
+wire [BUFFER_ADDR_WIDTH - 1 : 0] counter, read_ptr, write_ptr;
 assign counter = uut.counter;
+assign read_ptr = uut.read_ptr;
+assign write_ptr = uut.write_ptr;
 
 // internal data
 reg [DW - 1 : 0] data [TEST_CYCLES - 1 : 0] [NUM_TESTS - 1 : 0];
@@ -197,7 +199,9 @@ $display("> Phase 3: Test empty and full signals");
     reset = 0;
     // test
     for(i = 0; i < NUM_TESTS; i = i + 1) begin
-    $display(" * Test %d", i);
+    rden_i = 0;
+    wren_i = 0;
+    $display(" * Test %0d", i);
     // at start of test, buffer should be empty
         $display(" *** Buffer empty");
         $display(" **** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
@@ -259,6 +263,7 @@ $display("> Phase 3: Test empty and full signals");
             phase3_pass = 0;
         end
     // empty the buffer half way
+        wren_i = 0;
         rden_i = 1;
         for(j = 0; j < BUFFER_DEPTH / 2; j = j + 1) begin
             @(negedge clk);
@@ -302,7 +307,7 @@ $display("> Phase 3: Test empty and full signals");
     @(negedge clk);
     end
 
-$display("> Phase 3.5: analysis of empty/full")
+$display("> Phase 3.5: analysis of empty/full");
     // initialize signals
     data_i = 0;
     rden_i = 0;
@@ -313,6 +318,61 @@ $display("> Phase 3.5: analysis of empty/full")
     @(negedge clk);
     reset = 0;
     // test
+    $display(" * reset state");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    data_i = data[0][0];
+    wren_i = 1;
+    @(negedge clk);
+    $display(" * write 1");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    data_i = data[0][1];
+    rden_i = 1;
+    @(negedge clk);
+    $display(" * write and read 1");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    wren_i = 0;
+    @(negedge clk);
+    $display(" * read 1");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    rden_i = 0;
+    @(negedge clk);
+    wren_i = 1;
+    for(j = 0; j < 31; j = j + 1) begin
+        data_i = data[NUM_TESTS / j][NUM_TESTS % j];
+        @(negedge clk);
+    end
+    $display(" * write 0-30");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    $display(" *** read_ptr: %0b, write_ptr: %0b", read_ptr, write_ptr);
+    $display(" *** empty: %b, full: %b", empty_o, full_o);
+    data_i = data[NUM_TESTS / 31][NUM_TESTS % 31];
+    @(negedge clk);
+    $display(" * write +31 (32 total, full)");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    $display(" *** read_ptr: %0b, write_ptr: %0b", read_ptr, write_ptr);
+    $display(" *** empty: %b, full: %b", empty_o, full_o);
+
+    data_i = data[NUM_TESTS / 32][NUM_TESTS % 32];
+    @(negedge clk);
+    $display(" * write +1 (32)");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    $display(" *** read_ptr: %0b, write_ptr: %0b", read_ptr, write_ptr);
+    $display(" *** empty: %b, full: %b", empty_o, full_o);
+
+    wren_i = 0;
+    rden_i = 1;
+    @(negedge clk);
+    $display(" * read 0");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    $display(" *** read_ptr: %0b, write_ptr: %0b", read_ptr, write_ptr);
+    $display(" *** empty: %b, full: %b", empty_o, full_o);
+
+    @(negedge clk);
+    $display(" * read 1");
+    $display(" *** counter: %0b, ~(|counter) = %b, &counter = %b", counter, ~(|counter), &counter);
+    $display(" *** read_ptr: %0b, write_ptr: %0b", read_ptr, write_ptr);
+    $display(" *** empty: %b, full: %b", empty_o, full_o);
+
 
 
 // display results

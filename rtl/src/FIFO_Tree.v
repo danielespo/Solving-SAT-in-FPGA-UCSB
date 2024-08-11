@@ -152,14 +152,15 @@ for (i = 0; i < 4; i = i + 1) begin
         clause_valid_i[i * 5 + L0src] & (L0src < 5);
 end
 
+        /******** POTENTIAL PROBLEM AREA ********/
 for (i = 0; i < 2; i = i + 1) begin
     // read from L0 if 
     // 1. this buffer is not empty and
     // 2. if this buffer should be read or the other buffer is empty
     // This signal is combinationally generated but it uses L1_src which
     // is sequential.
-    assign L0rden[i * 2]        = ~L0E[i * 2] && (L1src[i] ? L0E[i * 2 + 1] : 1);
-    assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1] && (L1src[i] ? 1 : L0E[i * 2]);
+    assign L0rden[i * 2]        = ~L0E[i * 2]; //&& (L1src[i] ? L0E[i * 2 + 1] : 1);
+    assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1];// && (L1src[i] ? 1 : L0E[i * 2]);
 end
 
 // integer test_signal_1, test_signal_2, test_signal_3;
@@ -180,8 +181,9 @@ always @ (posedge clk) begin
         // test_signal_4 <= {~L0E[3], ~L0E[2], ~L0E[1], ~L0E[0]};
         for (j = 0; j < 2; j = j + 1) begin
             // toggle L1src if the target fifo is not empty
-            L1src[j]    <= L1src[j] ? L0E[(j * 2)] : L0E[(j * 2) + 1];
-            // The following approach does not work because the addition is treated as a signed 
+            L1src[j]    <= L1src[j] ? L0E[(j * 2)] : ~L0E[(j * 2) + 1];
+            
+            // The following approach does not work because the addistion is treated as a signed 
             // number and the result is negative so the access of the L0E array is out of bounds. 
             // I'm not sure why this doesn't get flagged as an error during synthesis or simulation.
             // L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
