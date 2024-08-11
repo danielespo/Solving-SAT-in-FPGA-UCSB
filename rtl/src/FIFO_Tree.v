@@ -66,7 +66,7 @@ generate
         FIFO_Buffer # (
             .DATA_WIDTH(CLAUSE_WIDTH),
             .BUFFER_ADDR_WIDTH($clog2(BUFFER_DEPTH))
-        ) L0_FIFO (
+        ) L0_FIFO_inst (
             .clk    (clk),
             .reset  (reset),
             .data_i (L0din[CW * i +: CW]),
@@ -93,7 +93,7 @@ generate
         FIFO_Buffer # (
             .DATA_WIDTH(CLAUSE_WIDTH),
             .BUFFER_ADDR_WIDTH($clog2(BUFFER_DEPTH))
-        ) L1_FIFO (
+        ) L1_FIFO_inst (
             .clk    (clk),
             .reset  (reset),
             .data_i (L1din[CW * i +: CW]),
@@ -109,7 +109,7 @@ endgenerate
 // L2 1x 2-1 fifo buffer signals
 wire L2E, L2F;
 wire L2rden;
-reg  L2wren;
+reg  L2wren, L2rden_prev;
 wire [CLAUSE_WIDTH - 1 : 0] L2dout, L2din;
 reg L2src;
 assign L2din = L1dout[CW * L2src +: CW];
@@ -136,7 +136,7 @@ always @ (posedge clk) begin
         overflow <= 0;
         L0src <= 0;
     end else if (wren) begin
-        L0src <= 1;
+        L0src <= 0;
     end else if (L0src < 5) begin
         L0src <= L0src + 1;
     end else begin
@@ -159,8 +159,8 @@ for (i = 0; i < 2; i = i + 1) begin
     // 2. if this buffer should be read or the other buffer is empty
     // This signal is combinationally generated but it uses L1_src which
     // is sequential.
-    assign L0rden[i * 2]        = ~L0E[i * 2]; //&& (L1src[i] ? L0E[i * 2 + 1] : 1);
-    assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1];// && (L1src[i] ? 1 : L0E[i * 2]);
+    assign L0rden[i * 2]        = ~L0E[i * 2] && (L1src[i] ? L0E[i * 2 + 1] : 1);
+    assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1] && (L1src[i] ? 1 : L0E[i * 2]);
 end
 
 // integer test_signal_1, test_signal_2, test_signal_3;
@@ -180,17 +180,28 @@ always @ (posedge clk) begin
         // test_signal_3 <= L1src[0];
         // test_signal_4 <= {~L0E[3], ~L0E[2], ~L0E[1], ~L0E[0]};
         for (j = 0; j < 2; j = j + 1) begin
+
+            // set L1src to whichever buffer was most recently read from
+            if(L0rden[j * 2 + 1]) begin
+                L1src[j]    <= 1;
+            end else if(L0rden[j * 2]) begin
+                L1src[j]    <= 0;
+            end else begin
+                L1src[j]    <= L1src[j];
+            end
+
             // toggle L1src if the target fifo is not empty
-            L1src[j]    <= L1src[j] ? L0E[(j * 2)] : ~L0E[(j * 2) + 1];
-            
-            // The following approach does not work because the addistion is treated as a signed 
-            // number and the result is negative so the access of the L0E array is out of bounds. 
-            // I'm not sure why this doesn't get flagged as an error during synthesis or simulation.
-            // L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
+                // The following approach does not work because the addistion is treated as a signed 
+                // number and the result is negative so the access of the L0E array is out of bounds. 
+                // I'm not sure why this doesn't get flagged as an error during synthesis or simulation.
+                // L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
+            // this approach is also just generally wrong. some data is overwritten before it is 
+            // written to the next level
+            // L1src[j]    <= L1src[j] ? L0E[(j * 2)] : ~L0E[(j * 2) + 1];
 
             // if L0rden was high for either src buffer then write to L1 next rising edge
             L1wren[j]   <= |L0rden[j * 2 +: 2];
-        end
+        end 
     end
 end
 
@@ -202,16 +213,27 @@ always @ (posedge clk) begin
     if(reset) begin
         L2src <= 1'b0;
         L2wren <= 1'b0;
+        L2rden_prev <= 1'b0;
     end else begin
         // toggle L2src if the target fifo is not empty
-        L2src   <= L2src ^ (~L1E[~L2src]);
+        // L2src   <= L2src ^ (~L1E[~L2src]);
+        // L2src   <= L2src ? L1E[0] : ~L1E[1];
+
+        if(L1rden[1]) begin
+            L2src    <= 1;
+        end else if(L1rden[0]) begin
+            L2src    <= 0;
+        end else begin
+            L2src    <= L2src;
+        end
         // if L1rden was high for either src buffer then write to L2 next rising edge
         L2wren  <= |L1rden;
+        L2rden_prev <= L2rden;
     end
 end
 
-assign L2rden   = rden;
-assign clause_o = L2dout;
+assign L2rden   = rden && L2wren;
+assign clause_o = L2rden_prev ? L2dout : {CW{1'bx}};
 assign empty    = L2E;
 
 always @ (posedge clk) begin

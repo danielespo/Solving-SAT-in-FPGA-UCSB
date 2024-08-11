@@ -54,10 +54,17 @@ module FIFO_Buffer #(
             counter         <= 0;
             data_o          <= 0;
         end else if (wren_i && rden_i) begin         // concurrent rw is always valid
-            buffer[write_ptr]   <= data_i;
-            data_o              <= buffer[read_ptr];
-            write_ptr           <= write_ptr + 1;
-            read_ptr            <= read_ptr + 1;
+            if(read_ptr == write_ptr) begin 
+                data_o <= data_i;
+                buffer[write_ptr] <= data_i;
+                write_ptr <= write_ptr + 1;
+                read_ptr <= read_ptr + 1;
+            end else begin
+                buffer[write_ptr]   <= data_i;
+                data_o              <= buffer[read_ptr];
+                write_ptr           <= write_ptr + 1;
+                read_ptr            <= read_ptr + 1;
+            end
         end else begin
             if (wren_i && !full_o) begin                // if write enable is high and the buffer is not full
                 buffer[write_ptr]   <= data_i;              // write the data to buffer at the write_ptr index

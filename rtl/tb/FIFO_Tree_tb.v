@@ -31,7 +31,7 @@ module FIFO_Tree_tb;
 // Parameters for the FIFO tree
 parameter CLAUSE_COUNT = 20;
 parameter CLAUSE_WIDTH = 9;  
-parameter BUFFER_DEPTH = 32;
+parameter BUFFER_DEPTH = 16;
 // testing parameters
 parameter NUM_TESTS = 1;
 parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
@@ -91,7 +91,7 @@ FIFO_tree #(
 // internal data
 reg [CW * CC - 1 : 0]   clauses         [NUM_TESTS - 1 : 0];
 reg [CC - 1 : 0]        valid_bits      [NUM_TESTS - 1 : 0];
-reg [CW - 1 : 0]        valid_clauses_1 [CC - 1 : 0];
+reg [CW     : 0]        valid_clauses_1 [CC - 1 : 0];
 reg [CW - 1 : 0]        all_clauses_i   [CC - 1 : 0];
 integer num_valid;
 integer matched, mismatched;
@@ -103,9 +103,6 @@ assign uut_L0E = uut.L0E;
 assign uut_L0F = uut.L0F;
 assign uut_L0wren = uut.L0wren;
 assign uut_L0rden = uut.L0rden;
-// wire [CW * 4 - 1 : 0] uut_L0dout, uut_L0din;
-// assign uut_L0dout = uut.L0dout;
-// assign uut_L0din = uut.L0din;
 wire [CW - 1 : 0] uut_L0dout_packed [3:0];
 wire [CW - 1 : 0] uut_L0din_packed [3:0];
 for(n = 0; n < 4; n = n + 1) begin
@@ -114,15 +111,17 @@ for(n = 0; n < 4; n = n + 1) begin
 end
 wire [2:0] uut_L0src;
 assign uut_L0src = uut.L0src;
+wire [CW - 1 : 0] uut_L0_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
+wire [CW - 1 : 0] uut_L0_FIFO_1_buffer [BUFFER_DEPTH - 1 : 0];
+wire [CW - 1 : 0] uut_L0_FIFO_2_buffer [BUFFER_DEPTH - 1 : 0];
+wire [CW - 1 : 0] uut_L0_FIFO_3_buffer [BUFFER_DEPTH - 1 : 0];
+
 
 wire [1:0] uut_L1E, uut_L1F, uut_L1rden, uut_L1wren;
 assign uut_L1E = uut.L1E;
 assign uut_L1F = uut.L1F;
 assign uut_L1rden = uut.L1rden;
 assign uut_L1wren = uut.L1wren;
-// wire [CW * 2 - 1 : 0] uut_L1dout, uut_L1din;
-// assign uut_L1dout = uut.L1dout;
-// assign uut_L1din = uut.L1din;
 wire [CW - 1 : 0] uut_L1dout_packed [1:0];
 wire [CW - 1 : 0] uut_L1din_packed [1:0];
 for(n = 0; n < 2; n = n + 1) begin
@@ -131,6 +130,9 @@ for(n = 0; n < 2; n = n + 1) begin
 end
 wire [1:0] uut_L1src;
 assign uut_L1src = uut.L1src;
+wire [CW - 1 : 0] uut_L1_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
+wire [CW - 1 : 0] uut_L1_FIFO_1_buffer [BUFFER_DEPTH - 1 : 0];
+
 
 wire uut_L2E, uut_L2F, uut_L2rden, uut_L2wren;
 assign uut_L2E = uut.L2E;
@@ -142,6 +144,18 @@ assign uut_L2dout = uut.L2dout;
 assign uut_L2din = uut.L2din;
 wire uut_L2src;
 assign uut_L2src = uut.L2src;
+wire [CW - 1 : 0] uut_L2_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
+
+// try to access internal signals
+for(n = 0; n < BUFFER_DEPTH; n = n + 1) begin
+    assign uut_L0_FIFO_0_buffer[n] = uut.L0_FIFO[0].L0_FIFO_inst.buffer[n];
+    assign uut_L0_FIFO_1_buffer[n] = uut.L0_FIFO[1].L0_FIFO_inst.buffer[n];
+    assign uut_L0_FIFO_2_buffer[n] = uut.L0_FIFO[2].L0_FIFO_inst.buffer[n];
+    assign uut_L0_FIFO_3_buffer[n] = uut.L0_FIFO[3].L0_FIFO_inst.buffer[n];
+    assign uut_L1_FIFO_0_buffer[n] = uut.L1_FIFO[0].L1_FIFO_inst.buffer[n];
+    assign uut_L1_FIFO_1_buffer[n] = uut.L1_FIFO[1].L1_FIFO_inst.buffer[n];
+    assign uut_L2_FIFO_0_buffer[n] = uut.FIFO_last.buffer[n];
+end
 
 // temp signals 
 reg [CC - 1 : 0]    temp_valid_reg;
@@ -226,7 +240,7 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         for(j = 0; j < CC; j = j + 1) begin
             if(valid_bits[i][j] == 1) begin
                 valid_clauses_1[num_valid][CW - 1 : 0] = clauses[i][CW * j +: CW];
-                //valid_clauses_1[num_valid][CW] = 1;
+                valid_clauses_1[num_valid][CW] = 1;
                 num_valid = num_valid + 1;
             end
             all_clauses_i[j] = clauses[i][CW * j +: CW];
@@ -242,30 +256,36 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         end
         wren=0;
         rden = 1;
-        for(j = 0; j < TEST_CYCLES+10; j = j + 1) begin
+        for(j = 0; j < TEST_CYCLES; j = j + 1) begin
             @(negedge clk);
             has_match = 0;
             for(k = 0; k < num_valid; k = k + 1) begin
                 `ifdef VERBOSE
-                $display("  *>>> Test %d: Checking clause %d against %d", i, clause_o, valid_clauses_1[k][CW - 1 : 0]);
+                $display("  *>>> Test %0d: Checking clause %0x against %0x", i, clause_o, valid_clauses_1[k][CW - 1 : 0]);
                 `endif
                 if(clause_o == valid_clauses_1[k][CW - 1 : 0]) begin
-                    matched = matched + 1;
-                    has_match = 1;
-                    valid_clauses_1[k][CW] = 0;
+                    if(valid_clauses_1[k][CW] == 0) begin
+                        $display("  * Test %0d: Clause %0x matched twice", i, clause_o);
+                        has_match = 1;
+                    end else begin
+                        matched = matched + 1;
+                        has_match = 1;
+                        valid_clauses_1[k][CW] = 0;
+                    end
                 end
             end
             if(has_match == 0) begin
                 mismatched = mismatched + 1;
                 `ifdef VERBOSE
-                $display("  * Test %d: Mismatched clause: %d", i, clause_o);
+                $display("  * Test %0d, Cycle %0d: Mismatched clause: %0x", i, j, clause_o);
                 `endif
             end
         end
         if(mismatched > 0) begin
-            $display("  * Test %d: %d/%d clauses matched", i, matched, num_valid);
+            $display("  * Test %0d: %0d/%0d clauses matched", i, matched, num_valid);
+            $display("  * Test %0d: %0d clauses mismatched", i, mismatched);
         end else begin
-            $display("  * Test %d: All clauses matched", i);
+            $display("  * Test %0d: All clauses matched", i);
         end
         
     end
