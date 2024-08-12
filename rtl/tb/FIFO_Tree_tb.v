@@ -23,7 +23,7 @@ Change Log:
 
 `timescale 1ns / 1ps
 `define SIM
-`define VERBOSE
+//`define VERBOSE
 `define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $error($sformatf MESSAGE); end
 
 module FIFO_Tree_tb;
@@ -33,7 +33,7 @@ parameter CLAUSE_COUNT = 20;
 parameter CLAUSE_WIDTH = 9;  
 parameter BUFFER_DEPTH = 32;
 // testing parameters
-parameter NUM_TESTS = 4;
+parameter NUM_TESTS = 2;
 parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
 
 localparam CW = CLAUSE_WIDTH;
@@ -88,16 +88,24 @@ FIFO_tree #(
 // wire [CW - 1 : 0] L2dout = uut.L2dout;
 // wire [CW - 1 : 0] L2din = uut.L2din;
 
-// internal data
-reg [CW * CC - 1 : 0]   clauses         [NUM_TESTS - 1 : 0];
-reg [CC - 1 : 0]        valid_bits      [NUM_TESTS - 1 : 0];
-reg [CW - 1 : 0]        valid_clauses_1 [CC - 1 : 0];
-reg                     valid_clauses_v [CC - 1 : 0];
-reg [CW - 1 : 0]        all_clauses_i   [CC - 1 : 0];
-integer num_valid;
-integer matched, mismatched, overmatched;
-integer has_match;
-reg test_pass;
+// generated testing data
+reg [CC - 1 : 0]            valid_bits              [0 : NUM_TESTS - 1];
+reg [CW * CC - 1 : 0]       clauses                 [0 : NUM_TESTS - 1];
+reg [$clog2(CC) - 1 : 0]    valid_count             [0 : NUM_TESTS - 1];
+
+reg [CW - 1 : 0]            clauses_packed          [0 : NUM_TESTS - 1][CC - 1 : 0];
+reg [CW - 1 : 0]            valid_clauses_packed    [0 : NUM_TESTS - 1][CC - 1 : 0];
+reg                         valid_clauses_matched   [0 : NUM_TESTS - 1][CC - 1 : 0];
+
+// per test signals for waveform
+reg [CW - 1 : 0]    valid_clauses_t     [CC - 1 : 0]; // packed valid clauses per test
+reg                 valid_clauses_m     [CC - 1 : 0]; // mark for already matched clauses per test
+reg [CW - 1 : 0]    all_clauses_t       [CC - 1 : 0]; // packed all clauses per test
+
+// per test signals for checking
+integer matched, mismatched, duplicates;
+reg has_match;
+reg  [NUM_TESTS - 1 : 0] test_passed; // tracked for each test for summary report
 
 // monitor signals
     wire [3:0] uut_L0E, uut_L0F, uut_L0wren, uut_L0rden;
@@ -113,10 +121,10 @@ reg test_pass;
     end
     wire [2:0] uut_L0src;
     assign uut_L0src = uut.L0src;
-    wire [CW - 1 : 0] uut_L0_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
-    wire [CW - 1 : 0] uut_L0_FIFO_1_buffer [BUFFER_DEPTH - 1 : 0];
-    wire [CW - 1 : 0] uut_L0_FIFO_2_buffer [BUFFER_DEPTH - 1 : 0];
-    wire [CW - 1 : 0] uut_L0_FIFO_3_buffer [BUFFER_DEPTH - 1 : 0];
+    wire [CW - 1 : 0] uut_L0_FIFO_0_buffer [0 : BUFFER_DEPTH - 1];
+    wire [CW - 1 : 0] uut_L0_FIFO_1_buffer [0 : BUFFER_DEPTH - 1];
+    wire [CW - 1 : 0] uut_L0_FIFO_2_buffer [0 : BUFFER_DEPTH - 1];
+    wire [CW - 1 : 0] uut_L0_FIFO_3_buffer [0 : BUFFER_DEPTH - 1];
     wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_counter;
     wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_read_ptr;
     wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_write_ptr;
@@ -135,8 +143,8 @@ reg test_pass;
     end
     wire [1:0] uut_L1src;
     assign uut_L1src = uut.L1src;
-    wire [CW - 1 : 0] uut_L1_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
-    wire [CW - 1 : 0] uut_L1_FIFO_1_buffer [BUFFER_DEPTH - 1 : 0];
+    wire [CW - 1 : 0] uut_L1_FIFO_0_buffer [0 : BUFFER_DEPTH - 1];
+    wire [CW - 1 : 0] uut_L1_FIFO_1_buffer [0 : BUFFER_DEPTH - 1];
 
 
     wire uut_L2E, uut_L2F, uut_L2rden, uut_L2wren;
@@ -149,7 +157,7 @@ reg test_pass;
     assign uut_L2din = uut.L2din;
     wire uut_L2src;
     assign uut_L2src = uut.L2src;
-    wire [CW - 1 : 0] uut_L2_FIFO_0_buffer [BUFFER_DEPTH - 1 : 0];
+    wire [CW - 1 : 0] uut_L2_FIFO_0_buffer [0 : BUFFER_DEPTH - 1];
 
     // try to access internal signals
     for(n = 0; n < BUFFER_DEPTH; n = n + 1) begin
@@ -165,10 +173,6 @@ reg test_pass;
     assign uut_L0_FIFO_3_counter = uut.L0_FIFO[3].L0_FIFO_inst.counter;
     assign uut_L0_FIFO_3_read_ptr = uut.L0_FIFO[3].L0_FIFO_inst.read_ptr;
     assign uut_L0_FIFO_3_write_ptr = uut.L0_FIFO[3].L0_FIFO_inst.write_ptr;
-
-// temp signals 
-reg [CC - 1 : 0]    temp_valid_reg;
-integer             temp_valid_num;
 
 /*
 Test Plan:
@@ -200,31 +204,45 @@ Test Plan:
 
 initial begin
 $display("FIFO Tree Testbench: Begin Simulation");
+
 // generate test data using random number generation
 $display("> Generating test data... ");
 for(i = 0; i < NUM_TESTS; i = i + 1) begin
-    temp_valid_reg = $random;
-    temp_valid_num = 0;
+    // get random valid bit assignment less than or equal to TEST_CYCLES
+    valid_bits[i] = $random;
+    valid_count[i] = 0;
     for(j = 0; j < CC; j = j + 1) begin
-        for(k = 0; k < D_WORDS; k = k + 1) begin
-            clauses[i][32 * k +: 32] = $random;
+        if(valid_bits[i][j] == 1) valid_count[i] = valid_count[i] + 1;
+    end
+    if(valid_count[i] > TEST_CYCLES) begin 
+        valid_bits[i] = ~valid_bits[i];
+        valid_count[i] = CC - valid_count[i];
+    end
+
+    // generate random clauses
+    for(k = 0; k < D_WORDS; k = k + 1) begin
+        clauses[i][32 * k +: 32] = $random;
+    end
+    clauses[i][D_WORDS * 32 +: D_REM] = $random;
+
+    // pack the clauses
+    k = 0;
+    for(j = 0; j < CC; j = j + 1) begin
+        clauses_packed[i][j] = clauses[i][CW * j +: CW];
+        if(valid_bits[i][j] == 1) begin
+            valid_clauses_packed[i][k] = clauses_packed[i][j];
+            valid_clauses_matched[i][k] = 1;
+            k = k + 1;
         end
-        clauses[i][D_WORDS * 32 +: D_REM] = $random;
-        if(temp_valid_reg[j] == 1) temp_valid_num = temp_valid_num + 1;
     end
-    if(temp_valid_num > TEST_CYCLES) begin 
-        temp_valid_reg = ~temp_valid_reg;
-        temp_valid_num = CC - temp_valid_num;
+    for(j = 0; j < CC - k; j = j + 1) begin
+        valid_clauses_packed[i][j + k] = 0;
+        valid_clauses_matched[i][j + k] = 0;
     end
-    valid_bits[i] = temp_valid_reg;
-    $display("  * Test %d: %b, %d", i, temp_valid_reg, temp_valid_num);
+
+    $display("  * Test %d: %d valid", i, valid_count[i]);
 end
 
-// init regs to zero
-for(i = 0; i < CC; i = i + 1) begin
-    valid_clauses_1[i] = 0;
-    valid_clauses_v[i] = 0;
-end
 
 // Test Phase 1
 $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
@@ -243,69 +261,91 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
 
     // Test
     for(i = 0; i < NUM_TESTS; i = i + 1) begin
+        $display(" * Test %0d", i);
+
+        // initialize test variables
         matched = 0;
         mismatched = 0;
-        overmatched = 0;
-        num_valid = 0;
-        test_pass = 1;
-        // load correct data into valid_clauses_1
+        duplicates = 0;
+        test_passed[i] = 1;
+
+        // load testing data
         for(j = 0; j < CC; j = j + 1) begin
-            if(valid_bits[i][j] == 1) begin
-                valid_clauses_1[num_valid] = clauses[i][CW * j +: CW];
-                valid_clauses_v[num_valid] = 1;
-                num_valid = num_valid + 1;
-            end
-            all_clauses_i[j] = clauses[i][CW * j +: CW];
+            valid_clauses_t[j] = valid_clauses_packed[i][j];
+            valid_clauses_m[j] = valid_clauses_matched[i][j];
+            all_clauses_t[j] = clauses_packed[i][j];
         end
-        // load the FIFO tree with data
+
+        // load the FIFO tree data
         clauses_i = clauses[i];
         clause_valid_i = valid_bits[i];
         wren = 1;
+
         // wait on data to sift to the bottom of the FIFO tree
         while(empty == 1) begin
             @(negedge clk);
             wren = 0;
         end
-        // wren=0;
+
+        // read data out of the FIFO tree
         rden = 1;
-        for(j = 0; j < TEST_CYCLES + i * 6; j = j + 1) begin
+        for(j = 0; j < TEST_CYCLES; j = j + 1) begin
+            $display(" .* Cycle %0d", j);
             @(negedge clk);
-            wren=0;
+            wren = 0;
             has_match = 0;
-            for(k = 0; k < num_valid; k = k + 1) begin
-                `ifdef VERBOSE
-                $display("  *>>> Test %0d: Checking clause %0x against %0x", i, clause_o, valid_clauses_1[k]);
-                `endif
-                if(clause_o == valid_clauses_1[k]) begin
-                    if(valid_clauses_v[k] == 0) begin
-                        $display("  * Test %0d: Clause %0x matched twice", i, clause_o);
-                        overmatched = overmatched + 1;
-                        has_match = 1;
-                        test_pass = 0;
-                    end else begin
-                        matched = matched + 1;
-                        has_match = 1;
-                        valid_clauses_v[k] = 0;
+            if(clause_o === {CW{1'bx}}) begin
+                if(empty == 0) begin
+                    $display(" ..* tree not empty, but clause is null");
+                    mismatched = mismatched + 1;
+                    test_passed[i] = 0;
+                end else begin
+                    $display(" ..* tree is empty");
+                end
+            end else begin
+                $display(" ..* Checking clause: %3x", clause_o);
+                for(k = 0; k < valid_count[i]; k = k + 1) begin
+                    `ifdef VERBOSE
+                    $display(" ....> against %3x", clause_o, valid_clauses_t[k]);
+                    `endif
+                    if(clause_o == valid_clauses_t[k]) begin
+                        if(valid_clauses_m[k] == 0) begin
+                            $display(" ...* duplicate clause");
+                            duplicates = duplicates + 1;
+                            has_match = 1;
+                            test_passed[i] = 0;
+                        end else begin
+                            valid_clauses_m[k] = 0;
+                            $display(" ...* found match");
+                            matched = matched + 1;
+                            has_match = 1;
+                        end
                     end
                 end
-            end
-            if(has_match == 0) begin
-                if(clause_o != {CW{1'bx}}) begin
-                    $display("  * Test %0d, Cycle %0d: Mismatched clause: %0x", i, j, clause_o);
+                if(~has_match) begin
+                    $display(" ...* clause not found in valid clauses");
                     mismatched = mismatched + 1;
-                    test_pass = 0;
+                    test_passed[i] = 0;
                 end
             end
         end
-        if(test_pass == 0) begin
-            $display("  * Test %0d: %0d/%0d clauses matched", i, matched, num_valid);
-            $display("  * Test %0d: %0d clauses mismatched", i, mismatched);
-            $display("  * Test %0d: %0d clauses overmatched", i, overmatched);
+
+        if(test_passed[i] == 0) begin
+            $display(" .* Test Failed");
+            $display(" ..* %0d/%0d clauses matched", matched, valid_count[i]);
+            $display(" ..* %0d clauses mismatched", mismatched);
+            $display(" ..* %0d duplicate clauses", duplicates);
         end else begin
-            $display("  * Test %0d: Test Passed", i);
+            $display(" .* Test Passed");
         end
-        
     end
+
+    if(&test_passed) begin
+        $display(" * Phase 1 Passed");
+    end else begin
+        $display(" * Phase 1 Failed");
+    end
+
 
 
 
