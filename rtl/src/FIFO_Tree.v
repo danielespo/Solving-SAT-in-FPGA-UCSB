@@ -136,7 +136,7 @@ always @ (posedge clk) begin
         overflow <= 0;
         L0src <= 0;
     end else if (wren) begin
-        L0src <= 0;
+        L0src <= 1;
     end else if (L0src < 5) begin
         L0src <= L0src + 1;
     end else begin
