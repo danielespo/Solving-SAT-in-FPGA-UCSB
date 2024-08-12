@@ -13,20 +13,24 @@ Description:
     overflow occurs in any of its buffer.
 
 Notes: 
-    This FIFO tree
-    will immediately start writing to its first level L0
+    This FIFO tree:
+    - Will immediately start writing to its first level L0
     buffers on the clock cycle when wren is raised. It
     will then spend the next 4 clock cycles to write the
     remaining 4 clauses in its imputs.
+    - Does not define r/w during when OF is raised or when
+    empty/full flags are raised.
 
 Testing:
     V1.0 test passed
-    V2.0 test not established
+    V2.0 test passed
 
 Change Log:
 
-2024/08/5 - Barry Wang
+2024/08/5  - Barry Wang
     Created V2.0
+2024/08/12 - Barry Wang
+    Fixed I/O timing
 
 
 -----------------------------------------------------*/

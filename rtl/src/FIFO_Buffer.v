@@ -22,7 +22,7 @@ Notes:
 
 Testing: 
 - V1.0 tested with FIFO_Tree_tb.v
-- V2.0 test file in progress
+- V2.0 test passed
 */
 
 module FIFO_Buffer #(
@@ -36,8 +36,8 @@ module FIFO_Buffer #(
     input                       wren_i,         // Write signal
     
     output reg [DATA_WIDTH-1:0] data_o,         // Data output
-    output                      empty_o,        // Empty flag (active low)
-    output                      full_o          // Full flag (active high)
+    output                      empty_o,        // Empty flag
+    output                      full_o          // Full flag
 );
     
     reg [DATA_WIDTH - 1 : 0] buffer [0 : 2 ** BUFFER_ADDR_WIDTH - 1];
