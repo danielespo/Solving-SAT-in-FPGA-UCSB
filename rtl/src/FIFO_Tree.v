@@ -148,6 +148,7 @@ end
 // L0 read and write enables
 // These signals are mostly combinational
 for (i = 0; i < 4; i = i + 1) begin
+    
     assign L0wren[i] = wren ? clause_valid_i[i * 5] :
         clause_valid_i[i * 5 + L0src] & (L0src < 5);
 end
@@ -182,16 +183,17 @@ always @ (posedge clk) begin
         for (j = 0; j < 2; j = j + 1) begin
 
             // set L1src to whichever buffer was most recently read from
-            if(L0rden[j * 2 + 1]) begin
-                L1src[j]    <= 1;
-            end else if(L0rden[j * 2]) begin
-                L1src[j]    <= 0;
-            end else begin
-                L1src[j]    <= L1src[j];
-            end
+            L1src[j]    <= L0rden[j * 2 + 1] ? 1 : L0rden[j * 2] ? 0 : L1src[j];
+            // if(L0rden[j * 2 + 1]) begin
+            //     L1src[j]    <= 1;
+            // end else if(L0rden[j * 2]) begin
+            //     L1src[j]    <= 0;
+            // end else begin
+            //     L1src[j]    <= L1src[j];
+            // end
 
             // toggle L1src if the target fifo is not empty
-                // The following approach does not work because the addistion is treated as a signed 
+                // The following approach does not work because the addisytion is treated as a signed 
                 // number and the result is negative so the access of the L0E array is out of bounds. 
                 // I'm not sure why this doesn't get flagged as an error during synthesis or simulation.
                 // L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
@@ -217,7 +219,7 @@ always @ (posedge clk) begin
     end else begin
         // toggle L2src if the target fifo is not empty
         // L2src   <= L2src ^ (~L1E[~L2src]);
-        // L2src   <= L2src ? L1E[0] : ~L1E[1];
+        //L2src   <= L2src ? L1E[0] : ~L1E[1];
 
         if(L1rden[1]) begin
             L2src    <= 1;

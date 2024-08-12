@@ -31,9 +31,9 @@ module FIFO_Tree_tb;
 // Parameters for the FIFO tree
 parameter CLAUSE_COUNT = 20;
 parameter CLAUSE_WIDTH = 9;  
-parameter BUFFER_DEPTH = 16;
+parameter BUFFER_DEPTH = 32;
 // testing parameters
-parameter NUM_TESTS = 1;
+parameter NUM_TESTS = 4;
 parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
 
 localparam CW = CLAUSE_WIDTH;
@@ -97,6 +97,7 @@ reg [CW - 1 : 0]        all_clauses_i   [CC - 1 : 0];
 integer num_valid;
 integer matched, mismatched, overmatched;
 integer has_match;
+reg test_pass;
 
 // monitor signals
     wire [3:0] uut_L0E, uut_L0F, uut_L0wren, uut_L0rden;
@@ -116,6 +117,9 @@ integer has_match;
     wire [CW - 1 : 0] uut_L0_FIFO_1_buffer [BUFFER_DEPTH - 1 : 0];
     wire [CW - 1 : 0] uut_L0_FIFO_2_buffer [BUFFER_DEPTH - 1 : 0];
     wire [CW - 1 : 0] uut_L0_FIFO_3_buffer [BUFFER_DEPTH - 1 : 0];
+    wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_counter;
+    wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_read_ptr;
+    wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_write_ptr;
 
 
     wire [1:0] uut_L1E, uut_L1F, uut_L1rden, uut_L1wren;
@@ -157,6 +161,10 @@ integer has_match;
         assign uut_L1_FIFO_1_buffer[n] = uut.L1_FIFO[1].L1_FIFO_inst.buffer[n];
         assign uut_L2_FIFO_0_buffer[n] = uut.FIFO_last.buffer[n];
     end
+
+    assign uut_L0_FIFO_3_counter = uut.L0_FIFO[3].L0_FIFO_inst.counter;
+    assign uut_L0_FIFO_3_read_ptr = uut.L0_FIFO[3].L0_FIFO_inst.read_ptr;
+    assign uut_L0_FIFO_3_write_ptr = uut.L0_FIFO[3].L0_FIFO_inst.write_ptr;
 
 // temp signals 
 reg [CC - 1 : 0]    temp_valid_reg;
@@ -239,6 +247,7 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         mismatched = 0;
         overmatched = 0;
         num_valid = 0;
+        test_pass = 1;
         // load correct data into valid_clauses_1
         for(j = 0; j < CC; j = j + 1) begin
             if(valid_bits[i][j] == 1) begin
@@ -253,13 +262,13 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         clause_valid_i = valid_bits[i];
         wren = 1;
         // wait on data to sift to the bottom of the FIFO tree
-        // while(empty == 0) begin
-        //     @(negedge clk);
-        //     wren = 0;
-        // end
+        while(empty == 1) begin
+            @(negedge clk);
+            wren = 0;
+        end
         // wren=0;
         rden = 1;
-        for(j = 0; j < TEST_CYCLES+2; j = j + 1) begin
+        for(j = 0; j < TEST_CYCLES + i * 6; j = j + 1) begin
             @(negedge clk);
             wren=0;
             has_match = 0;
@@ -272,6 +281,7 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
                         $display("  * Test %0d: Clause %0x matched twice", i, clause_o);
                         overmatched = overmatched + 1;
                         has_match = 1;
+                        test_pass = 0;
                     end else begin
                         matched = matched + 1;
                         has_match = 1;
@@ -280,18 +290,19 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
                 end
             end
             if(has_match == 0) begin
-                mismatched = mismatched + 1;
-                `ifdef VERBOSE
-                $display("  * Test %0d, Cycle %0d: Mismatched clause: %0x", i, j, clause_o);
-                `endif
+                if(clause_o != {CW{1'bx}}) begin
+                    $display("  * Test %0d, Cycle %0d: Mismatched clause: %0x", i, j, clause_o);
+                    mismatched = mismatched + 1;
+                    test_pass = 0;
+                end
             end
         end
-        if(mismatched > 0) begin
+        if(test_pass == 0) begin
             $display("  * Test %0d: %0d/%0d clauses matched", i, matched, num_valid);
             $display("  * Test %0d: %0d clauses mismatched", i, mismatched);
             $display("  * Test %0d: %0d clauses overmatched", i, overmatched);
         end else begin
-            $display("  * Test %0d: All clauses matched", i);
+            $display("  * Test %0d: Test Passed", i);
         end
         
     end
