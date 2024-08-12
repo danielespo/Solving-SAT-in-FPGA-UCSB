@@ -40,7 +40,7 @@ module FIFO_Buffer #(
     output                      full_o          // Full flag (active high)
 );
     
-    reg [DATA_WIDTH - 1 : 0] buffer [BUFFER_ADDR_WIDTH ** 2 - 1 : 0];
+    reg [DATA_WIDTH - 1 : 0] buffer [0 : 2 ** BUFFER_ADDR_WIDTH - 1];
     reg [BUFFER_ADDR_WIDTH - 1 : 0] read_ptr, write_ptr, counter;
     
     // We require a power of 2 address space.
