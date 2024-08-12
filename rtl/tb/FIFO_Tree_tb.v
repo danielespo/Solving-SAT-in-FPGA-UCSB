@@ -33,7 +33,7 @@ parameter CLAUSE_COUNT = 20;
 parameter CLAUSE_WIDTH = 9;  
 parameter BUFFER_DEPTH = 32;
 // testing parameters
-parameter NUM_TESTS = 2;
+parameter NUM_TESTS = 5;
 parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
 
 localparam CW = CLAUSE_WIDTH;
@@ -280,6 +280,7 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
         clauses_i = clauses[i];
         clause_valid_i = valid_bits[i];
         wren = 1;
+        rden = 0;
 
         // wait on data to sift to the bottom of the FIFO tree
         while(empty == 1) begin
@@ -294,38 +295,38 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
             @(negedge clk);
             wren = 0;
             has_match = 0;
-            if(clause_o === {CW{1'bx}}) begin
-                if(empty == 0) begin
+            if(empty == 1) begin
+                $display(" ..* tree is empty");
+            end else begin
+                if(clause_o === {CW{1'bx}}) begin
                     $display(" ..* tree not empty, but clause is null");
                     mismatched = mismatched + 1;
                     test_passed[i] = 0;
                 end else begin
-                    $display(" ..* tree is empty");
-                end
-            end else begin
-                $display(" ..* Checking clause: %3x", clause_o);
-                for(k = 0; k < valid_count[i]; k = k + 1) begin
-                    `ifdef VERBOSE
-                    $display(" ....> against %3x", clause_o, valid_clauses_t[k]);
-                    `endif
-                    if(clause_o == valid_clauses_t[k]) begin
-                        if(valid_clauses_m[k] == 0) begin
-                            $display(" ...* duplicate clause");
-                            duplicates = duplicates + 1;
-                            has_match = 1;
-                            test_passed[i] = 0;
-                        end else begin
-                            valid_clauses_m[k] = 0;
-                            $display(" ...* found match");
-                            matched = matched + 1;
-                            has_match = 1;
+                    $display(" ..* Checking clause: %3x", clause_o);
+                    for(k = 0; k < valid_count[i]; k = k + 1) begin
+                        `ifdef VERBOSE
+                        $display(" ....> against %3x", clause_o, valid_clauses_t[k]);
+                        `endif
+                        if(clause_o == valid_clauses_t[k]) begin
+                            if(valid_clauses_m[k] == 0) begin
+                                $display(" ...* duplicate clause");
+                                duplicates = duplicates + 1;
+                                has_match = 1;
+                                test_passed[i] = 0;
+                            end else begin
+                                valid_clauses_m[k] = 0;
+                                $display(" ...* found match");
+                                matched = matched + 1;
+                                has_match = 1;
+                            end
                         end
                     end
-                end
-                if(~has_match) begin
-                    $display(" ...* clause not found in valid clauses");
-                    mismatched = mismatched + 1;
-                    test_passed[i] = 0;
+                    if(~has_match) begin
+                        $display(" ...* clause not found in valid clauses");
+                        mismatched = mismatched + 1;
+                        test_passed[i] = 0;
+                    end
                 end
             end
         end
@@ -341,9 +342,9 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
     end
 
     if(&test_passed) begin
-        $display(" * Phase 1 Passed");
+        $display("  Phase 1 Passed");
     end else begin
-        $display(" * Phase 1 Failed");
+        $display("  Phase 1 Failed");
     end
 
 
