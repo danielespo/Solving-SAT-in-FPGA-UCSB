@@ -50,10 +50,11 @@ module FIFO_tree #(
 
     localparam CW = CLAUSE_WIDTH;
     genvar i;
-    reg [31:0] j;
+    integer j;
     
     // L0 4x 5-1 fifo buffers signals
     wire [3:0] L0E, L0F, L0wren, L0rden;
+    reg  [3:0] L0rden_delay;
     wire [CLAUSE_WIDTH * 4 - 1 : 0] L0dout, L0din;
     reg  [2:0] L0src;
     // L0 MUX generation
@@ -81,13 +82,20 @@ module FIFO_tree #(
     
     // L1 2x 2-1 fifo buffers signals
     wire [1:0] L1E, L1F, L1rden;
+    reg  [1:0] L1rden_delay;
     reg  [1:0] L1wren;
-    wire [CLAUSE_WIDTH * 2 - 1 : 0] L1dout, L1din;
+    wire [CLAUSE_WIDTH * 2 - 1 : 0] L1dout;
+    reg  [CLAUSE_WIDTH * 2 - 1 : 0] L1din;
     reg  [1:0] L1src;
-    // L1 MUX generation
-    for (i = 0; i < 2; i = i + 1) begin
-        assign L1din[CW * i +: CW] = L0dout[CW * (L1src[i] + i * 2) +: CW];
+    
+    // L1din MUX
+    always @ (*) begin
+        for (j = 0; j < 2; j = j + 1) begin
+            L1din[CW * j +: CW] <= L0rden_delay[j * 2] ?
+                L0dout[CW * (j * 2) +: CW] : L0dout[CW * (j * 2 + 1) +: CW];
+        end
     end
+
     generate
         for (i = 0; i < 2; i = i + 1) begin : L1_FIFO
             FIFO_Buffer # (
@@ -109,10 +117,16 @@ module FIFO_tree #(
     // L2 1x 2-1 fifo buffer signals
     wire L2E, L2F;
     wire L2rden;
-    reg  L2wren, L2rden_prev;
-    wire [CLAUSE_WIDTH - 1 : 0] L2dout, L2din;
-    reg L2src;
-    assign L2din = L1dout[CW * L2src +: CW];
+    reg  L2wren;
+    wire [CLAUSE_WIDTH - 1 : 0] L2dout;
+    reg  [CLAUSE_WIDTH - 1 : 0] L2din;
+    reg  L2src;
+    
+    // L2din MUX
+    always @ (*) begin
+        L2din <= L1rden_delay[0] ? L1dout[0 +: CW] : L1dout[CW +: CW];
+    end
+    
     FIFO_Buffer # (
         .DATA_WIDTH(CLAUSE_WIDTH),
         .BUFFER_ADDR_WIDTH($clog2(BUFFER_DEPTH))
@@ -145,62 +159,37 @@ module FIFO_tree #(
     end
         
     // L0 controls --------------------------------------------------
+    always @ (posedge clk) begin
+        L0rden_delay <= reset ? 0 : L0rden;
+    end
     // L0 read and write enables
     // These signals are mostly combinational
     for (i = 0; i < 4; i = i + 1) begin
-        
         assign L0wren[i] = wren ? clause_valid_i[i * 5] :
             clause_valid_i[i * 5 + L0src] & (L0src < 5);
     end
     
-            /******** POTENTIAL PROBLEM AREA ********/
     for (i = 0; i < 2; i = i + 1) begin
         // read from L0 if 
         // 1. this buffer is not empty and
         // 2. if this buffer should be read or the other buffer is empty
-        // This signal is combinationally generated but it uses L1_src which
-        // is sequential.
+        // This signal is combinationally generated but it uses L1src_delay
+        // which is sequential.
         assign L0rden[i * 2]        = ~L0E[i * 2] && (L1src[i] ? L0E[i * 2 + 1] : 1);
         assign L0rden[i * 2 + 1]    = ~L0E[i * 2 + 1] && (L1src[i] ? 1 : L0E[i * 2]);
     end
     
-    // integer test_signal_1, test_signal_2, test_signal_3;
-    // reg [3:0] test_signal_4;
     // L1 controls --------------------------------------------------
     always @ (posedge clk) begin
         if(reset) begin
-            L1src <= 0;
-            L1wren <= 0;
-            // test_signal_1 <= L1src[0] ^ (~L0E[~L1src[0]]);
-            // test_signal_2 <= ~L0E[~L1src[0]];
-            // test_signal_3 <= L1src[0];
-            // test_signal_4 <= ~L0E;
+            L1src           <= 0;
+            L1wren          <= 0;
+            L1rden_delay    <= 0;
         end else begin
-            // test_signal_1 <= L1src[0] ^ (~L0E[~L1src[0]]);
-            // test_signal_2 <= ~L0E[~L1src[0]];
-            // test_signal_3 <= L1src[0];
-            // test_signal_4 <= {~L0E[3], ~L0E[2], ~L0E[1], ~L0E[0]};
+            L1rden_delay    <= L1rden;
             for (j = 0; j < 2; j = j + 1) begin
-    
-                // set L1src to whichever buffer was most recently read from
-                //L1src[j]    <= L0rden[j * 2 + 1] ? 1 : L0rden[j * 2] ? 0 : L1src[j];
-                // if(L0rden[j * 2 + 1]) begin
-                //     L1src[j]    <= 1;
-                // end else if(L0rden[j * 2]) begin
-                //     L1src[j]    <= 0;
-                // end else begin
-                //     L1src[j]    <= L1src[j];
-                // end
-    
                 // toggle L1src if the target fifo is not empty
-                    // The following approach does not work because the addisytion is treated as a signed 
-                    // number and the result is negative so the access of the L0E array is out of bounds. 
-                    // I'm not sure why this doesn't get flagged as an error during synthesis or simulation.
-                    // L1src[j]    <= L1src[j] ^ (~L0E[(j * 2) + (~L1src[j])]);
-                // this approach is also just generally wrong. some data is overwritten before it is 
-                // written to the next level
                 L1src[j]    <= L1src ^ (~L0E[L1src[j] ? j * 2 + 1 : j * 2]);
-    
                 // if L0rden was high for either src buffer then write to L1 next rising edge
                 L1wren[j]   <= |L0rden[j * 2 +: 2];
             end 
@@ -213,29 +202,18 @@ module FIFO_tree #(
     // L2 controls --------------------------------------------------
     always @ (posedge clk) begin
         if(reset) begin
-            L2src <= 1'b0;
-            L2wren <= 1'b0;
-            L2rden_prev <= 1'b0;
+            L2src       <= 0;
+            L2wren      <= 0;
         end else begin
             // toggle L2src if the target fifo is not empty
-            L2src   <= L2src ^ (~L1E[~L2src]);
-            //L2src   <= L2src ? L1E[0] : ~L1E[1];
-            /*
-            if(L1rden[1]) begin
-                L2src    <= 1;
-            end else if(L1rden[0]) begin
-                L2src    <= 0;
-            end else begin
-                L2src    <= L2src;
-            end */
+            L2src       <= L2src ^ (~L1E[~L2src]);
             // if L1rden was high for either src buffer then write to L2 next rising edge
             L2wren  <= |L1rden;
-            L2rden_prev <= L2rden;
         end
     end
     
-    assign L2rden   = rden && L2wren;
-    assign clause_o = L2rden_prev ? L2dout : {CW{1'bx}};
+    assign L2rden   = rden;
+    assign clause_o = L2dout;
     assign empty    = L2E;
     
     always @ (posedge clk) begin
