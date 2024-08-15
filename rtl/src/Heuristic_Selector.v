@@ -15,7 +15,7 @@ Notes:
 Testing:
 - made some changes that need to be tested (8/5)
 - more changes made (8/13)
-- testbench complete, testing in progress
+- (8/14) testbench complete, all tests passed
 */
 
 module Heuristic_Selector #(

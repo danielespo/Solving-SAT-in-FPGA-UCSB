@@ -10,7 +10,7 @@ Testbench file for Heuristic_Selector.v
 
 Status: 
 - V1.0 tests passed
-- V2.0 in progress
+- V2.0 tests passed
 */
 
 `timescale 1ns / 1ps
