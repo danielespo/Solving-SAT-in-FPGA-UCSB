@@ -33,6 +33,8 @@ module Heuristic_Selector #(
     input [NSAT-1:0] break_values_valid_i, // this is a vector of valid bits for each break value
     input [31:0] random_i, 
 
+    input enable_i;
+
     output reg [NSAT_BITS-1:0] select_o,
     output reg random_selection_o
 );
@@ -100,7 +102,7 @@ always @(posedge clk) begin
         select_o <= 2'b11; // invalid value for reset to catch bugs potentially
         hasZero <= 0;
         random_selection_o <= 0;
-    end else begin
+    end else if(enable_i) begin
         for(i = 0; i < NSAT; i = i + 1) begin   
             if((break_values[i] == 0) && (break_values_valid_i[i])) begin  // if a break value is zero and valid, we want to select it
                 hasZero <= 1;
