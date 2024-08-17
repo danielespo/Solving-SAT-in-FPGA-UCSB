@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="impl_1" LaunchPart="xc7vx485tffg1157-1" LaunchTime="1723854253">
+  <File Type="ROUTE-PWR" Name="SAT_Solver_Top_power_routed.rpt"/>
+  <File Type="PA-TCL" Name="SAT_Solver_Top.tcl"/>
+  <File Type="ROUTE-PWR-SUM" Name="SAT_Solver_Top_power_summary_routed.pb"/>
+  <File Type="REPORTS-TCL" Name="SAT_Solver_Top_reports.tcl"/>
+  <File Type="OPT-RQA-PB" Name="SAT_Solver_Top_rqa_opted.pb"/>
+  <File Type="BITSTR-MMI" Name="SAT_Solver_Top.mmi"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="SAT_Solver_Top_methodology_drc_opted.rpt"/>
+  <File Type="INIT-TIMING" Name="SAT_Solver_Top_timing_summary_init.rpt"/>
+  <File Type="OPT-TIMING" Name="SAT_Solver_Top_timing_summary_opted.rpt"/>
+  <File Type="OPT-DCP" Name="SAT_Solver_Top_opt.dcp"/>
+  <File Type="OPT-DRC" Name="SAT_Solver_Top_drc_opted.rpt"/>
+  <File Type="OPT-HWDEF" Name="SAT_Solver_Top.hwdef"/>
+  <File Type="PWROPT-DCP" Name="SAT_Solver_Top_pwropt.dcp"/>
+  <File Type="PWROPT-DRC" Name="SAT_Solver_Top_drc_pwropted.rpt"/>
+  <File Type="PWROPT-TIMING" Name="SAT_Solver_Top_timing_summary_pwropted.rpt"/>
+  <File Type="PLACE-DCP" Name="SAT_Solver_Top_placed.dcp"/>
+  <File Type="PLACE-IO" Name="SAT_Solver_Top_io_placed.rpt"/>
+  <File Type="PLACE-CLK" Name="SAT_Solver_Top_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL" Name="SAT_Solver_Top_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="SAT_Solver_Top_utilization_placed.pb"/>
+  <File Type="PLACE-CTRL" Name="SAT_Solver_Top_control_sets_placed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="SAT_Solver_Top_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-PRE-SIMILARITY" Name="SAT_Solver_Top_incremental_reuse_pre_placed.rpt"/>
+  <File Type="BG-BIN" Name="SAT_Solver_Top.bin"/>
+  <File Type="PLACE-TIMING" Name="SAT_Solver_Top_timing_summary_placed.rpt"/>
+  <File Type="ROUTE-PWR-RPX" Name="SAT_Solver_Top_power_routed.rpx"/>
+  <File Type="PLACE-RQA-PB" Name="SAT_Solver_Top_rqa_placed.pb"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="SAT_Solver_Top_postplace_pwropt.dcp"/>
+  <File Type="BITSTR-MSK" Name="SAT_Solver_Top.msk"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="SAT_Solver_Top_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="SAT_Solver_Top_physopt.dcp"/>
+  <File Type="PHYSOPT-DRC" Name="SAT_Solver_Top_drc_physopted.rpt"/>
+  <File Type="BITSTR-RBT" Name="SAT_Solver_Top.rbt"/>
+  <File Type="PHYSOPT-TIMING" Name="SAT_Solver_Top_timing_summary_physopted.rpt"/>
+  <File Type="ROUTE-ERROR-DCP" Name="SAT_Solver_Top_routed_error.dcp"/>
+  <File Type="ROUTE-DCP" Name="SAT_Solver_Top_routed.dcp"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="SAT_Solver_Top_routed_bb.dcp"/>
+  <File Type="ROUTE-DRC" Name="SAT_Solver_Top_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-PB" Name="SAT_Solver_Top_drc_routed.pb"/>
+  <File Type="ROUTE-DRC-RPX" Name="SAT_Solver_Top_drc_routed.rpx"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="SAT_Solver_Top_methodology_drc_routed.rpt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="SAT_Solver_Top_methodology_drc_routed.rpx"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="SAT_Solver_Top_methodology_drc_routed.pb"/>
+  <File Type="ROUTE-RQS-PB" Name="SAT_Solver_Top_rqs_routed.pb"/>
+  <File Type="ROUTE-STATUS" Name="SAT_Solver_Top_route_status.rpt"/>
+  <File Type="ROUTE-STATUS-PB" Name="SAT_Solver_Top_route_status.pb"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="SAT_Solver_Top_timing_summary_routed.rpt"/>
+  <File Type="ROUTE-TIMING-PB" Name="SAT_Solver_Top_timing_summary_routed.pb"/>
+  <File Type="ROUTE-TIMING-RPX" Name="SAT_Solver_Top_timing_summary_routed.rpx"/>
+  <File Type="ROUTE-SIMILARITY" Name="SAT_Solver_Top_incremental_reuse_routed.rpt"/>
+  <File Type="ROUTE-CLK" Name="SAT_Solver_Top_clock_utilization_routed.rpt"/>
+  <File Type="ROUTE-BUS-SKEW" Name="SAT_Solver_Top_bus_skew_routed.rpt"/>
+  <File Type="ROUTE-BUS-SKEW-PB" Name="SAT_Solver_Top_bus_skew_routed.pb"/>
+  <File Type="ROUTE-BUS-SKEW-RPX" Name="SAT_Solver_Top_bus_skew_routed.rpx"/>
+  <File Type="POSTROUTE-PHYSOPT-DCP" Name="SAT_Solver_Top_postroute_physopt.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="SAT_Solver_Top_postroute_physopt_bb.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="SAT_Solver_Top_timing_summary_postroute_physopted.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="SAT_Solver_Top_timing_summary_postroute_physopted.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="SAT_Solver_Top_timing_summary_postroute_physopted.rpx"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW" Name="SAT_Solver_Top_bus_skew_postroute_physopted.rpt"/>
+  <File Type="BG-BIT" Name="SAT_Solver_Top.bit"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-PB" Name="SAT_Solver_Top_bus_skew_postroute_physopted.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-RPX" Name="SAT_Solver_Top_bus_skew_postroute_physopted.rpx"/>
+  <File Type="BITSTR-NKY" Name="SAT_Solver_Top.nky"/>
+  <File Type="BITSTR-BMM" Name="SAT_Solver_Top_bd.bmm"/>
+  <File Type="PDI-FILE" Name="SAT_Solver_Top.pdi"/>
+  <File Type="BOOT-PDI-FILE" Name="SAT_Solver_Top_boot.pdi"/>
+  <File Type="PL-PDI-FILE" Name="SAT_Solver_Top_pld.pdi"/>
+  <File Type="RCFI_FILE" Name="SAT_Solver_Top.rcfi"/>
+  <File Type="CFI_FILE" Name="SAT_Solver_Top.cfi"/>
+  <File Type="RNPI_FILE" Name="SAT_Solver_Top.rnpi"/>
+  <File Type="NPI_FILE" Name="SAT_Solver_Top.npi"/>
+  <File Type="RBD_FILE" Name="SAT_Solver_Top.rbd"/>
+  <File Type="BITSTR-LTX" Name="debug_nets.ltx"/>
+  <File Type="BITSTR-LTX" Name="SAT_Solver_Top.ltx"/>
+  <File Type="BITSTR-SYSDEF" Name="SAT_Solver_Top.sysdef"/>
+  <File Type="BG-BGN" Name="SAT_Solver_Top.bgn"/>
+  <File Type="BG-DRC" Name="SAT_Solver_Top.drc"/>
+  <File Type="RDI-RDI" Name="SAT_Solver_Top.vdi"/>
+  <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
+  <File Type="ROUTE-RQS" Name="SAT_Solver_Top_routed.rqs"/>
+  <File Type="POSTROUTE-PHYSOPT-RQS" Name="SAT_Solver_Top_postroute_physopted.rqs"/>
+  <File Type="ROUTE-RQS-RPT" Name="route_report_qor_suggestions_0.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-RQS-RPT" Name="postroute_physopt_report_qor_suggestions_0.rpt"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Address_Translation_Table.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Address_Translation_Table.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Break_Value_Counter.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Break_Value_Counter.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Evaluator.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Evaluator.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Evaluator_Cluster.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Evaluator_Cluster.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Register.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Register.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Table.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Table.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/FIFO_Buffer.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/FIFO_Buffer.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/FIFO_Tree.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/FIFO_Tree.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Heuristic_Selector.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Heuristic_Selector.v"/>
+        <Attr Name="ImportTime" Val="1723851832"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Parallel_to_Serial.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Parallel_to_Serial.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Temporal_Buffer.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Temporal_Buffer.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Temporal_Buffer_Wrapper.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Temporal_Buffer_Wrapper.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Unsat_Clause_Buffer.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Unsat_Clause_Buffer.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Variable_Table.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Variable_Table.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Variable_Table_Cluster.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Variable_Table_Cluster.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/XOR_PRNG.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/XOR_PRNG.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/SAT_Solver_Top.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/SAT_Solver_Top.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/Address_Translation_Table_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/Address_Translation_Table_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/Break_Value_Counter_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/Break_Value_Counter_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/Clause_Evaluator_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/Clause_Evaluator_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Processor.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Processor.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/FIFO_Buffer_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/FIFO_Buffer_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/FIFO_Tree_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/FIFO_Tree_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/Heuristic_Selector_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/Heuristic_Selector_tb.v"/>
+        <Attr Name="ImportTime" Val="1723851832"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/bd/MVP_example/hdl/MVP_example_wrapper.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/bd/MVP_example/hdl/MVP_example_wrapper.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/Temporal_Buffer_Wrapper_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/Temporal_Buffer_Wrapper_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/tb/XOR_PRNG_tb.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/tb/XOR_PRNG_tb.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/Clause_Selector.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../rtl/src/Clause_Selector.v"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="SAT_Solver_Top"/>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1" RelGenDir="$PGENDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/cons/base.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../cons/base.xdc"/>
+        <Attr Name="ImportTime" Val="1723505589"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="utils" Type="Utils" RelSrcDir="$PSRCDIR/utils_1" RelGenDir="$PGENDIR/utils_1">
+    <Filter Type="Utils"/>
+    <Config>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
+    <Step Id="init_design"/>
+    <Step Id="opt_design"/>
+    <Step Id="power_opt_design"/>
+    <Step Id="place_design"/>
+    <Step Id="post_place_power_opt_design"/>
+    <Step Id="phys_opt_design"/>
+    <Step Id="route_design"/>
+    <Step Id="post_route_phys_opt_design"/>
+    <Step Id="write_bitstream"/>
+  </Strategy>
+</GenRun>

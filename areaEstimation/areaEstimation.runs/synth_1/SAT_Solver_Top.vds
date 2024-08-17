@@ -1,0 +1,26 @@
+#-----------------------------------------------------------
+# Vivado v2023.2.2 (64-bit)
+# SW Build 4126759 on Thu Feb  8 23:53:51 MST 2024
+# IP Build 4126054 on Fri Feb  9 11:39:09 MST 2024
+# SharedData Build 4115275 on Tue Jan 30 00:40:57 MST 2024
+# Start of session at: Fri Aug 16 17:24:17 2024
+# Process ID: 3716
+# Current directory: C:/Users/dalbe/OneDrive/Documents/Papers Writing 2024/Solving-SAT-in-FPGA-UCSB/areaEstimation/areaEstimation.runs/synth_1
+# Command line: vivado.exe -log SAT_Solver_Top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source SAT_Solver_Top.tcl
+# Log file: C:/Users/dalbe/OneDrive/Documents/Papers Writing 2024/Solving-SAT-in-FPGA-UCSB/areaEstimation/areaEstimation.runs/synth_1/SAT_Solver_Top.vds
+# Journal file: C:/Users/dalbe/OneDrive/Documents/Papers Writing 2024/Solving-SAT-in-FPGA-UCSB/areaEstimation/areaEstimation.runs/synth_1\vivado.jou
+# Running On: DESKTOP-319BQJL, OS: Windows, CPU Frequency: 2895 MHz, CPU Physical cores: 16, Host memory: 16557 MB
+#-----------------------------------------------------------
+source SAT_Solver_Top.tcl -notrace
+create_project: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 571.688 ; gain = 184.047
+Command: synth_design -top SAT_Solver_Top -part xc7vx485tffg1157-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7vx485t'
+WARNING: [Common 17-348] Failed to get the license for feature 'Synthesis' and/or device 'xc7vx485t'. Explanation: A license feature for Synthesis was found but is expired.
+Resolution: Check the status of your licenses in the Vivado License Manager. For debug help search Xilinx Support for "Licensing FAQ". 
+0 Infos, 1 Warnings, 0 Critical Warnings and 1 Errors encountered.
+synth_design failed
+ERROR: [Common 17-345] A valid license was not found for feature 'Synthesis' and/or device 'xc7vx485t'. Please run the Vivado License Manager for assistance in determining
+which features and devices are licensed for your system.
+Resolution: Check the status of your licenses in the Vivado License Manager. For debug help search Xilinx Support for "Licensing FAQ". If you are using a license server, verify that the license server is up and running a version of the xilinx daemon that is compatible with the version of Xilinx software that you are using. Note: Vivado 2021.1 and later versions require upgrading your license server tools to the Flex 11.17.2.0 versions. Please confirm with your license admin that the correct version of the license server tools are installed.
+INFO: [Common 17-206] Exiting Vivado at Fri Aug 16 17:24:27 2024...

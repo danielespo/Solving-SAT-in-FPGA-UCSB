@@ -8,68 +8,68 @@ This does nothing.
 */
 
 module SAT_Solver_Top #(
-    parameter MAX_CLAUSES_PER_VARIABLE = 20,
-    parameter NSAT = 3,
-    parameter LITERAL_ADDRESS_WIDTH = 11,
-    parameter CLAUSE_TABLE_ADDRESS_WIDTH = 11,
-    parameter CLAUSE_COUNT = 20,
-    parameter CLUSTER_SIZE = 20 * 2,  // Adapted from Variable_Table_Cluster
-    parameter NUM_CLAUSES = 20,
-    parameter NUM_CLAUSES_BITS = 5,
-    parameter IMPLEMENTATION = "OUTPUT_GATED",
-    parameter REDUCE = 1,
-    parameter FIFO_DATA_WIDTH = 36,
-    parameter FIFO_BUFFER_ADDR_WIDTH = 5,
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
-    parameter NSAT_BITS = 2,
-    parameter P = 'h6E147AE0,
-    parameter DEPTH = 2048,
-    parameter NUM_PARALLEL = 5, // Number of parallel inputs for Parallel_to_Serial
-    parameter MCPV = MAX_CLAUSES_PER_VARIABLE, // Add parameter for MAX_CLAUSES_PER_VARIABLE
-    parameter CLAUSE_WIDTH = 36,  // FIFO Clause Width
-    parameter BUFFER_DEPTH = 32   // FIFO Buffer Depth
+    parameter MAX_CLAUSES_PER_VARIABLE = 20, // Maximum number of clauses associated with a variable
+    parameter NSAT = 3, // Number of variables in the SAT problem
+    parameter LITERAL_ADDRESS_WIDTH = 11, // Bit width for literal addresses
+    parameter CLAUSE_TABLE_ADDRESS_WIDTH = 11, // Bit width for clause table addresses
+    parameter CLAUSE_COUNT = 20, // Total number of clauses in the SAT problem
+    parameter CLUSTER_SIZE = 20 * 2,  // Size of the cluster for Variable_Table_Cluster
+    parameter NUM_CLAUSES = 20, // Number of clauses being processed
+    parameter NUM_CLAUSES_BITS = 5, // Bit width needed to represent the number of clauses
+    parameter IMPLEMENTATION = "OUTPUT_GATED", // Type of implementation used in the design
+    parameter REDUCE = 1, // Reduction factor for certain calculations
+    parameter FIFO_DATA_WIDTH = 36, // Data width for the FIFO buffers
+    parameter FIFO_BUFFER_ADDR_WIDTH = 5, // Address width for the FIFO buffer
+    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5, // Bit width to represent max clauses per variable
+    parameter NSAT_BITS = 2, // Bit width to represent the NSAT value
+    parameter P = 'h6E147AE0, // Parameter used for the PRNG (pseudo-random number generator)
+    parameter DEPTH = 2048, // Depth of the memory or buffers used in the design
+    parameter NUM_PARALLEL = 5, // Number of parallel inputs for the Parallel_to_Serial module
+    parameter MCPV = MAX_CLAUSES_PER_VARIABLE, // Alias for MAX_CLAUSES_PER_VARIABLE for consistency
+    parameter CLAUSE_WIDTH = 36,  // Width of each clause in the FIFO tree
+    parameter BUFFER_DEPTH = 32   // Depth of the FIFO buffer in the FIFO tree
 )(
-    input wire clk,                       // Clock signal
-    input wire reset,                     // Reset signal
+    input wire clk,                       // Global clock signal 
+    input wire reset,                     // Global reset
     input wire wren,                      // Write enable signal for Address_Translation_Table
-    input wire [LITERAL_ADDRESS_WIDTH:0] waddr, raddr,  // Write and read addresses for Address_Translation_Table
+    input wire [LITERAL_ADDRESS_WIDTH:0] waddr, raddr,  // Addresses for writing and reading the Address_Translation_Table
     input wire [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1:0] din,  // Data input for Address_Translation_Table
-    input wire [NUM_CLAUSES-1:0] clause,  // Clause bits indicating if the clause is broken
+    input wire [NUM_CLAUSES-1:0] clause,  // Clause bits indicating if a clause is broken
     input wire [(NSAT - REDUCE) * CLUSTER_SIZE - 1:0] var_val,  // Variable values input for Clause_Evaluator_Cluster
     input wire [(NSAT - REDUCE) * CLUSTER_SIZE - 1:0] var_neg,  // Variable negations input for Clause_Evaluator_Cluster
     input wire [FIFO_DATA_WIDTH-1:0] fifo_data_i,  // Data input for FIFO_Buffer
-    input wire fifo_rden_i,             // Read enable for FIFO_Buffer
-    input wire fifo_wren_i,             // Write enable for FIFO_Buffer
+    input wire fifo_rden_i,             // Read enable signal for FIFO_Buffer
+    input wire fifo_wren_i,             // Write enable signal for FIFO_Buffer
     input wire [(NSAT - 1) * MCPV * (LITERAL_ADDRESS_WIDTH + 1) - 1:0] literals_multi_i,  // Input literals for Temporal_Buffer_Wrapper
     input wire [NSAT_BITS-1:0] write_index_i,  // Write index for Temporal_Buffer_Wrapper
-    input wire write_en_i,  // Write enable for Temporal_Buffer_Wrapper
+    input wire write_en_i,  // Write enable signal for Temporal_Buffer_Wrapper
     input wire [NSAT_BITS-1:0] read_index_i,  // Read index for Temporal_Buffer_Wrapper
-    input wire [CLAUSE_WIDTH * CLAUSE_COUNT - 1 : 0] clauses_i,  // FIFO Tree inputs
-    input wire [CLAUSE_COUNT - 1 : 0] clause_valid_i,
-    input wire fifo_tree_wren,  // Write enable for FIFO tree
-    input wire fifo_tree_rden,  // Read enable for FIFO tree
-    input wire fifo_tree_cOF,   // Clear overflow flag for FIFO tree
-    output wire fifo_tree_empty,  // Empty flag from FIFO tree
-    output wire fifo_tree_OF,   // Overflow flag from FIFO tree
-    output wire [CLAUSE_WIDTH - 1 : 0] fifo_tree_clause_o,  // Output clause from FIFO tree
+    input wire [CLAUSE_WIDTH * CLAUSE_COUNT - 1 : 0] clauses_i,  // Input clauses for the FIFO tree
+    input wire [CLAUSE_COUNT - 1 : 0] clause_valid_i, // Validity flags for each clause in the FIFO tree
+    input wire fifo_tree_wren,  // Write enable signal for FIFO tree
+    input wire fifo_tree_rden,  // Read enable signal for FIFO tree
+    input wire fifo_tree_cOF,   // Clear overflow flag signal for FIFO tree
+    output wire fifo_tree_empty,  // Empty flag output from FIFO tree
+    output wire fifo_tree_OF,   // Overflow flag output from FIFO tree
+    output wire [CLAUSE_WIDTH - 1 : 0] fifo_tree_clause_o,  // Output clause from the FIFO tree
     input wire [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0] clause_reg_din, // Data input for Clause_Register
-    input wire clause_reg_we,            // Write enable for Clause_Register
-    input wire [LITERAL_ADDRESS_WIDTH-1:0] clause_table_waddr, clause_table_raddr, // Write and read addresses for Clause_Table
-    input wire clause_table_we,          // Write enable for Clause_Table
+    input wire clause_reg_we,            // Write enable signal for Clause_Register
+    input wire [LITERAL_ADDRESS_WIDTH-1:0] clause_table_waddr, clause_table_raddr, // Addresses for writing and reading the Clause_Table
+    input wire clause_table_we,          // Write enable signal for Clause_Table
     input wire [(LITERAL_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clause_table_clauses_i, // Input clauses for Clause_Table
     input wire [DATA_WIDTH-1:0] parallel_data_i [NUM_PARALLEL-1:0], // Parallel data input for Parallel_to_Serial
-    input wire data_valid_i [NUM_PARALLEL-1:0], // Data valid signals for Parallel_to_Serial
-    input wire write_en_parallel,        // Write enable for Parallel_to_Serial
+    input wire data_valid_i [NUM_PARALLEL-1:0], // Validity flags for parallel data inputs
+    input wire write_en_parallel,        // Write enable signal for Parallel_to_Serial
     output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1:0] ct_addr_field,  // Clause table address output
     output wire [CLAUSE_COUNT-1:0] mask_field,  // Mask field output
-    output wire [NUM_CLAUSES_BITS-1:0] break_value,  // Number of broken clauses
-    output wire [NSAT_BITS-1:0] select_o,  // Selected variable index from Heuristic_Selector
+    output wire [NUM_CLAUSES_BITS-1:0] break_value,  // Output indicating the number of broken clauses
+    output wire [NSAT_BITS-1:0] select_o,  // Selected variable index output from Heuristic_Selector
     output wire random_selection_o,      // Random selection indicator from Heuristic_Selector
-    output wire sat_result,               // Output SAT result
-    output wire done,                     // Indicates the SAT solver has completed
+    output wire sat_result,               // Output SAT result indicating if the problem is satisfiable
+    output wire done,                     // Output indicating completion of the SAT solving process
     output wire [FIFO_DATA_WIDTH-1:0] fifo_data_o,  // Data output from FIFO_Buffer
-    output wire fifo_empty_o,            // Empty flag from FIFO_Buffer
-    output wire fifo_full_o,              // Full flag from FIFO_Buffer
+    output wire fifo_empty_o,            // Empty flag output from FIFO_Buffer
+    output wire fifo_full_o,              // Full flag output from FIFO_Buffer
     output wire [(NSAT-1)*MAX_CLAUSES_PER_VARIABLE*(LITERAL_ADDRESS_WIDTH+1)-1:0] literals_multi_o, // Output literals from Temporal_Buffer_Wrapper
     output wire [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0] clause_reg_dout, // Data output from Clause_Register
     output wire [(LITERAL_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clause_table_clauses_o, // Output clauses from Clause_Table
@@ -78,11 +78,11 @@ module SAT_Solver_Top #(
 );
 
     // Internal wires and registers
-    wire [31:0] random_out; // Output from lfsr_prng
-    wire [CLUSTER_SIZE-1:0] en_a, en_b, we_a, we_b;
-    wire [(LITERAL_ADDRESS_WIDTH * CLUSTER_SIZE) - 1:0] addr_a, addr_b;
-    wire [CLUSTER_SIZE-1:0] din_a, din_b;
-    wire [CLUSTER_SIZE-1:0] dout_a, dout_b;
+    wire [31:0] random_out; // Output from the LFSR (Linear Feedback Shift Register) PRNG module
+    wire [CLUSTER_SIZE-1:0] en_a, en_b, we_a, we_b; // Enable and write enable signals for Variable_Table_Cluster
+    wire [(LITERAL_ADDRESS_WIDTH * CLUSTER_SIZE) - 1:0] addr_a, addr_b; // Addresses for Variable_Table_Cluster
+    wire [CLUSTER_SIZE-1:0] din_a, din_b; // Data input for Variable_Table_Cluster
+    wire [CLUSTER_SIZE-1:0] dout_a, dout_b; // Data output for Variable_Table_Cluster
     wire [CLUSTER_SIZE-1:0] break_o; // Output from Clause_Evaluator_Cluster to Break_Value_Counter
 
     // Instantiate Address_Translation_Table module
@@ -200,8 +200,8 @@ module SAT_Solver_Top #(
         .CLAUSE_COUNT(CLAUSE_COUNT)
     ) unsat_clause_buffer_inst (
         .clk(clk),
-        .reset(reset),
-        // Connect additional ports as required
+        .reset(reset)
+        // anything else here?
     );
 
     // Instantiate Variable_Table module
@@ -210,8 +210,8 @@ module SAT_Solver_Top #(
         .CLUSTER_SIZE(CLUSTER_SIZE)
     ) variable_table_inst (
         .clk(clk),
-        .reset(reset),
-        // Connect additional ports as required
+        .reset(reset)
+        // anything else here?
     );
 
     // Instantiate FIFO_Buffer module
@@ -277,8 +277,7 @@ module SAT_Solver_Top #(
         .out(random_out)  // Connect to the Heuristic_Selector
     );
 
-    // Instantiate the SAT result logic (to be implemented)
-    assign sat_result = /* Logic to determine SAT result */;
-    assign done = /* Logic to indicate completion of SAT solving */;
+    // Logic in SAT result solver determined to be negibigle compared to the memories
+    // Hence we give an estimate of the memories 
 
 endmodule
