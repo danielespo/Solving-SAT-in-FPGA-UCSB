@@ -13,6 +13,7 @@ Notes:
 
 Testing:
 - 8/16 : module in progress, no testing yet
+       : module draft complete, testbench in progress
 
 */
 
@@ -74,8 +75,6 @@ Break_Value_Counter #(
     .NUM_ROWS(NSAT),
     .NUM_CLAUSES_BITS(NSAT_BITS)
 ) break_value_counter (
-    .clk(clk),
-    .reset(reset),
     .clause_broken_i(clause_broken_i),
     .mask_bits_i(mask_bits_i),
     .break_value_o(break_value),
