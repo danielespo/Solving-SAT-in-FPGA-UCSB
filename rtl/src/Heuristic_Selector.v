@@ -34,7 +34,7 @@ module Heuristic_Selector #(
     input [NSAT-1:0] break_values_valid_i, // this is a vector of valid bits for each break value
     input [31:0] random_i, 
 
-    input enable_i;
+    input enable_i,
 
     output wire [NSAT_BITS-1:0] select_o,
     output wire random_selection_o
