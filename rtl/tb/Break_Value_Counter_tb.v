@@ -56,6 +56,16 @@ Break_Value_Counter #(
     .clause_broken_o(clause_broken_o)
 );
 
+genvar n;
+// uut monitoring signals
+wire [NUM_CLAUSES_BITS - 1 : 0] uut_break_sum_steps [NUM_CLAUSES - 2 : 0];
+generate
+    for(n = 0; n < NUM_CLAUSES - 1; n = n + 1) begin
+        assign uut_break_sum_steps[n] = uut.break_sum_steps[n];
+    end
+endgenerate
+
+// testing data
 reg [NUM_CLAUSES - 1 : 0]       clause_status   [NUM_TESTS - 1 : 0];
 reg [NUM_CLAUSES - 1 : 0]       mask_bits       [NUM_TESTS - 1 : 0];
 reg [NUM_CLAUSES_BITS - 1 : 0]  break_value     [NUM_TESTS - 1 : 0];
@@ -142,8 +152,8 @@ $display("Break Value Counter Testbench: Begin Simulation");
         @(negedge clk);
 
         // check if the output matches the expected value
-        if(break_value_o != break_value[i]) bv_pass = 0;
-        if(clause_broken_o != clause_broken[i]) cb_pass = 0;
+        if(break_value_o !== break_value[i]) bv_pass = 0;
+        if(clause_broken_o !== clause_broken[i]) cb_pass = 0;
         
         case({bv_pass, cb_pass})
             2'b00: $display("Test %d: FAIL: Break Value and Clause Broken do not match", i);
@@ -166,7 +176,7 @@ $display("Break Value Counter Testbench: Begin Simulation");
     end else begin
         $display("    All tests passed");
     end
-
+    $finish;
 end
 
 

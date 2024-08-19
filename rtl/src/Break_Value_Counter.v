@@ -57,6 +57,7 @@ generate
     end
 endgenerate
 
+assign break_value_o = break_sum_steps[NUM_CLAUSES - 2];
 assign clause_broken_o = clause_broken_i & mask_bits_i;
 
 endmodule

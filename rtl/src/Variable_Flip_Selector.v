@@ -1,6 +1,6 @@
 /*
-Version: 1.0
-Break_Counter_Selector.v
+Version: 1.1
+Variable_Flip_Selector.v
 
 Author V1.0: Zeiler Randall-Reed
 Author V1.1: Zeiler Randall-Reed
@@ -11,16 +11,18 @@ included register to hold the break values for the first two cycles. This helps 
 of the data that is needed for the heuristic selector is available.
 
 Notes:
+- this module encapsulates the Break_Value_Counter and Heuristic_Selector modules, along with some
+    additional logic and registers to handle control signals. 
 
 Testing:
 V1.0 : module in progress, no testing yet
     (8/16) : module draft complete, testbench in progress
-
 V1.0 : module draft complete, no testing yet (8/18)
+V1.1 : all tests passed (8/19)
 
 */
 
-module Break_Counter_Selector #(
+module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
     parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
@@ -50,7 +52,7 @@ integer i, j;
 
 // internal registers
 reg [MCB - 1 : 0] break_values_reg  [NSAT - 2 : 0];
-reg [MC  - 1 : 0] break_bits_reg    [NSAT - 1 : 0];
+reg [MC  - 1 : 0] break_bits_reg    [NSAT - 2 : 0];
 
 // internal wires
 wire [       MCB - 1 : 0] break_value;
@@ -77,7 +79,7 @@ Break_Value_Counter #(
     .NUM_CLAUSES(MC),
     .NUM_ROWS(NSAT),
     .NUM_CLAUSES_BITS(MCB)
-) break_value_counter (
+) bvc (
     .clause_broken_i(clause_broken_i),
     .mask_bits_i(mask_bits_i),
     .break_value_o(break_value),
@@ -90,7 +92,7 @@ Heuristic_Selector #(
     .MAX_CLAUSES_PER_VARIABLE_BITS(MCB),
     .NSAT_BITS(NSAT_BITS),
     .P(P)
-) heuristic_selector (
+) hs (
     .break_values_i(all_break_values),
     .break_values_valid_i(&wren_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
     .random_i(random_i),
@@ -103,8 +105,6 @@ always @(posedge clk) begin
     if(reset) begin
         for(i = 0; i < NSAT - 1; i = i + 1) begin
             break_values_reg[i] <= 0;
-        end
-        for(i = 0; i < NSAT; i = i + 1) begin
             break_bits_reg[i] <= 0;
         end
         selected_o <= 2'b11;
@@ -119,7 +119,7 @@ always @(posedge clk) begin
         if(&wren_i) begin // when we are using the data (all ones)
             break_bits_reg[NSAT - 1] <= break_bits;
             selected_o <= select_o;
-            clause_broken_bits_o <= select_o == 2'b11 ? break_bits : break_bits_reg[select_o];
+            clause_broken_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
         end
     end
 end

@@ -1,8 +1,10 @@
 /*
-Version: 1.0
-Break_Counter_Selector_tb.v
+Version: 1.1
+Variable_Flip_Selector_tb.v
+(previously: Break_Counter_Selector_tb.v)
 
 Author V1.0: Zeiler Randall-Reed
+Author V1.1: Zeiler Randall-Reed
 
 Description:
 This module is where the break value counter and heuristic selector are combined. There is also an
@@ -10,15 +12,16 @@ included register to hold the break values for the first two cycles. This helps 
 of the data that is needed for the heuristic selector is available.
 
 Status:
-- V1.0: testbench in progress.
+- V1.0: testbench in progress (8/18)
+- V1.1: all tests passed (8/19)
 */
 
 `timescale 1ns / 1ps
 `define SIM
 
-module Break_Counter_Selector_tb;
+module Variable_Flip_Selector_tb;
 
-// Break_Counter_Selector params
+// Variable_Flip_Selector params
 parameter MAX_CLAUSES_PER_VARIABLE = 20;
 parameter NSAT = 3;
 parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5;
@@ -55,7 +58,7 @@ wire [NSAT_BITS - 1 : 0] selected_o;
 wire [MC - 1 : 0] clause_broken_bits_o;
 
 // instantiate the unit under test (UUT)
-Break_Counter_Selector #(
+Variable_Flip_Selector #(
     .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
     .NSAT(NSAT),
     .MAX_CLAUSES_PER_VARIABLE_BITS(MAX_CLAUSES_PER_VARIABLE_BITS),
@@ -72,6 +75,21 @@ Break_Counter_Selector #(
     .selected_o(selected_o),
     .clause_broken_bits_o(clause_broken_bits_o)
 );
+
+genvar n;
+// uut monitor signals
+wire [MCB - 1 : 0] uut_break_values_reg [NSAT - 2 : 0];
+wire [MC  - 1 : 0] uut_break_bits_reg   [NSAT - 2 : 0];
+wire [NSAT * MCB - 1 : 0] uut_all_break_values_packed [NSAT - 1 : 0];
+generate
+    for(n = 0; n < NSAT - 1; n = n + 1) begin
+        assign uut_break_values_reg[n] = uut.break_values_reg[n];
+        assign uut_break_bits_reg[n] = uut.break_bits_reg[n];
+    end
+    for(n = 0; n < NSAT; n = n + 1) begin
+        assign uut_all_break_values_packed[n] = uut.all_break_values[MCB * n +: MCB];
+    end
+endgenerate
 
 /* Testing Plan:
 - basic cases
@@ -140,7 +158,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         break_valid[4 + j] = 3'b111;
         random_num[3][4 + j] = $random; // should be irrelevant because of zero
         random_num[4][4 + j] = $random;
-        select[4 + j] = (j == 3 ? 2'b10 : 2'b11); // zero override
+        select[4 + j] = (j == 2 ? 2'b01 : 2'b10); // zero override
         clause_broken_bits[4 + j] = break_bits[select[4 + j]][4 + j] & mask_bits[select[4 + j]][4 + j];
     end
     // case 3: deterministic selection no duplicates (3 tests)
@@ -189,7 +207,7 @@ mask_bits_i = 20'b0;
 break_values_valid_i = 3'b0;
 random_i = 32'b0;
 wren_i = 2'b00;
-test_pass = {20{1'b1}};
+test_pass = {NUM_TESTS{1'b1}};
 num_passed = 0;
 
 // reset the system
@@ -198,6 +216,7 @@ reset = 1;
 @(negedge clk);
 reset = 0;
 
+$display("Running tests...");
 // case tests
 for(i = 0; i < NUM_TESTS; i = i + 1) begin
     // D
@@ -234,11 +253,11 @@ for(i = 0; i < NUM_TESTS; i = i + 1) begin
 
     // check the results
     if(selected_o !== select[i]) begin
-        $display("Test %0d: selected_o failed. Expected %0d, got %0d", i, select[i], selected_o);
+        $display("    Test %0d: selected_o failed. Expected %0d, got %0d", i, select[i], selected_o);
         test_pass[i] = 1'b0;
     end
     if(clause_broken_bits_o !== clause_broken_bits[i]) begin
-        $display("Test %0d: clause_broken_bits_o failed. Expected %b, got %b", i, clause_broken_bits[i], clause_broken_bits_o);
+        $display("    Test %0d: clause_broken_bits_o failed. Expected %b, got %b", i, clause_broken_bits[i], clause_broken_bits_o);
         test_pass[i] = 1'b0;
     end
 
@@ -252,7 +271,7 @@ for(i = 0; i < NUM_TESTS; i = i + 1) if(test_pass[i]) num_passed = num_passed + 
 
 
 $display("Break Counter Selector Testbench: End Simulation");
-$display("Test Results: %0d/%0d tests passed", num_passed, NUM_TESTS);
+$display("    Test Results: %0d/%0d tests passed", num_passed, NUM_TESTS);
 $finish;
 
 
