@@ -110,8 +110,9 @@ wire random_sel;
 assign sel_1 = det_sel_1;
 assign sel_2 = has_zero ? zero_sel_2 : (random_walk ? rand_sel_2 : det_sel_2);
 assign sel_3 = has_zero ? zero_sel_3 : (random_walk ? rand_sel_3 : det_sel_3);
+assign sel = num_valid[1] ? (num_valid[0] ? sel_3 : sel_2) : (num_valid[0] ? sel_1 : 2'b11);
 
-assign select_o = num_valid[1] ? (num_valid[0] ? sel_3 : sel_2) : (num_valid[0] ? sel_1 : 2'b11);
-assign random_selection_o = (num_valid[1] && ~has_zero) ? random_walk : 0;
+assign select_o = enable_i ? sel : 2'bxx;
+assign random_selection_o = enable_i ? ((num_valid[1] && ~has_zero) ? random_walk : 0) : 1'bx;
 
 endmodule

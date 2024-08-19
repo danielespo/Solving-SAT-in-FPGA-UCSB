@@ -3,6 +3,7 @@ Version: 1.0
 Break_Counter_Selector.v
 
 Author V1.0: Zeiler Randall-Reed
+Author V1.1: Zeiler Randall-Reed
 
 Description:
 This module is where the break value counter and heuristic selector are combined. There is also an
@@ -12,8 +13,10 @@ of the data that is needed for the heuristic selector is available.
 Notes:
 
 Testing:
-- 8/16 : module in progress, no testing yet
-       : module draft complete, testbench in progress
+V1.0 : module in progress, no testing yet
+    (8/16) : module draft complete, testbench in progress
+
+V1.0 : module draft complete, no testing yet (8/18)
 
 */
 
@@ -26,16 +29,16 @@ module Break_Counter_Selector #(
 )(
     input clk,
     input reset,
-    input [NUM_CLAUSES - 1 : 0] clause_broken_i,
-    input [NUM_CLAUSES - 1 : 0] mask_bits_i,
+    input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_i,
+    input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] mask_bits_i,
     input [NSAT - 1 : 0] break_values_valid_i,
     input [31:0] random_i,
 
     input [NSAT_BITS - 1 : 0] wren_i,   // controller signal 
                                         // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
 
-    output     [NSAT_BITS - 1 : 0] select_o,
-    output reg [MC - 1 : 0] clause_broken_bits_o
+    output reg [NSAT_BITS - 1 : 0] selected_o,
+    output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_bits_o
 );
 
 // localparams
@@ -49,13 +52,13 @@ integer i, j;
 reg [MCB - 1 : 0] break_values_reg  [NSAT - 2 : 0];
 reg [MC  - 1 : 0] break_bits_reg    [NSAT - 1 : 0];
 
-reg [NSAT_BITS - 1 : 0] wren_last;
-
 // internal wires
 wire [       MCB - 1 : 0] break_value;
 wire [       MC  - 1 : 0] break_bits;
 
 wire [NSAT * MCB - 1 : 0] all_break_values;
+
+wire [NSAT_BITS - 1 : 0] select_o;
 
 genvar n;
 generate
@@ -66,14 +69,14 @@ generate
 endgenerate
 
 // nice simple logic to check onehot
-wire one_hot = ~|(wren_i & (wren_i - 1)) & |wren_i;
+wire control_one_hot = ~|(wren_i & (wren_i - 1)) & |wren_i;
 
 
 // initialize break_value_counter and heuristic_selector
 Break_Value_Counter #(
-    .NUM_CLAUSES(NUM_CLAUSES),
+    .NUM_CLAUSES(MC),
     .NUM_ROWS(NSAT),
-    .NUM_CLAUSES_BITS(NSAT_BITS)
+    .NUM_CLAUSES_BITS(MCB)
 ) break_value_counter (
     .clause_broken_i(clause_broken_i),
     .mask_bits_i(mask_bits_i),
@@ -82,14 +85,12 @@ Break_Value_Counter #(
 );
 
 Heuristic_Selector #(
-    .MAX_CLAUSES_PER_VARIABLE(MAX_CLAUSES_PER_VARIABLE),
+    .MAX_CLAUSES_PER_VARIABLE(MC),
     .NSAT(NSAT),
-    .MAX_CLAUSES_PER_VARIABLE_BITS(MAX_CLAUSES_PER_VARIABLE_BITS),
+    .MAX_CLAUSES_PER_VARIABLE_BITS(MCB),
     .NSAT_BITS(NSAT_BITS),
     .P(P)
 ) heuristic_selector (
-    .clk(clk),
-    .reset(reset),
     .break_values_i(all_break_values),
     .break_values_valid_i(&wren_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
     .random_i(random_i),
@@ -106,29 +107,20 @@ always @(posedge clk) begin
         for(i = 0; i < NSAT; i = i + 1) begin
             break_bits_reg[i] <= 0;
         end
+        selected_o <= 2'b11;
         clause_broken_bits_o <= 0;
     end else begin
         for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wren_i is one hot
-            if(wren_i[i] == 1 && one_hot) begin
+            if(wren_i[i] == 1 && control_one_hot) begin
                 break_values_reg[i] <= break_value;
                 break_bits_reg[i] <= break_bits;
             end
         end
         if(&wren_i) begin // when we are using the data (all ones)
             break_bits_reg[NSAT - 1] <= break_bits;
+            selected_o <= select_o;
+            clause_broken_bits_o <= select_o == 2'b11 ? break_bits : break_bits_reg[select_o];
         end
-        if(&wren_last && ~|wren_i) begin // cycle after we use the data (all ones to all zeros)
-            clause_broken_bits_o <= break_bits_reg[select_o];
-        end
-    end
-end
-
-// wren_last
-always @(posedge clk) begin
-    if(reset) begin
-        wren_last <= 0;
-    end else begin
-        wren_last <= wren_i;
     end
 end
 
