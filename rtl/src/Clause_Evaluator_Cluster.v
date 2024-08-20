@@ -48,23 +48,23 @@ module Clause_Evaluator_Cluster #(
     input   wire    [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_neg_i,
     output  wire    [CLUSTER_SIZE - 1 : 0] break_o
 );
-
-genvar i;
-generate
-    for (i = 0; i < CLUSTER_SIZE; i = i + 1)
-      begin
-        Clause_Evaluator # (
-            .NSAT(NSAT),
-            .IMPLEMENTATION(IMPLEMENTATION),
-            .REDUCE(REDUCE)
-        ) ce (
-            .clk_i(clk_i),
-            .reset_i(reset_i),
-            .var_val_i(var_val_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
-            .var_neg_i(var_neg_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
-            .break_o(break_o[i])
-        );
-      end
-endgenerate
-
+    
+    genvar i;
+    generate
+        for (i = 0; i < CLUSTER_SIZE; i = i + 1)
+          begin
+            Clause_Evaluator # (
+                .NSAT(NSAT),
+                .IMPLEMENTATION(IMPLEMENTATION),
+                .REDUCE(REDUCE)
+            ) ce (
+                .clk_i(clk_i),
+                .reset_i(reset_i),
+                .var_val_i(var_val_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
+                .var_neg_i(var_neg_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
+                .break_o(break_o[i])
+            );
+          end
+    endgenerate
+    
 endmodule
