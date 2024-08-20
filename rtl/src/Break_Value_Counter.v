@@ -44,27 +44,18 @@ Change Log:
 */
 module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
-    parameter NUM_ROWS = 3
-    `ifdef SIM
-    , parameter NUM_CLAUSES_BITS = 5
-    `endif
+    parameter NUM_ROWS = 3 
 )
 (
     // input                                   clk,                // Clock signal
     // input                                   reset,              // Reset signal
     input       [NUM_CLAUSES - 1 : 0]           clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
     input       [NUM_CLAUSES - 1 : 0]           mask_bits_i,        // valid mask from the clause table
-    `ifdef SIM
-    input       [NUM_CLAUSES_BITS - 1 : 0]      break_value_o,      // number of clauses that are broken
-    `else
     output reg  [$clog2(NUM_CLAUSES) - 1 : 0]   break_value_o,      // number of clauses that are broken
-    `endif
     output wire [NUM_CLAUSES - 1 : 0]           clause_broken_o     // forwarding of bits indicating if the clauseis broken / unsatisfied
 );
 
-`ifndef SIM
 localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
-`endif
     
 integer i;
 

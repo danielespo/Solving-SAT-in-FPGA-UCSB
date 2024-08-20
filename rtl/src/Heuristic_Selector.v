@@ -19,47 +19,28 @@ Testing:
 - V2.0 testbench not yet created
 */
 
-// comment out the following line to remove the simulation-specific code
-// `define SIM
-
 module Heuristic_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
     parameter P = 'h6E147AE0 // can be assigned any value 0 to 4294967295 
                             // - if the LSFR input is above this number, the selector will random walk
                             // - if we want greedy move probability around 4.3, we can use 1846835936
-    `ifdef SIM, 
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5, 
-    parameter NSAT_BITS = 2
-    `endif
 )(
     // input clk,
     // input reset,
-    `ifdef SIM
-    input [NSAT * MAX_CLAUSES_PER_VARIABLE_BITS - 1 : 0] break_values_i,
-    `else
-    input [(NSAT * $clog(MAX_CLAUSES_PER_VARIABLE)) - 1 : 0] break_values_i,
-    `endif
+    input [NSAT * $clog2(MAX_CLAUSES_PER_VARIABLE) - 1 : 0] break_values_i,
     input [NSAT - 1 : 0] break_values_valid_i, // this is a vector of valid bits for each break value
     input [31 : 0] random_i, 
 
     input enable_i,
 
-    `ifdef SIM
-    output wire [NSAT_BITS - 1:0] select_o,
-    `else
     output wire [$clog2(NSAT)-1:0] select_o,
-    `endif
     output wire random_selection_o
 );
 
 localparam MC = MAX_CLAUSES_PER_VARIABLE;
-`ifdef SIM
-localparam MCB = MAX_CLAUSES_PER_VARIABLE_BITS;
-`else
 localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
 localparam NSAT_BITS = $clog2(NSAT);
-`endif
 
 wire [MCB - 1 : 0] break_values [NSAT - 1 : 0];
 wire [NSAT - 1 : 0] is_zero;

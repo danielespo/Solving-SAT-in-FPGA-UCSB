@@ -38,25 +38,17 @@ module Variable_Flip_Selector #(
     input [NSAT - 1 : 0] break_values_valid_i,
     input [31:0] random_i,
 
-    `ifdef SIM
-    input [NSAT_BITS - 1 : 0] wren_i,
-    output reg [NSAT_BITS - 1 : 0] selected_o,
-    `else
     input [$clog2(NSAT) - 1 : 0] wren_i,    // controller signal 
-                                            // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
+    // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
+    
     output reg [$clog2(NSAT) - 1 : 0] selected_o,
-    `endif
     output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_bits_o
 );
 
 // localparams
 localparam MC = MAX_CLAUSES_PER_VARIABLE;
-`ifdef SIM
-localparam MCB = MAX_CLAUSES_PER_VARIABLE_BITS;
-`else
 localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
 localparam NSAT_BITS = $clog2(NSAT);
-`endif
 
 // integer vars
 integer i, j;
