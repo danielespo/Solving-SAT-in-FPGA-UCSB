@@ -3,14 +3,15 @@ Version: 2.0
 Heuristic_Selector_tb.v
 
 V1.0 Author: Zeiler Randall-Reed
-V2.0 Author: Zeiler Randall-Reed
+V1.1 Author: Zeiler Randall-Reed
 
 Description: 
 Testbench file for Heuristic_Selector.v
 
 Status: 
 - V1.0 tests passed
-- V2.0 tests passed
+- V1.1 tests passed
+- V2.0 testbench in progress
 */
 
 `timescale 1ns / 1ps
@@ -50,6 +51,8 @@ integer random_count;
 // testing integers
 integer i, j, k, f;
 
+genvar n;
+
 // Inputs
 reg clk = 1;
 always #5 clk <= ~clk;
@@ -58,6 +61,8 @@ reg reset;
 reg [(NSAT*MCPVB) - 1 : 0] break_values;
 reg [NSAT - 1 : 0] break_values_valid;
 reg [31:0] random_lsfr; // comes from lfsr_prng
+
+//reg enable;
 
 // Output
 wire [NSAT_BITS-1:0] select;
@@ -71,11 +76,10 @@ Heuristic_Selector #(
     .NSAT_BITS(NSAT_BITS),
     .P(P)
 ) HS (
-    .clk(clk),
-    .reset(reset),
     .break_values_i(break_values),
     .break_values_valid_i(break_values_valid),
     .random_i(random_lsfr),
+    .enable_i(1),
     .select_o(select),
     .random_selection_o(random_selection)
 );
@@ -122,6 +126,50 @@ reg[TEST_SECTIONS - 1 : 0] test_pass;
 
 reg[MCPVB - 1 : 0] bv_packed [NSAT - 1 : 0];
 reg[NSAT_BITS - 1 : 0] index_packed [NSAT - 1 : 0];
+
+// monitor signals
+wire [MCPVB - 1 : 0] uut_break_values [NSAT - 1 : 0];
+wire [NSAT - 1 : 0] uut_is_zero;
+wire uut_has_zero;
+wire uut_bvv_000, uut_bvv_001, uut_bvv_010, uut_bvv_100, uut_bvv_011, uut_bvv_101, uut_bvv_110, uut_bvv_111;
+wire uut_random_walk;
+wire [NSAT_BITS - 1 : 0] uut_rand_sel_2, uut_rand_sel_3;
+wire [NSAT_BITS - 1 : 0] uut_num_valid, uut_det_sel_1, uut_det_sel_2, uut_det_sel_3;
+wire [NSAT_BITS - 1 : 0] uut_zero_sel_2, uut_zero_sel_3;
+wire [NSAT_BITS - 1 : 0] uut_sel_1, uut_sel_2, uut_sel_3;
+
+wire [NSAT_BITS - 1 : 0] uut_select_o;
+wire uut_random_selection_o;
+
+generate
+    for(n = 0; n < NSAT; n = n + 1) begin
+        assign uut_break_values[n] = HS.break_values[n];
+    end
+endgenerate
+assign uut_is_zero = HS.is_zero;
+assign uut_has_zero = HS.has_zero;
+assign uut_bvv_000 = HS.bvv_000;
+assign uut_bvv_001 = HS.bvv_001;
+assign uut_bvv_010 = HS.bvv_010;
+assign uut_bvv_100 = HS.bvv_100;
+assign uut_bvv_011 = HS.bvv_011;
+assign uut_bvv_101 = HS.bvv_101;
+assign uut_bvv_110 = HS.bvv_110;
+assign uut_bvv_111 = HS.bvv_111;
+assign uut_random_walk = HS.random_walk;
+assign uut_rand_sel_2 = HS.rand_sel_2;
+assign uut_rand_sel_3 = HS.rand_sel_3;
+assign uut_num_valid = HS.num_valid;
+assign uut_det_sel_1 = HS.det_sel_1;
+assign uut_det_sel_2 = HS.det_sel_2;
+assign uut_det_sel_3 = HS.det_sel_3;
+assign uut_zero_sel_2 = HS.zero_sel_2;
+assign uut_zero_sel_3 = HS.zero_sel_3;
+assign uut_sel_1 = HS.sel_1;
+assign uut_sel_2 = HS.sel_2;
+assign uut_sel_3 = HS.sel_3;
+assign uut_select_o = HS.select_o;
+assign uut_random_selection_o = HS.random_selection_o;
 
 
 initial begin
