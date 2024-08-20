@@ -26,10 +26,6 @@ module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
     parameter P = 'h6E147AE0
-    `ifdef SIM ,
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
-    parameter NSAT_BITS = 2
-    `endif
 )(
     input clk,
     input reset,
