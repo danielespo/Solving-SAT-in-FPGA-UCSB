@@ -4,8 +4,8 @@ Break_Value_Counter.v
 
 V1.0 Author: Zeiler Randall-Reed
 V2.0 Author: Zeiler Randall-Reed
-V2.1 Author: Zeiler Randall-Reed
-V2.2 Author: Barry Wang
+V2.1 Author: Barry Wang
+V2.2 Author: Zeiler Randall-Reed
 
 Description:
 This module takes the output of the clause evaluators, and clause table mask as an input. It 
@@ -19,7 +19,11 @@ Notes:
 - 8/18 : changed the summation method to one that is inefficient but works. 
 V2.1
 - 8/19 : changed to an always(*) block to allow for more optimizations
+V2.2
+- 8/19 : added `SIM` macro to bypass Vivado's restriction of the use of $clog2 in simulation
 
+
+    
 Testing:
 V1.0
 - testbench file created 5/23/24
@@ -30,8 +34,13 @@ V2.1
 - 8/18: tb not yet created - will test standalone and as a part of Break_Counter_Selector.v
 - 8/18: all tests passed
 V2.2
-- 8/19 : 
+- 8/19 : checked with digitaljs
+- 8/19 : all tests passed
 
+Change Log:
+2024/08/15 - Barry Wang
+    Added mask support
+    
 */
 module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
@@ -56,17 +65,16 @@ module Break_Value_Counter #(
 `ifndef SIM
 localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
 `endif
-
-wire [NUM_CLAUSES_BITS - 1 : 0] break_sum_steps [NUM_CLAUSES - 2 : 0];
     
-assign clause_broken_o = clause_broken_i & mask_bits_i;
-
 integer i;
 
+assign clause_broken_o = clause_broken_i & mask_bits_i;
+  
 always @ (*) begin
     break_value_o = 0;
     for (i = 0; i < NUM_CLAUSES; i = i+1) begin
         break_value_o = break_value_o + clause_broken_o[i];
     end 
 end
+  
 endmodule

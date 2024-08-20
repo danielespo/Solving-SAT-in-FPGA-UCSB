@@ -14,18 +14,18 @@ cd <parent>
 > If the repository already exists, pull from main to get the latest updates
 ```sh
 git clone https://github.com/danielespo/Solving-SAT-in-FPGA-UCSB.git
-git checkout directory_restructuring
+git checkout main
 ```
 
 ### `cd` into the repository and rebuild the project
-Make sure there is not a generated project already. If so, remove the directory or save it somewhere else if you wish to keep the changes.
-```sh
-rm -r KMSAT-10-Z
-```
 Rebuild the project using `vivado -source`.
 ```sh
 cd Solving-SAT-in-FPGA-UCSB
 vivado -source rebuild_KMSAT.tcl 
+```
+Make sure there is not a generated project already. If so, remove the directory or save it somewhere else if you wish to keep the changes.
+```sh
+rm -r ./KMSAT
 ```
 > If `vivado` is not recognized by your shell, please add it to your `PATH` environment variable.
 > Use the following link to a tutorial if you experience troubles. 
@@ -34,13 +34,13 @@ vivado -source rebuild_KMSAT.tcl
 ## Making Changes and Saving Source Controlled Files
 The `rebuild_KMSAT.tcl` script **does not** automatically update when changes to the project organization are made. To update the `rebuild.tcl` script, you must run the following command in the Vivado tcl terminal:
 ```sh
-write_project_tcl rebuild_KMSAT
+write_project_tcl -force rebuild_KMSAT
 ```
 > If the tcl terminal complains about a tcl script already existing, delete the script or override with the `-force` option for the `write_project_tcl` command.
 
 Within the generated `rebuild_KMSAT.tcl` file, there is a header that specifies the files that need to be included in source control. Check (add / rm) only these files into git and do not include any generated files.
 
-This command creates a new `rebuild.tcl` file and must be run after changes are made to the project, if you wish to have them saved:
+This command creates a new `rebuild_KMSAT.tcl` file and must be run after changes are made to the project, if you wish to have them saved:
 - adding or removing sources from the project
 - creating new block diagrams
 
