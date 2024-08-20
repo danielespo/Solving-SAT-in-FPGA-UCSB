@@ -5,6 +5,7 @@ Break_Value_Counter.v
 V1.0 Author: Zeiler Randall-Reed
 V2.0 Author: Zeiler Randall-Reed
 V2.1 Author: Zeiler Randall-Reed
+V2.2 Author: Barry Wang
 
 Description:
 This module takes the output of the clause evaluators, and clause table mask as an input. It 
@@ -15,8 +16,9 @@ clauses and outputs the break value.
 Notes:
 - 8/16 : according to the diagram, this module is not clocked. It is a combinatorial module that 
     works in conjunction with the Heuristic_Selector and some regs in the Break_Counter_Selector
-- 8/18 : changed the summation method to one that is inefficient but works. see related comment 
-    in the code below. (line 45-47)
+- 8/18 : changed the summation method to one that is inefficient but works. 
+V2.1
+- 8/19 : changed to an always(*) block to allow for more optimizations
 
 Testing:
 V1.0
@@ -27,37 +29,44 @@ V2.0
 V2.1
 - 8/18: tb not yet created - will test standalone and as a part of Break_Counter_Selector.v
 - 8/18: all tests passed
+V2.2
+- 8/19 : 
 
 */
 module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
-    parameter NUM_ROWS = 3,
-    parameter NUM_CLAUSES_BITS = 5
+    parameter NUM_ROWS = 3
+    `ifdef SIM
+    , parameter NUM_CLAUSES_BITS = 5
+    `endif
 )
 (
     // input                                   clk,                // Clock signal
     // input                                   reset,              // Reset signal
-    input       [NUM_CLAUSES - 1 : 0]       clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
-    input       [NUM_CLAUSES - 1 : 0]       mask_bits_i,        // valid mask from the clause table
-    output wire [NUM_CLAUSES_BITS - 1 : 0]  break_value_o,      // number of clauses that are broken
-    output wire [NUM_CLAUSES - 1 : 0]       clause_broken_o     // forwarding of bits indicating if the clause is broken / unsatisfied
+    input       [NUM_CLAUSES - 1 : 0]           clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
+    input       [NUM_CLAUSES - 1 : 0]           mask_bits_i,        // valid mask from the clause table
+    `ifdef SIM
+    input       [NUM_CLAUSES_BITS - 1 : 0]      break_value_o,      // number of clauses that are broken
+    `else
+    output reg  [$clog2(NUM_CLAUSES) - 1 : 0]   break_value_o,      // number of clauses that are broken
+    `endif
+    output wire [NUM_CLAUSES - 1 : 0]           clause_broken_o     // forwarding of bits indicating if the clauseis broken / unsatisfied
 );
 
+`ifndef SIM
+localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
+`endif
+
 wire [NUM_CLAUSES_BITS - 1 : 0] break_sum_steps [NUM_CLAUSES - 2 : 0];
-
-
-// this has the potential to be slow. if timing issues arise, consider a more efficient summation method
-// - maybe try a tree of some sort. I was having a hard time finding a way to make one that is 
-//   parameterizable, so I chose this simpler (and potentially slower) option.
-genvar i;
-generate
-    assign break_sum_steps[0] = (clause_broken_i[0] & mask_bits_i[0]) + (clause_broken_i[1] & mask_bits_i[1]);
-    for(i = 0; i < NUM_CLAUSES - 2; i = i + 1) begin
-        assign break_sum_steps[i + 1] = break_sum_steps[i] + (clause_broken_i[i + 2] & mask_bits_i[i + 2]);
-    end
-endgenerate
-
-assign break_value_o = break_sum_steps[NUM_CLAUSES - 2];
+    
 assign clause_broken_o = clause_broken_i & mask_bits_i;
 
+integer i;
+
+always @ (*) begin
+    break_value_o = 0;
+    for (i = 0; i < NUM_CLAUSES; i = i+1) begin
+        break_value_o = break_value_o + clause_broken_o[i];
+    end 
+end
 endmodule

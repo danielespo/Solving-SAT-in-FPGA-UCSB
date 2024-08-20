@@ -25,9 +25,11 @@ V1.1 : all tests passed (8/19)
 module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
-    parameter NSAT_BITS = 2,
     parameter P = 'h6E147AE0
+    `ifdef SIM ,
+    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5,
+    parameter NSAT_BITS = 2
+    `endif
 )(
     input clk,
     input reset,
@@ -36,16 +38,25 @@ module Variable_Flip_Selector #(
     input [NSAT - 1 : 0] break_values_valid_i,
     input [31:0] random_i,
 
-    input [NSAT_BITS - 1 : 0] wren_i,   // controller signal 
-                                        // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
-
+    `ifdef SIM
+    input [NSAT_BITS - 1 : 0] wren_i,
     output reg [NSAT_BITS - 1 : 0] selected_o,
+    `else
+    input [$clog2(NSAT) - 1 : 0] wren_i,    // controller signal 
+                                            // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
+    output reg [$clog2(NSAT) - 1 : 0] selected_o,
+    `endif
     output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_bits_o
 );
 
 // localparams
 localparam MC = MAX_CLAUSES_PER_VARIABLE;
+`ifdef SIM
 localparam MCB = MAX_CLAUSES_PER_VARIABLE_BITS;
+`else
+localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
+localparam NSAT_BITS = $clog2(NSAT);
+`endif
 
 // integer vars
 integer i, j;
@@ -77,8 +88,7 @@ wire control_one_hot = ~|(wren_i & (wren_i - 1)) & |wren_i;
 // initialize break_value_counter and heuristic_selector
 Break_Value_Counter #(
     .NUM_CLAUSES(MC),
-    .NUM_ROWS(NSAT),
-    .NUM_CLAUSES_BITS(MCB)
+    .NUM_ROWS(NSAT)
 ) bvc (
     .clause_broken_i(clause_broken_i),
     .mask_bits_i(mask_bits_i),
@@ -89,8 +99,6 @@ Break_Value_Counter #(
 Heuristic_Selector #(
     .MAX_CLAUSES_PER_VARIABLE(MC),
     .NSAT(NSAT),
-    .MAX_CLAUSES_PER_VARIABLE_BITS(MCB),
-    .NSAT_BITS(NSAT_BITS),
     .P(P)
 ) hs (
     .break_values_i(all_break_values),
