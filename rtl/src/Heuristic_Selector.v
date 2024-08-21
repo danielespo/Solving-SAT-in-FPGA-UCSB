@@ -22,7 +22,7 @@ Testing:
 module Heuristic_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter P = 'h6E147AE0 // can be assigned any value 0 to 4294967295 
+    parameter P = 'h6E147AE0, // can be assigned any value 0 to 4294967295 
                             // - if the LSFR input is above this number, the selector will random walk
                             // - if we want greedy move probability around 4.3, we can use 1846835936
 )(
@@ -34,7 +34,7 @@ module Heuristic_Selector #(
 
     input enable_i,
 
-    output wire [$clog2(NSAT)-1:0] select_o,
+    output wire [$clog2(NSAT) - 1:0] select_o,
     output wire random_selection_o
 );
 
@@ -59,15 +59,15 @@ endgenerate
 
 assign has_zero = |(is_zero & break_values_valid_i);
 
-wire bvv_000, bvv_001, bvv_010, bvv_100, bvv_011, bvv_101, bvv_110, bvv_111;
-assign bvv_000 = (break_values_valid_i[2] == 0 && break_values_valid_i[1] == 0 && break_values_valid_i[0] == 0);
+wire /*bvv_000,*/ bvv_001, bvv_010, bvv_100, bvv_011, bvv_101, bvv_110/*, bvv_111*/;
+//assign bvv_000 = (break_values_valid_i[2] == 0 && break_values_valid_i[1] == 0 && break_values_valid_i[0] == 0);
 assign bvv_001 = (break_values_valid_i[2] == 0 && break_values_valid_i[1] == 0 && break_values_valid_i[0] == 1);
 assign bvv_010 = (break_values_valid_i[2] == 0 && break_values_valid_i[1] == 1 && break_values_valid_i[0] == 0);
 assign bvv_011 = (break_values_valid_i[2] == 0 && break_values_valid_i[1] == 1 && break_values_valid_i[0] == 1);
 assign bvv_100 = (break_values_valid_i[2] == 1 && break_values_valid_i[1] == 0 && break_values_valid_i[0] == 0);
 assign bvv_101 = (break_values_valid_i[2] == 1 && break_values_valid_i[1] == 0 && break_values_valid_i[0] == 1);
 assign bvv_110 = (break_values_valid_i[2] == 1 && break_values_valid_i[1] == 1 && break_values_valid_i[0] == 0);
-assign bvv_111 = (break_values_valid_i[2] == 1 && break_values_valid_i[1] == 1 && break_values_valid_i[0] == 1);
+//assign bvv_111 = (break_values_valid_i[2] == 1 && break_values_valid_i[1] == 1 && break_values_valid_i[0] == 1);
 
 // combinational logic for random walk and random selection determination
 wire random_walk;
@@ -108,7 +108,6 @@ assign zero_sel_3 = is_zero[2] ? 2'b10 :
 
 // combinatorial logic for output selection
 wire [NSAT_BITS-1:0] sel_1, sel_2, sel_3, sel;
-wire random_sel;
 assign sel_1 = det_sel_1;
 assign sel_2 = has_zero ? zero_sel_2 : (random_walk ? rand_sel_2 : det_sel_2);
 assign sel_3 = has_zero ? zero_sel_3 : (random_walk ? rand_sel_3 : det_sel_3);

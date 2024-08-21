@@ -44,9 +44,8 @@ Change Log:
 */
 module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
-    parameter NUM_ROWS = 3 
-)
-(
+    parameter NUM_ROWS = 3
+)(
     // input                                   clk,                // Clock signal
     // input                                   reset,              // Reset signal
     input       [NUM_CLAUSES - 1 : 0]           clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
@@ -55,17 +54,17 @@ module Break_Value_Counter #(
     output wire [NUM_CLAUSES - 1 : 0]           clause_broken_o     // forwarding of bits indicating if the clauseis broken / unsatisfied
 );
 
-localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
+    localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
+        
+    integer i;
     
-integer i;
-
-assign clause_broken_o = clause_broken_i & mask_bits_i;
-  
-always @ (*) begin
-    break_value_o = 0;
-    for (i = 0; i < NUM_CLAUSES; i = i+1) begin
-        break_value_o = break_value_o + clause_broken_o[i];
-    end 
-end
+    assign clause_broken_o = clause_broken_i & mask_bits_i;
+      
+    always @ (*) begin
+        break_value_o = 0;
+        for (i = 0; i < NUM_CLAUSES; i = i+1) begin
+            break_value_o = break_value_o + clause_broken_o[i];
+        end 
+    end
   
 endmodule
