@@ -12,6 +12,8 @@ This module handles the logic to select which index of the Unsatisfied Clause Bu
 - Asynchronous calculation of selected index
 
 Notes:
+- if unexpected selection occurs, there may be very rare rounding error cases that were missed 
+  in testing
 
 Testing:
 V1.0
