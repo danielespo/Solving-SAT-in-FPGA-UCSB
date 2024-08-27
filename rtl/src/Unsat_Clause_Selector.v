@@ -4,6 +4,7 @@ Unsat_Clause_Selector.v
 
 Author V1.0: Zeiler Randall-Reed
 Author V1.1: Zeiler Randall-Reed
+Author V1.2: Zeiler Randall-Reed
 
 Description:
 This module handles the logic to select which index of the Unsatisfied Clause Buffer to read from.
@@ -15,6 +16,10 @@ Notes:
 Testing:
 V1.0
 - testbench in progress
+V1.1
+- most tests passed, rounding issues
+V1.2
+- all tests passed, rounding issues fixed
 
 Change Log:
 V1.0 - 8/22/2024
@@ -26,6 +31,9 @@ V1.1 - 8/23/2024
     fixed m-table size issue
     fixed naming problem
     fixed integer division algorithm issue (incorrect range)
+V1.2 - 8/26/2024
+    added exception for when unsat_buffer_count_i = 1 because of unexpected behavior
+    m table must be populated with fixed point values rounded UP instead of down or to nearest
 */
 
 module M_Table #(
@@ -133,7 +141,7 @@ always @(posedge clk) begin
         N_R2 <= N_R1;
         product2 <= N_R1 * mt_data_o;
         // stage 3 
-        selected_o <= N_R2 - (product2[M_TABLE_WIDTH +: RAN_WIDTH] * m2);
+        selected_o <= (m2 == 1) ? 0 : N_R2 - (product2[M_TABLE_WIDTH +: RAN_WIDTH] * m2);
 
 
         // case(select_stage_i)
