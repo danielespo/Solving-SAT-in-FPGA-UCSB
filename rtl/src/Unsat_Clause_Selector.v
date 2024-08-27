@@ -3,6 +3,7 @@ Version: 1.0
 Unsat_Clause_Selector.v
 
 Author V1.0: Zeiler Randall-Reed
+Author V1.1: Zeiler Randall-Reed
 
 Description:
 This module handles the logic to select which index of the Unsatisfied Clause Buffer to read from.
@@ -21,6 +22,10 @@ V1.0 - 8/22/2024
     Added 1/m table module
     Logic to calculate index
     Added potential control signals
+V1.1 - 8/23/2024
+    fixed m-table size issue
+    fixed naming problem
+    fixed integer division algorithm issue (incorrect range)
 */
 
 module M_Table #(
@@ -35,8 +40,8 @@ module M_Table #(
     output reg [M_TABLE_WIDTH : 0] data_o,
     output reg debug_DIV_BY_ZERO
 );
-    // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
-    reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH - 1];
+    // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i))
+    reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH];
     reg debug_DIV_BY_ZERO;
     // 1/m table (fixed point)
     always @(posedge clk) begin
@@ -86,7 +91,7 @@ localparam MT_WIDTH = M_TABLE_WIDTH;
 // m table signals
 wire mt_en, mt_we;
 wire [BUF_ADDR_WIDTH - 1 : 0] mt_addr_i;
-wire [MT_WIDTH - 1 : 0] m_data_o;
+wire [MT_WIDTH - 1 : 0] mt_data_o;
 
 assign mt_addr_i = setup ? write_addr_i : unsat_buffer_count_i;
 assign mt_en = setup ? 1 : mt_en_i;
@@ -106,29 +111,29 @@ M_Table #(
 );
 
 //internal regs
-reg [RANDOM_NUM_WIDTH + $clog2(BUFFER_DEPTH) - 1 : 0] product;
-reg [RANDOM_NUM_WIDTH - 1 : 0] N_R1, N_R2;
-reg [$clog2(BUFFER_DEPTH) - 1 : 0] m1, m2;
+reg [RAN_WIDTH + M_TABLE_WIDTH - 1 : 0] product2;
+reg [RAN_WIDTH - 1 : 0] N_R1, N_R2;
+reg [BUF_ADDR_WIDTH - 1 : 0] m1, m2;
 
 always @(posedge clk) begin
     if(reset) begin
-        product <= 0;
+        product2 <= 0;
         //select_o <= 0;
         N_R1 <= 0;
         N_R2 <= 0;
         m1 <= 0;
         m2 <= 0;
-    end
-    else begin
+    end else begin
+        // a mod b = a - (a/b) * b
         // stage 1
         N_R1 <= random_i[RANDOM_OFFSET +: RANDOM_NUM_WIDTH];
         m1 <= unsat_buffer_count_i;
         // stage 2
         m2 <= m1;
         N_R2 <= N_R1;
-        product <= N_R1 * mt_data_o;
-        // stage 3
-        selected_o <= N_R2 - (product[RANDOM_NUM_WIDTH + $clog2(BUFFER_DEPTH) - 1 : $clog2(BUFFER_DEPTH)] * m2);
+        product2 <= N_R1 * mt_data_o;
+        // stage 3 
+        selected_o <= N_R2 - (product2[M_TABLE_WIDTH +: RAN_WIDTH] * m2);
 
 
         // case(select_stage_i)
@@ -140,7 +145,7 @@ always @(posedge clk) begin
         //     end
         //     2'b01: begin
         //         // r = N_R * m_table[m]
-        //         product <= N_R * m_data_o;
+        //         product2 <= N_R * mt_data_o;
         //     end
         //     2'b10: begin
         //         // r = N_R - (r * m) = N_R mod m
@@ -148,7 +153,7 @@ always @(posedge clk) begin
         //     end
         //     2'b11: begin
         //         // idle / reset
-        //         product <= 0;
+        //         product2 <= 0;
         //         select_o <= 0;
         //         N_R <= 0;
         //         m <= 0;
