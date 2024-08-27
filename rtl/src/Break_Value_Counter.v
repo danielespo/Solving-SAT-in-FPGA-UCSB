@@ -1,51 +1,70 @@
 /* 
+Version: 1.1
 Break_Value_Counter.v
-Author: Zeiler Randall-Reed
-Module name: BreakValueCounter
+
+V1.0 Author: Zeiler Randall-Reed
+V2.0 Author: Zeiler Randall-Reed
+V2.1 Author: Barry Wang
+V2.2 Author: Zeiler Randall-Reed
 
 Description:
-This module takes the output of the clause evaluators as an input.
-It expects an array of bits, where each bit represents the evaluation of a clause.
-If the clause is broken, the bit is set to 1, otherwise it is set to 0.
-The module counts the number of broken clauses and outputs the break value.
+This module takes the output of the clause evaluators, and clause table mask as an input. It 
+expects an array of bits, where each bit represents the evaluation of a clause. If the clause is
+broken, the bit is set to 1, otherwise it is set to 0. The module counts the number of broken 
+clauses and outputs the break value.
 
 Notes:
-- My understanding is that the temporal buffers will contain the logic
-    for determining clause fitness. This module is simply counting the 
-    number of broken clauses from the clause evaluators. 
-- There may be more work necessary if I have misunderstood this.
-- If not, this module is ready for testing.
+- 8/16 : according to the diagram, this module is not clocked. It is a combinatorial module that 
+    works in conjunction with the Heuristic_Selector and some regs in the Break_Counter_Selector
+- 8/18 : changed the summation method to one that is inefficient but works. 
+V2.1
+- 8/19 : changed to an always(*) block to allow for more optimizations
+V2.2
+- 8/19 : added `SIM` macro to bypass Vivado's restriction of the use of $clog2 in simulation
 
+
+    
 Testing:
+V1.0
 - testbench file created 5/23/24
-- all tests passed
+- all tests passed (august)
+V2.0
+- 8/15: tb not yet created - might test along with Heuristic_Selector in Break_Counter_Selector.v
+V2.1
+- 8/18: tb not yet created - will test standalone and as a part of Break_Counter_Selector.v
+- 8/18: all tests passed
+V2.2
+- 8/19 : checked with digitaljs
+- 8/19 : all tests passed
 
+Change Log:
+2024/08/15 - Barry Wang
+    Added mask support
+    
 */
 module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
-    parameter NUM_ROWS = 3,
-    parameter NUM_CLAUSES_BITS = 5
-)
-(
-    input           clk,                            // Clock signal
-    input           reset,                          // Reset signal
-    input [NUM_CLAUSES-1:0] clause ,                // bits indicating if the clause is broken / unsatisfied
-    output reg [NUM_CLAUSES_BITS-1:0] break_value   // number of clauses that are broken
+    parameter NUM_ROWS = 3
+)(
+    // input                                   clk,                // Clock signal
+    // input                                   reset,              // Reset signal
+    input       [NUM_CLAUSES - 1 : 0]           clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
+    input       [NUM_CLAUSES - 1 : 0]           mask_bits_i,        // valid mask from the clause table
+    output reg  [$clog2(NUM_CLAUSES) - 1 : 0]   break_value_o,      // number of clauses that are broken
+    output wire [NUM_CLAUSES - 1 : 0]           clause_broken_o     // forwarding of bits indicating if the clauseis broken / unsatisfied
 );
 
-integer index;
-
-always @(posedge clk) begin
-    if(reset) begin         // on reset, reset the output
-        break_value = 0;
-    end else begin
-        break_value = 0;   // set the output to 0
-        for(index = 0; index < NUM_CLAUSES; index = index + 1) begin    // loop through the "isBroken" array
-            if(clause[index]) begin
-                break_value = break_value + 1'b1;                         // increment the output for each broken clause
-            end
-        end
+    localparam NUM_CLAUSES_BITS = $clog2(NUM_CLAUSES);
+        
+    integer i;
+    
+    assign clause_broken_o = clause_broken_i & mask_bits_i;
+      
+    always @ (*) begin
+        break_value_o = 0;
+        for (i = 0; i < NUM_CLAUSES; i = i+1) begin
+            break_value_o = break_value_o + clause_broken_o[i];
+        end 
     end
-end
-
+  
 endmodule

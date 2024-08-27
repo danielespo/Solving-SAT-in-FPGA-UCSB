@@ -28,37 +28,38 @@ Testing:
 module Temporal_Buffer #(
     parameter NSAT = 3,
     parameter LAW = 11,  // LAW = LITERAL_ADDRESS_WIDTH
-    parameter NSAT_BITS = 2,
     parameter SIZE = 2
 )(
     input                           clk,            // Clock signal
     input                           reset,          // Reset signal
 
-    input [NSAT_BITS-1:0]           write_index_i,  // which flip is currently being evaluated
+    input [$clog2(NSAT)-1:0]           write_index_i,  // which flip is currently being evaluated
     input                           write_en_i,     // write enable signal
     input [SIZE*(LAW+1)-1:0]        literals_i,     // clause_table literals input by literals because need to put selected literal together with clause_table literals
 
-    input [NSAT_BITS-1:0]           read_index_i,   // which flip was selected by the heuristic selector
+    input [$clog2(NSAT)-1:0]           read_index_i,   // which flip was selected by the heuristic selector
     output reg [SIZE*(LAW+1)-1:0]   literals_o      // output clause with selected flip if broken
 );
 
-integer i,j;
-
-/* Internal Signals */
-reg [SIZE*(LAW+1)-1:0] stored_literals [NSAT-1:0]; 
-
-/* Logic */
-always @(posedge clk) begin
-    if(reset) begin
-        for(i = 0; i < NSAT; i = i + 1) begin
-            stored_literals[i] <= 0;
+    localparam NSAT_BITS = $clog2(NSAT);
+    
+    integer i,j;
+    
+    /* Internal Signals */
+    reg [SIZE*(LAW+1)-1:0] stored_literals [NSAT-1:0]; 
+    
+    /* Logic */
+    always @(posedge clk) begin
+        if(reset) begin
+            for(i = 0; i < NSAT; i = i + 1) begin
+                stored_literals[i] <= 0;
+            end
+        end else begin
+            if(write_en_i) stored_literals[write_index_i] <= literals_i;
+            if(read_index_i == 2) literals_o <= literals_i; 
+            if(read_index_i != 2) literals_o <= stored_literals[read_index_i];
         end
-    end else begin
-        if(write_en_i) stored_literals[write_index_i] <= literals_i;
-        if(read_index_i == 2) literals_o <= literals_i; 
-        if(read_index_i != 2) literals_o <= stored_literals[read_index_i];
     end
-end
-
+    
 
 endmodule
