@@ -23,15 +23,15 @@ Change Log:
 -----------------------------------------------------*/
 
 module Variable_Table #(
-    parameter LITERAL_ADDRESS_WIDTH = 11
+    parameter VARIABLE_ADDRESS_WIDTH = 11
 )(
     input       clk, en_a, en_b, we_a, we_b,
-    input       [LITERAL_ADDRESS_WIDTH - 1 : 0] addr_a, addr_b,
+    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_a, addr_b,
     input       din_a, din_b,
     output reg  dout_a, dout_b
 );
 
-    reg ram [0 : 2 ** LITERAL_ADDRESS_WIDTH - 1];
+    reg ram [0 : 2 ** VARIABLE_ADDRESS_WIDTH - 1];
     
     
     always @(posedge clk)

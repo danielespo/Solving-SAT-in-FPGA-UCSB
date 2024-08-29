@@ -50,6 +50,8 @@ module M_Table #(
     output reg [M_TABLE_WIDTH : 0] data_o,
     output reg debug_DIV_BY_ZERO
 );
+    //(* rom_style = "block" *) reg [M_TABLE_WIDTH - 1 : 0] data;
+    
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i))
     reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH];
     reg debug_DIV_BY_ZERO;
@@ -83,12 +85,12 @@ module Unsat_Clause_Selector # (
 
     // loading 1/m table signals
     input setup, output ready, // control signals maybe?
-    input [$clog2(BUFFER_DEPTH) - 1 : 0] write_addr_i,
+    input [$clog2(BUFFER_DEPTH) - 1 : 0] mt_write_addr_i,
     input [M_TABLE_WIDTH - 1 : 0] mt_data_i,
 
     // selecting index signals 
     // input [1 : 0] select_stage_i, // 00 = setup, 01 = step 1 (1/m multiplication), 10 = step 2 (mod m), 11 = idle
-    input mt_en_i,
+    input mt_en_i,      // the setup signal overrides this 
     input [$clog2(BUFFER_DEPTH) - 1 : 0] unsat_buffer_count_i,
     input [31 : 0] random_i,
     output reg [$clog2(BUFFER_DEPTH) - 1 : 0] selected_o
@@ -103,7 +105,7 @@ wire mt_en, mt_we;
 wire [BUF_ADDR_WIDTH - 1 : 0] mt_addr_i;
 wire [MT_WIDTH - 1 : 0] mt_data_o;
 
-assign mt_addr_i = setup ? write_addr_i : unsat_buffer_count_i;
+assign mt_addr_i = setup ? mt_write_addr_i : unsat_buffer_count_i;
 assign mt_en = setup ? 1 : mt_en_i;
 assign mt_we = setup;
 

@@ -22,15 +22,15 @@ Change Log:
 
 module Unsat_Clause_Buffer # (
     parameter NSAT = 3, 
-    parameter LITERAL_ADDRESS_WIDTH = 11,
+    parameter VARIABLE_ADDRESS_ = 11,
     parameter DEPTH = 2048
 )(
     input       clk_a, clk_b, en_a, en_b, we_a, we_b,
-    input       [$clog2(DEPTH) - 1 : 0]                         addr_a, addr_b,
-    input       [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0]    din_a, din_b,
-    output reg  [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0]    dout_a, dout_b
+    input       [$clog2(DEPTH) - 1 : 0]                     addr_a, addr_b,
+    input       [(VARIABLE_ADDRESS_ + 1) * NSAT - 1 : 0]    din_a,  din_b,
+    output reg  [(VARIABLE_ADDRESS_ + 1) * NSAT - 1 : 0]    dout_a, dout_b
 );
-    localparam CLAUSE_SIZE = (LITERAL_ADDRESS_WIDTH + 1);
+    localparam CLAUSE_SIZE = (VARIABLE_ADDRESS_ + 1);
     reg [CLAUSE_SIZE * NSAT - 1 : 0] ram [0 : DEPTH - 1];
     
     always @(posedge clk_a)

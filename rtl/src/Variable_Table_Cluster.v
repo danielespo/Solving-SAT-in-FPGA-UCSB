@@ -22,13 +22,13 @@ Change Log:
 -----------------------------------------------------*/
 
 module Variable_Table_Cluster #(
-    parameter LITERAL_ADDRESS_WIDTH = 11,
+    parameter VARIABLE_ADDRESS_WIDTH = 11,
     // Total number of variable tables will be CLUSTER_SIZE,
     parameter CLUSTER_SIZE = 20 * 2
 )(
     input   clk,
     input   [CLUSTER_SIZE - 1 : 0] en_a, en_b, we_a, we_b,
-    input   [(LITERAL_ADDRESS_WIDTH * CLUSTER_SIZE) - 1 : 0] addr_a, addr_b,
+    input   [(VARIABLE_ADDRESS_WIDTH * CLUSTER_SIZE) - 1 : 0] addr_a, addr_b,
     input   [CLUSTER_SIZE - 1 : 0] din_a, din_b,
     output  [CLUSTER_SIZE - 1 : 0] dout_a, dout_b
 );
@@ -36,14 +36,14 @@ module Variable_Table_Cluster #(
     generate
         for (i = 0; i < CLUSTER_SIZE; i = i + 1)
         begin
-            Variable_Table # (LITERAL_ADDRESS_WIDTH) (
+            Variable_Table # (VARIABLE_ADDRESS_WIDTH) (
                 .clk(clk),
                 .en_a(en_a[i]),
                 .en_b(en_b[i]),
                 .we_a(we_a[i]),
                 .we_b(we_b[i]),
-                .addr_a(addr_a[i * LITERAL_ADDRESS_WIDTH +: LITERAL_ADDRESS_WIDTH]),
-                .addr_b(addr_b[i * LITERAL_ADDRESS_WIDTH +: LITERAL_ADDRESS_WIDTH]),
+                .addr_a(addr_a[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
+                .addr_b(addr_b[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
                 .din_a(din_a[i]),
                 .din_b(din_b[i]),
                 .dout_a(dout_a[i]),

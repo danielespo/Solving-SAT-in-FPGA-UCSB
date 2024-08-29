@@ -38,7 +38,7 @@ module Variable_Flip_Selector #(
     // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
     
     output reg [$clog2(NSAT) - 1 : 0] selected_o,
-    output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_bits_o
+    output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_valid_bits_o
 );
 
     // localparams
@@ -104,7 +104,7 @@ module Variable_Flip_Selector #(
                 break_bits_reg[i] <= 0;
             end
             selected_o <= 2'b11;
-            clause_broken_bits_o <= 0;
+            clause_valid_bits_o <= 0;
         end else begin
             for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wren_i is one hot
                 if(wren_i[i] == 1 && control_one_hot) begin
@@ -115,7 +115,7 @@ module Variable_Flip_Selector #(
             if(&wren_i) begin // when we are using the data (all ones)
                 break_bits_reg[NSAT - 1] <= break_bits;
                 selected_o <= select_o;
-                clause_broken_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
+                clause_valid_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
             end
         end
     end

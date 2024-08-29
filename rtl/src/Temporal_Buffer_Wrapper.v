@@ -18,27 +18,28 @@ Testing:
 
 module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
-    parameter LAW = 11, // LAW - LITERAL_ADDRESS_WIDTH
-    parameter MCPV = 20 // MCPV - MAX_CLAUSES_PER_VARIABLE
+    parameter VARIABLE_ADDRESS_WIDTH = 11, 
+    parameter MAX_CLAUSE_MEMBERSHIP = 20 
 )(
     input                                   clk,                // Clock signal
     input                                   reset,              // Reset signal
 
     input   [$clog2(NSAT)-1:0]              write_index_i,      // which flip is currently being evaluated
     input                                   write_en_i,         // write enable signal
-    input   [(NSAT-1)*MCPV*(LAW+1)-1:0]     literals_multi_i,   // literals from clause table for each flip
+    input   [(NSAT - 1) * MAX_CLAUSE_MEMBERSHIP * (VARIABLE_ADDRESS_WIDTH + 1) - 1 : 0] literals_multi_i,   // literals from clause table for each flip
 
     input   [$clog2(NSAT)-1:0]              read_index_i,       // which flip was selected by the heuristic selector
-    output  [(NSAT-1)*MCPV*(LAW+1)-1:0]     literals_multi_o    // literals from clause table for selected flip
+    output  [(NSAT - 1) * MAX_CLAUSE_MEMBERSHIP * (VARIABLE_ADDRESS_WIDTH + 1) - 1 : 0] literals_multi_o    // literals from clause table for selected flip
 );
 
+    localparam MC = MAX_CLAUSE_MEMBERSHIP;
     localparam NSAT_BITS = $clog2(NSAT);
 
     // signals 
     genvar index;
     
     generate
-        for(index = 0; index < MCPV; index = index + 1) begin : gen_temp_buf
+        for(index = 0; index < MC; index = index + 1) begin : gen_temp_buf
             Temporal_Buffer #(
                 .NSAT(NSAT),
                 .LAW(LAW),
