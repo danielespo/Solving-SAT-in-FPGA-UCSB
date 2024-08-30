@@ -9,11 +9,6 @@
   ],
   {},
   ["UNSAT Clause Selector",
-   ["sel_stage",
-    {"name": "[1]", "wave": "10.1.."},
-    {"name": "[0]", "wave": "10101."}
-   ],
-   {},
    {"name": "buffer_count_i", "wave": "x2xxxx", "data": "UNSAT_counter"},
    {"name": "random_i",       "wave": "222222"},
    {"name": "selected_o",     "wave": "0..70.", "data": "selection_addr"}

@@ -221,20 +221,20 @@ wire [(NSAT - 1) * MC - 1 : 0] vtc_data_in;
 assign vtc_addresses_in = VT_addr_src ? {(NSAT - 1) * MC{selected_literal_flipped_addr}} : ct_variable_addresses;
 assign vtc_data_in = {(NSAT - 1) * MC{selected_literal_flipped_neg_bit}}
 
-// needs to be worked out - are we utilizing dual port memory or not, etc
-// Variable_Table_Cluster #(
-//     .NSAT(NSAT),
-//     .MAX_CLAUSE_MEMBERSHIP(MAX_CLAUSE_MEMBERSHIP),
-//     .VARIABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH)
-// ) variable_table_cluster (
-//     .clk(clk),
-//     .reset(reset),
-//     .wren(VT_wren),
-//     .rden(VT_rden),
-//     .addr_i(vtc_addresses_in),
-//     .data_i(vtc_data_in),
-//     .data_o(vtc_value_bits)
-// );
+//needs to be worked out - are we utilizing dual port memory or not, etc
+Variable_Table_Cluster #(
+    .NSAT(NSAT),
+    .MAX_CLAUSE_MEMBERSHIP(MAX_CLAUSE_MEMBERSHIP),
+    .VARIABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH)
+) variable_table_cluster (
+    .clk(clk),
+    .en_a(VT)
+    .wren(VT_wren),
+    .rden(VT_rden),
+    .addr_i(vtc_addresses_in),
+    .data_i(vtc_data_in),
+    .data_o(vtc_value_bits)
+);
 
 /* --- temporal buffer wrapper --- */
 Temporal_Buffer_Wrapper #(
