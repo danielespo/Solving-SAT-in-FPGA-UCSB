@@ -30,6 +30,8 @@ V1.1
 - most tests passed, rounding issues
 V1.2
 - all tests passed, rounding issues fixed
+V2.0
+- testbench not yet created
 
 Change Log:
 V1.0 - 8/22/2024
@@ -64,9 +66,11 @@ module Unsat_Clause_Selector # (
 
     input setup, output ready, // control signals maybe?
     // loading 1/m table signals
+    input                                           mt_setup_wren_i,
     input [$clog2(BUFFER_DEPTH) - 1 : 0]            mt_setup_addr_i,
     input [M_TABLE_WIDTH - 1 : 0]                   mt_setup_data_i,
     // loading Unsat Buffer Clauses
+    input                                           ucb_setup_wren_i,
     input [$clog2(BUFFER_DEPTH) - 1 : 0]            ucb_setup_addr_i,
     input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]    ucb_setup_data_i,
 
@@ -81,6 +85,7 @@ module Unsat_Clause_Selector # (
     // prng signal
     input [31 : 0] random_i,
 
+    output wire [$clog2(BUFFER_DEPTH) - 1 : 0] buffer_count_o,
     output reg [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] selected_o
 );
 
@@ -92,6 +97,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
 // unsat buffer signals
     reg [BUF_ADDR_WIDTH - 1 : 0] ucb_count;
+    assign buffer_count_o = ucb_count;
 
     wire ucb_en, ucb_we;
     wire [BUF_ADDR_WIDTH - 1 : 0] ucb_addr;
@@ -114,10 +120,10 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     wire [MT_WIDTH - 1 : 0] mt_data_o;
 
 // unsat buffer instantiation
-    assign ucb_en = setup ? 1 : ~write_disable_i;
-    assign ucb_we = setup ? 1 : (fifo_empty_i ? (selection != ucb_last_addr) : 1);
-    assign ucb_addr = setup ? ucb_setup_addr_i : (request3 ? selection : ucb_count);
-    assign ucb_data_in = setup ? ucb_setup_data_i : (fifo_empty_i ? ucb_last_data : fifo_clause_i);
+    assign ucb_en       = setup ? 1 : ~write_disable_i;
+    assign ucb_we       = setup ? ucb_setup_wren_i : (fifo_empty_i ? (selection != ucb_last_addr) : 1);
+    assign ucb_addr     = setup ? ucb_setup_addr_i : (request3 ? selection : ucb_count);
+    assign ucb_data_in  = setup ? ucb_setup_data_i : (fifo_empty_i ? ucb_last_data : fifo_clause_i);
     assign ucb_last_addr = ucb_count - 1;
 
     Unsat_Clause_Buffer #(
@@ -142,7 +148,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 // 1/m table instantiation
     assign mt_addr = setup ? mt_setup_addr_i : ucb_count;
     assign mt_en = 1; //setup ? 1 : mt_en_i;
-    assign mt_we = setup;
+    assign mt_we = setup & mt_setup_wren_i;
 
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
     M_Table #(
