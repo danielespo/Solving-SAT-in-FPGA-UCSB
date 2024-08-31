@@ -10,7 +10,7 @@
    {"name": "clauses_i",        "wave": "0.......70.."},
    {"name": "clauses_valid_i",  "wave": "0.......70.."},
    {"name": "rd_en",            "wave": "0........."},
-   {"name": "clause_o",           "wave": "9.7...", "data": "Invalid Valid"}
+   {"name": "clause_o",         "wave": "9.7...", "data": "Invalid Valid"}
   ],
   {},
   ["UNSAT Clause Selector",

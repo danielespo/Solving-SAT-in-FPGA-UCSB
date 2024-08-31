@@ -31,7 +31,7 @@ V1.1
 V1.2
 - all tests passed, rounding issues fixed
 V2.0
-- testbench not yet created
+- testbench in progresss
 
 Change Log:
 V1.0 - 8/22/2024
@@ -51,6 +51,8 @@ V2.0 - 8/29/2024
     added counter logic to keep track of the number of unsat clauses
     added unsat buffer signals and instantiation
     modified selection pipeline to keep track of requests to read the buffer
+     - 8/30/2024
+    testbench started
 */
 
 module Unsat_Clause_Selector # (
@@ -65,10 +67,6 @@ module Unsat_Clause_Selector # (
     input reset,
 
     input setup, output ready, // control signals maybe?
-    // loading 1/m table signals
-    input                                           mt_setup_wren_i,
-    input [$clog2(BUFFER_DEPTH) - 1 : 0]            mt_setup_addr_i,
-    input [M_TABLE_WIDTH - 1 : 0]                   mt_setup_data_i,
     // loading Unsat Buffer Clauses
     input                                           ucb_setup_wren_i,
     input [$clog2(BUFFER_DEPTH) - 1 : 0]            ucb_setup_addr_i,
@@ -86,7 +84,8 @@ module Unsat_Clause_Selector # (
     input [31 : 0] random_i,
 
     output wire [$clog2(BUFFER_DEPTH) - 1 : 0] buffer_count_o,
-    output reg [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] selected_o
+    output wire [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] selected_o,
+    output reg ucb_overflow_o
 );
 
 localparam RAN_WIDTH = RANDOM_NUM_WIDTH;
@@ -112,12 +111,14 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     reg [RAN_WIDTH - 1 : 0] N_R1, N_R2;
     reg [BUF_ADDR_WIDTH - 1 : 0] m1, m2;
     reg [BUF_ADDR_WIDTH - 1 : 0] selection;
-    reg request1, request2, request3;
+    reg request1, request2, request3, request4;
 
 // m table signals
-    wire mt_en, mt_we;
+    wire mt_en;
     wire [BUF_ADDR_WIDTH - 1 : 0] mt_addr;
+    wire mt_clear_debug_DIV_BY_ZERO;
     wire [MT_WIDTH - 1 : 0] mt_data_o;
+    wire mt_debug_DIV_BY_ZERO;
 
 // unsat buffer instantiation
     assign ucb_en       = setup ? 1 : ~write_disable_i;
@@ -145,22 +146,24 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         .dout_b(ucb_last_data)
     );
 
+    assign selected_o = request4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
+
 // 1/m table instantiation
-    assign mt_addr = setup ? mt_setup_addr_i : ucb_count;
+    assign mt_addr = m1;
     assign mt_en = 1; //setup ? 1 : mt_en_i;
-    assign mt_we = setup & mt_setup_wren_i;
 
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
     M_Table #(
         .BUFFER_DEPTH(BUFFER_DEPTH),
-        .M_TABLE_WIDTH(MT_WIDTH)
+        .M_TABLE_WIDTH(MT_WIDTH),
+        .M_TABLE_NAME("M_table_roundup.mem")
     ) m_table (
         .clk(clk),
         .en(mt_en),
-        .we(mt_we),
         .addr_i(mt_addr),
-        .data_i(mt_setup_data_i),
-        .data_o(mt_data_o)
+        .clear_debug_DIV_BY_ZERO(mt_clear_debug_DIV_BY_ZERO),
+        .data_o(mt_data_o),
+        .debug_DIV_BY_ZERO(mt_debug_DIV_BY_ZERO)
     );
 
 // unsat buffer counter logic
@@ -168,9 +171,10 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         if(reset) begin
             ucb_count <= 0;
         end else begin
-            if(ucb_we & ~request3) ucb_count <= ucb_count + 1;
-            else if(~ucb_we & request3) ucb_count <= ucb_count - 1;
-            else if(ucb_we & request3) ucb_count <= ucb_count;
+            if(ucb_we & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
+            else if(~ucb_we & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
+            else if(ucb_we & request3) ucb_count <= ucb_count;  // if fifo not empty and we're selecting (1R 1W)
+            else if(~ucb_we & ~request3) ucb_count <= ucb_count; // if fifo empty and no selection (0R 0W)
         end
     end
 
@@ -199,6 +203,8 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
             // stage 3 
             selection <= (m2 == 1) ? 0 : N_R2 - (product2[M_TABLE_WIDTH +: RAN_WIDTH] * m2);
             request3 <= request2;
+            // stage 4
+            request4 <= request3;
         end
     end
 

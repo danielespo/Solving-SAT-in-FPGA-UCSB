@@ -21,26 +21,36 @@ Change Log:
 
 module M_Table #(
     parameter BUFFER_DEPTH = 2048,
-    parameter M_TABLE_WIDTH = 32
+    parameter M_TABLE_WIDTH = 32,
+    parameter M_TABLE_NAME = "M_table_roundup.mem"
 )(
     input clk,
-    input en, we,
-    input [$clog2(BUFFER_DEPTH) - 1 : 0] addr_i,
-    input [M_TABLE_WIDTH - 1 : 0] data_i,
+    input en,
+    input [$clog2(BUFFER_DEPTH) : 0] addr_i,
     input clear_debug_DIV_BY_ZERO,
-    output reg [M_TABLE_WIDTH : 0] data_o,
+    output reg [M_TABLE_WIDTH - 1 : 0] data_o,
     output reg debug_DIV_BY_ZERO
 );
     //(* rom_style = "block" *) reg [M_TABLE_WIDTH - 1 : 0] data;
+    localparam BUFFER_ADDR_WIDTH = $clog2(BUFFER_DEPTH);
     
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i))
-    reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH];
-    reg debug_DIV_BY_ZERO;
+    reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH - 1];
+
+    // initial register data and loading 1/M-table
+    initial begin
+        debug_DIV_BY_ZERO = 0;
+        data_o = 0;
+        $readmemh(M_TABLE_NAME, m_table);
+    end
+
+    wire [BUFFER_ADDR_WIDTH - 1 : 0] addr_adjusted;
+    assign addr_adjusted = addr_i - 1; 
+
     // 1/m table (fixed point)
     always @(posedge clk) begin
         if(en) begin
-            if(we) m_table[addr_i] <= data_i;
-            data_o <= m_table[addr_i];
+            data_o <= |addr_i ? m_table[addr_i - 1] : {M_TABLE_WIDTH{1'bx}};
         end
     end
     // debug signal to indicate division by zero
