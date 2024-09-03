@@ -38,16 +38,20 @@ module Clause_Table #(
     // Number of clauses in the clause table
     parameter CLAUSE_COUNT = 20,
     parameter DEPTH = 2048,
-    parameter LITERAL_ADDRESS_WIDTH = 11,
+    parameter VARIABLE_ADDRESS_WIDTH = 11,
     parameter NSAT = 3
 )(
-    input clk, we,
-    input [LITERAL_ADDRESS_WIDTH-1:0] waddr, raddr,
-    input [(LITERAL_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_i,
-    output reg [(LITERAL_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_o
+    input clk, 
+    
+    input we,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] waddr, 
+    input [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_i,
+
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] raddr,
+    output reg [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_o
 );
     
-    localparam WIDTH = (LITERAL_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT;
+    localparam WIDTH = (VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT;
     
     reg [WIDTH - 1 : 0] mem [0 : DEPTH - 1];
 

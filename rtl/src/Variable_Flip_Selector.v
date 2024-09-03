@@ -25,8 +25,7 @@ V1.1 : all tests passed (8/19)
 module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter P = 'h6E147AE0,
-    parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5
+    parameter P = 'h6E147AE0
 )(
     input clk,
     input reset,
@@ -35,32 +34,33 @@ module Variable_Flip_Selector #(
     input [NSAT - 1 : 0] break_values_valid_i,
     input [31:0] random_i,
 
-    input [$clog2(NSAT) - 1 : 0] wren_i,
+    input [$clog2(NSAT) - 1 : 0] wren_i,    // controller signal 
+    // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
+    
     output reg [$clog2(NSAT) - 1 : 0] selected_o,
-    output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_bits_o
+    output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_valid_bits_o
 );
-    
+
     // localparams
-    localparam NSAT_BITS = $clog2(NSAT);
     localparam MC = MAX_CLAUSES_PER_VARIABLE;
-    localparam MCB = MAX_CLAUSES_PER_VARIABLE_BITS;
-    
-    
+    localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
+    localparam NSAT_BITS = $clog2(NSAT);
+
     // integer vars
     integer i, j;
-    
+
     // internal registers
     reg [MCB - 1 : 0] break_values_reg  [NSAT - 2 : 0];
     reg [MC  - 1 : 0] break_bits_reg    [NSAT - 2 : 0];
-    
+
     // internal wires
     wire [       MCB - 1 : 0] break_value;
     wire [       MC  - 1 : 0] break_bits;
-    
+
     wire [NSAT * MCB - 1 : 0] all_break_values;
-    
+
     wire [NSAT_BITS - 1 : 0] select_o;
-    
+
     genvar n;
     generate
         for(n = 0; n < NSAT - 1; n = n + 1) begin
@@ -68,11 +68,11 @@ module Variable_Flip_Selector #(
         end
         assign all_break_values[(NSAT - 1) * MCB +: MCB] = break_value;
     endgenerate
-    
+
     // nice simple logic to check onehot
     wire control_one_hot = ~|(wren_i & (wren_i - 1)) & |wren_i;
-    
-    
+
+
     // initialize break_value_counter and heuristic_selector
     Break_Value_Counter #(
         .NUM_CLAUSES(MC),
@@ -83,7 +83,7 @@ module Variable_Flip_Selector #(
         .break_value_o(break_value),
         .clause_broken_o(break_bits)
     );
-    
+
     Heuristic_Selector #(
         .MAX_CLAUSES_PER_VARIABLE(MC),
         .NSAT(NSAT),
@@ -95,7 +95,7 @@ module Variable_Flip_Selector #(
         .enable_i(&wren_i),
         .select_o(select_o)
     );
-    
+
     // break_values_reg and break_bits_reg
     always @(posedge clk) begin
         if(reset) begin
@@ -104,7 +104,7 @@ module Variable_Flip_Selector #(
                 break_bits_reg[i] <= 0;
             end
             selected_o <= 2'b11;
-            clause_broken_bits_o <= 0;
+            clause_valid_bits_o <= 0;
         end else begin
             for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wren_i is one hot
                 if(wren_i[i] == 1 && control_one_hot) begin
@@ -115,7 +115,7 @@ module Variable_Flip_Selector #(
             if(&wren_i) begin // when we are using the data (all ones)
                 break_bits_reg[NSAT - 1] <= break_bits;
                 selected_o <= select_o;
-                clause_broken_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
+                clause_valid_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
             end
         end
     end

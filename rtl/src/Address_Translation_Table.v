@@ -27,30 +27,36 @@ Change Log:
 
 module Address_Translation_Table # (
     parameter CLAUSE_COUNT = 20,
-    parameter LITERAL_ADDRESS_WIDTH = 11,
+    parameter VARIABLE_ADDRESS_WIDTH = 11,
     parameter CLAUSE_TABLE_ADDRESS_WIDTH = 11
 )(
-    input       clk, wren,
-    input       [LITERAL_ADDRESS_WIDTH:0] waddr, raddr,
-    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] din,
-    output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1:0] ct_addr_field,
-    output wire [CLAUSE_COUNT-1:0] mask_field
+    input       clk, 
+
+    // setup write io  
+    input       wr_en,
+    input       [VARIABLE_ADDRESS_WIDTH : 0] wr_addr_i, 
+    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] data_i,
+
+    // runtime read io
+    input       [VARIABLE_ADDRESS_WIDTH : 0] rd_addr_i,
+    output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1 : 0] addr_o,
+    output wire [CLAUSE_COUNT - 1 : 0] mask_o
 );
 
-    localparam DEPTH = 2 ** (LITERAL_ADDRESS_WIDTH);
+    localparam DEPTH = 2 ** (VARIABLE_ADDRESS_WIDTH);
     localparam WIDTH = CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT;
     
     reg [WIDTH - 1 : 0] ram [0 : DEPTH - 1];
     
     reg [WIDTH - 1 : 0] dout;
     
-    assign mask_field = dout[CLAUSE_COUNT - 1 : 0];
-    assign ct_addr_field = dout[WIDTH - 1 : CLAUSE_COUNT];
+    assign mask_o = dout[CLAUSE_COUNT - 1 : 0];
+    assign addr_o = dout[WIDTH - 1 : CLAUSE_COUNT];
     
     always @(posedge clk)
     begin
-        if (wren) ram[waddr] <= din;
-        dout <= ram[raddr];
+        if (wr_en) ram[wr_addr_i] <= data_i;
+        dout <= ram[rd_addr_i];
     end
 
 endmodule

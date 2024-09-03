@@ -40,9 +40,9 @@ module Clause_Evaluator_Cluster #(
     parameter REDUCE = 1
 )(
     // Clock signal
-    input   wire    clk_i,
+    input   wire    clk,
     // Reset signal
-    input   wire    reset_i,
+    input   wire    reset,
     // Variable values and negation
     input   wire    [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_val_i,
     input   wire    [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_neg_i,
@@ -58,8 +58,8 @@ module Clause_Evaluator_Cluster #(
                 .IMPLEMENTATION(IMPLEMENTATION),
                 .REDUCE(REDUCE)
             ) ce (
-                .clk_i(clk_i),
-                .reset_i(reset_i),
+                .clk_i(clk),
+                .reset_i(reset),
                 .var_val_i(var_val_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
                 .var_neg_i(var_neg_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
                 .break_o(break_o[i])
