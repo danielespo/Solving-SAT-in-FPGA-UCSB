@@ -26,7 +26,7 @@ module M_Table #(
 )(
     input clk,
     input en,
-    input [$clog2(BUFFER_DEPTH) : 0] addr_i,
+    input [$clog2(BUFFER_DEPTH) - 1 : 0] addr_i,
     input clear_debug_DIV_BY_ZERO,
     output reg [M_TABLE_WIDTH - 1 : 0] data_o,
     output reg debug_DIV_BY_ZERO
@@ -40,17 +40,16 @@ module M_Table #(
     // initial register data and loading 1/M-table
     initial begin
         debug_DIV_BY_ZERO = 0;
-        data_o = 0;
+        data_o = {M_TABLE_WIDTH{1'b0}};
         $readmemh(M_TABLE_NAME, m_table);
     end
-
-    wire [BUFFER_ADDR_WIDTH - 1 : 0] addr_adjusted;
-    assign addr_adjusted = addr_i - 1; 
 
     // 1/m table (fixed point)
     always @(posedge clk) begin
         if(en) begin
-            data_o <= |addr_i ? m_table[addr_i - 1] : {M_TABLE_WIDTH{1'bx}};
+            data_o <= m_table[addr_i];
+        end else begin
+            data_o <= {M_TABLE_WIDTH{1'b0}};
         end
     end
     // debug signal to indicate division by zero

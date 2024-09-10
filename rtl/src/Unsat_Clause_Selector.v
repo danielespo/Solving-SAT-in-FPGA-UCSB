@@ -121,10 +121,26 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     wire mt_debug_DIV_BY_ZERO;
 
 // unsat buffer instantiation
-    assign ucb_en       = setup ? 1 : ~write_disable_i;
-    assign ucb_we       = setup ? ucb_setup_wren_i : (fifo_empty_i ? (selection != ucb_last_addr) : 1);
-    assign ucb_addr     = setup ? ucb_setup_addr_i : (request3 ? selection : ucb_count);
-    assign ucb_data_in  = setup ? ucb_setup_data_i : (fifo_empty_i ? ucb_last_data : fifo_clause_i);
+    assign ucb_en = setup ? 
+                        1'b1: 
+                        ~write_disable_i;
+    assign ucb_we = setup ? 
+                        ucb_setup_wren_i: 
+                        fifo_empty_i ?
+                            request3 ?
+                                !(selection == ucb_last_addr): 
+                                0 :  
+                            1;
+    assign ucb_addr = setup ? 
+                        ucb_setup_addr_i: 
+                        request3 ? 
+                            selection: 
+                            ucb_count;
+    assign ucb_data_in = setup ? 
+                        ucb_setup_data_i: 
+                        fifo_empty_i ? 
+                            ucb_last_data: 
+                            fifo_clause_i;
     assign ucb_last_addr = ucb_count - 1;
 
     Unsat_Clause_Buffer #(
@@ -148,6 +164,20 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
     assign selected_o = request4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
 
+
+// unsat buffer counter logic
+    always @(posedge clk) begin
+        if(reset) begin
+            ucb_count <= 0;
+        end else begin
+            if (setup & ucb_setup_wren_i) ucb_count <= ucb_count + 1; // increment counter during setup
+            else if(~fifo_empty_i & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
+            else if(fifo_empty_i & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
+            else if(fifo_empty_i & ~request3) ucb_count <= ucb_count;  // if fifo not empty and we're selecting (1R 1W)
+            else if(~fifo_empty_i & request3) ucb_count <= ucb_count; // if fifo empty and no selection (0R 0W)
+        end
+    end
+
 // 1/m table instantiation
     assign mt_addr = m1;
     assign mt_en = 1; //setup ? 1 : mt_en_i;
@@ -165,18 +195,6 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         .data_o(mt_data_o),
         .debug_DIV_BY_ZERO(mt_debug_DIV_BY_ZERO)
     );
-
-// unsat buffer counter logic
-    always @(posedge clk) begin
-        if(reset) begin
-            ucb_count <= 0;
-        end else begin
-            if(ucb_we & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
-            else if(~ucb_we & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
-            else if(ucb_we & request3) ucb_count <= ucb_count;  // if fifo not empty and we're selecting (1R 1W)
-            else if(~ucb_we & ~request3) ucb_count <= ucb_count; // if fifo empty and no selection (0R 0W)
-        end
-    end
 
 // selection logic     
     always @(posedge clk) begin

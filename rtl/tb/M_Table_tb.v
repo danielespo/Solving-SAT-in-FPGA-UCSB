@@ -23,11 +23,10 @@ integer i;
 // i/o
     reg clk;
     always #5 clk = ~clk;
-    reg en, we;
+    reg en;
     reg [$clog2(BUFFER_DEPTH) - 1 : 0] addr_i;
-    reg [M_TABLE_WIDTH - 1 : 0] data_i;
     reg clear_debug_DIV_BY_ZERO;
-    wire [M_TABLE_WIDTH : 0] data_o;
+    wire [M_TABLE_WIDTH - 1: 0] data_o;
     wire debug_DIV_BY_ZERO;
 
 // module instantiation
@@ -49,6 +48,17 @@ integer i;
     reg [BUFFER_DEPTH - 1 : 0] test_passed;
     integer num_passed = 0;
 
+// monitor signals
+    genvar n;
+    wire [M_TABLE_WIDTH - 1 : 0] mt_internal_data [0 : BUFFER_DEPTH - 1];
+    for(n = 0; n < BUFFER_DEPTH; n = n + 1) begin
+        assign mt_internal_data[n] = m_table.m_table[n];
+    end
+    wire [$clog2(BUFFER_DEPTH) - 1 : 0] mt_addr;
+    assign mt_addr = m_table.addr_i;
+    wire mt_addr_not_zero;
+    assign mt_addr_not_zero = (|mt_addr);
+
 initial begin
     $display("Starting M_Table_tb testbench");
     $readmemh(M_TABLE_NAME, m_table_expected);
@@ -57,9 +67,7 @@ initial begin
     // reset
     clk = 0;
     en = 0;
-    we = 0;
     addr_i = 0;
-    data_i = 0;
     clear_debug_DIV_BY_ZERO = 0;
     test_passed = {BUFFER_DEPTH{1'b1}};
     num_passed = BUFFER_DEPTH;
@@ -68,9 +76,9 @@ initial begin
     @(negedge clk);
 
     // check if data matches
+    en = 1;
     
     for(i = 0; i < BUFFER_DEPTH; i = i + 1) begin
-        en = 1;
         addr_i = i;
         @(negedge clk);
         if(data_o !== m_table_expected[i]) begin
