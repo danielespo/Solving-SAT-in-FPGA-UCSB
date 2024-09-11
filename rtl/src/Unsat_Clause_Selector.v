@@ -32,6 +32,9 @@ V1.2
 - all tests passed, rounding issues fixed
 V2.0
 - testbench in progresss
+V2.1
+- stress test passed
+- case tests in progress
 
 Change Log:
 V1.0 - 8/22/2024
@@ -56,7 +59,7 @@ V2.0 - 8/29/2024
 
 V2.1 - 9/10/2024
     changed the way the unsat buffer counter is incremented/decremented
-
+    added a debug signal for division by zero
 */
 
 module Unsat_Clause_Selector # (

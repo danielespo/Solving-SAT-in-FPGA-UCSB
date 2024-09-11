@@ -17,6 +17,7 @@ Status:
         added 'exhaustive' tests that try all possible values of unsat_buffer_count with random values
 
 - V2.0: testbench in progress
+- V2.1: testbench in progress, cases tests almost done and stress test done
 */
 //`define VERBOSE
 // `define TEST_TYPE_0 // uncomment for case tests
@@ -189,9 +190,8 @@ assign uut_setup = uut.setup;
         - report the number of matches and duplicates
 */
 
-/* - - - - - - - - - - - - - - - - - - - - CASE TESTS - - - - - - - - - - - - - - - - - - - - */
 `ifdef TEST_TYPE_0
-
+/* - - - - - - - - - - - - - - - - - - - - CASE TESTS - - - - - - - - - - - - - - - - - - - - */
     // test params
     parameter TEST_COUNT = 2048;
     parameter READ_WHILE_LOADING = 16;
@@ -547,21 +547,39 @@ assign uut_setup = uut.setup;
         @(negedge clk);
         clear_debug_DIV_BY_ZERO = 0;
 
-/* - - - - - - - - - - - - - - - - - - - - STRESS TESTS - - - - - - - - - - - - - - - - - - - - */
-
+        $display("Unsat Clause Buffer Testbench: End Case Test");
+        $finish;
+    end
 
 `elsif TEST_TYPE_1
+/* - - - - - - - - - - - - - - - - - - - - STRESS TESTS - - - - - - - - - - - - - - - - - - - - */
     parameter INITIAL_LOAD = 128;
     parameter FIFO_LOAD = 2048;
-    parameter TEST_COUNT = INITIAL_LOAD + FIFO_LOAD; // 2176
+    parameter TOTAL_LOAD = INITIAL_LOAD + FIFO_LOAD; // 2176
+
+    parameter PIPELINE_DEPTH = 8; // actual depth is 12
+    parameter FIFO_RATE_PER_CYCLE = 4; // number of values to write from FIFO per cycle
+    parameter FIFO_EMPTY_RATE = 3; // every third cycle, fifo_empty_i is set to 1
 
     // test data
-    reg [31 : 0]                random              [0 : TEST_COUNT - 1];
+    reg [31 : 0]                random              [0 : TOTAL_LOAD - 1];
     reg [CLAUSE_WIDTH - 1 : 0]  init_clauses        [0 : INITIAL_LOAD - 1];
     reg [CLAUSE_WIDTH - 1 : 0]  fifo_clauses        [0 : FIFO_LOAD - 1];
+    integer                     fifo_counter;
 
-    reg [CLAUSE_WIDTH - 1 : 0]  all_clauses         [0 : TEST_COUNT - 1];
-    reg                         all_clauses_matched [0 : TEST_COUNT - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]  all_clauses_exp     [0 : TOTAL_LOAD - 1];
+    reg                         all_clauses_matched [0 : TOTAL_LOAD - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]  output_clauses      [0 : TOTAL_LOAD - 1];
+    reg                         output_clauses_v    [0 : TOTAL_LOAD - 1];
+
+    reg other_match;
+    reg match_found;
+
+    integer fifo_empty_cycle_counter;
+    integer counter;
+    integer matches;
+    integer misses;
+    integer duplicates;
 
     initial begin
         $display("Unsat Clause Buffer Testbench: begin stress test");
@@ -579,18 +597,109 @@ assign uut_setup = uut.setup;
         random_i = 0;
 
         // generate random test data
+        $display("  Pre-setup: Generate random test data");
         for(i = 0; i < INITIAL_LOAD; i = i + 1) begin
             init_clauses[i][31:0] = $random;
             init_clauses[i][CLAUSE_WIDTH - 1:32] = $random;
-            all_clauses[i] = init_clauses[i];
+            random[i] = $random;
+            all_clauses_exp[i] = init_clauses[i];
             all_clauses_matched[i] = 0;
         end
         for(i = 0; i < FIFO_LOAD; i = i + 1) begin
             fifo_clauses[i][31:0] = $random;
             fifo_clauses[i][CLAUSE_WIDTH - 1:32] = $random;
-            all_clauses[INITIAL_LOAD + i] = fifo_clauses[i];
+            random[INITIAL_LOAD + i] = $random;
+            all_clauses_exp[INITIAL_LOAD + i] = fifo_clauses[i];
             all_clauses_matched[INITIAL_LOAD + i] = 0;
         end
+
+        $display("  Setup stage: Load the buffer with sequential values to test");
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+        setup = 1;
+        for(i = 0; i < INITIAL_LOAD; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = init_clauses[i];
+            @(negedge clk);
+        end
+        setup = 0;
+
+        $display("  Test stage: Run the module");
+        fifo_empty_cycle_counter = 1;
+        fifo_counter = 0;
+        counter = 0;
+        matches = 0;
+        misses = 0;
+        duplicates = 0;
+        while(buffer_count_o !== 0) begin
+            if(fifo_empty_cycle_counter == FIFO_EMPTY_RATE) begin
+                fifo_empty_i = 1;
+                fifo_empty_cycle_counter = 1;
+            end else begin
+                fifo_empty_i = 0;
+                fifo_empty_cycle_counter = fifo_empty_cycle_counter + 1;
+            end
+            // if fifo data is exhausted, set fifo to empty
+            if(fifo_counter == FIFO_LOAD) fifo_empty_i = 1;
+            for(i = 0; i < PIPELINE_DEPTH; i = i + 1) begin
+                // request at beginning of each pipeline
+                if(i == 0) request_i = 1;
+                else request_i = 0;
+
+                // record the output 4 stages after request
+                if(i == 4) begin
+                    output_clauses[counter] = selected_o;
+                    output_clauses_v[counter] = 1;
+                    counter = counter + 1;
+                end
+
+                // write from FIFO for first 4 cycles (or not if marked empty)
+                if(i < FIFO_RATE_PER_CYCLE && !fifo_empty_i) begin
+                    fifo_clause_i = fifo_clauses[fifo_counter];
+                    fifo_counter = fifo_counter + 1;
+                end else begin
+                    fifo_empty_i = 1;
+                    fifo_clause_i = 0;
+                end
+
+                @(negedge clk);
+            end
+        end
+
+        $display("Unsat Clause Buffer Testbench: End Stress Test");
+        $display("    Calculating Results ...");
+        for(i = 0; i < TOTAL_LOAD; i = i + 1) begin
+            other_match = 0;
+            match_found = 0;
+            for(j = 0; j < TOTAL_LOAD; j = j + 1) begin
+                if(all_clauses_exp[i] === output_clauses[j] && !match_found) begin
+                    if(!all_clauses_matched[j]) begin
+                        all_clauses_matched[j] = 1;
+                        match_found = 1;
+                        matches = matches + 1;
+                    end else begin
+                        other_match = 1;
+                    end
+                end
+            end
+            if(!match_found) begin
+                if(other_match) begin
+                    duplicates = duplicates + 1;
+                    $display("    Test failed: Output %0h is a duplicate", output_clauses[i]);
+                end else begin
+                    misses = misses + 1;
+                    $display("    Test failed: Output %0h not found in expected values", output_clauses[i]);
+                end
+            end
+        end
+        $display("    Matches: %0d", matches);
+        $display("    Misses: %0d", misses);
+        $display("    Duplicates: %0d", duplicates);
+        $display("    Total clauses: %0d", TOTAL_LOAD);
+        $finish;
     end
     
 
@@ -730,11 +839,5 @@ assign uut_setup = uut.setup;
 
 // e_num_passed_total = 0;
 // e_num_missed_avg = 0;
-
-$display("Unsat Clause Buffer Testbench: End Test");
-
-    $finish;
-
-end
 
 endmodule
