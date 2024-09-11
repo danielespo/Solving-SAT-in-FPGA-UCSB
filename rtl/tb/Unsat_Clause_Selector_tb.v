@@ -7,6 +7,7 @@ Author V1.1: Zeiler Randall-Reed
 Author V1.2: Zeiler Randall-Reed
 
 Author V2.0: Zeiler Randall-Reed
+Author V2.1: Zeiler Randall-Reed
 
 Description:
 
@@ -17,11 +18,12 @@ Status:
         added 'exhaustive' tests that try all possible values of unsat_buffer_count with random values
 
 - V2.0: testbench in progress
-- V2.1: testbench in progress, cases tests almost done and stress test done
+- V2.1: testbench complete, case tests passed, stress test passed
 */
+
 //`define VERBOSE
-// `define TEST_TYPE_0 // uncomment for case tests
-`define TEST_TYPE_1 // uncomment for stress test
+`define TEST_TYPE_0 // uncomment for case tests
+// `define TEST_TYPE_1 // uncomment for stress test
 
 module Unsat_Clause_Selector_tb;
 
@@ -66,6 +68,7 @@ genvar n;
     // outputs
         wire [$clog2(BUFFER_DEPTH) - 1 : 0] buffer_count_o;
         wire [CLAUSE_WIDTH - 1 : 0] selected_o;
+        wire ucb_overflow_o;
 
 // instantiate the unit under test (UUT)
 Unsat_Clause_Selector #(
@@ -91,7 +94,8 @@ Unsat_Clause_Selector #(
     .fifo_clause_i(fifo_clause_i),
     .random_i(random_i),
     .buffer_count_o(buffer_count_o),
-    .selected_o(selected_o)
+    .selected_o(selected_o),
+    .ucb_overflow_o(ucb_overflow_o)
 );
 
 // monitor signals
@@ -112,7 +116,6 @@ wire [RAN_WIDTH + M_TABLE_WIDTH - 1 : 0] uut_product2;
 wire [RAN_WIDTH - 1 : 0] der_quotient;
 wire [RAN_WIDTH - 1 : 0] uut_N_R1, uut_N_R2;
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_m1, uut_m2;
-wire [BUF_ADDR_WIDTH - 1 : 0] uut_selection;
 wire uut_request1, uut_request2, uut_request3, uut_request4;
 assign uut_product2 = uut.product2;
 assign der_quotient = uut.product2[M_TABLE_WIDTH +: RAN_WIDTH] ;
@@ -120,7 +123,6 @@ assign uut_N_R1 = uut.N_R1;
 assign uut_N_R2 = uut.N_R2;
 assign uut_m1 = uut.m1;
 assign uut_m2 = uut.m2;
-assign uut_selection = uut.selection;
 assign uut_request1 = uut.request1;
 assign uut_request2 = uut.request2;
 assign uut_request3 = uut.request3;
@@ -547,9 +549,170 @@ assign uut_setup = uut.setup;
         @(negedge clk);
         clear_debug_DIV_BY_ZERO = 0;
 
-        $display("Unsat Clause Buffer Testbench: End Case Test");
-        $finish;
+    $display("  Test F: buffer overflow");
+        // set values to zero
+        reset = 0;
+        setup = 0;
+        ucb_setup_wren_i = 0;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = 0;
+        request_i = 0;
+        write_disable_i = 0;
+        fifo_empty_i = 0;
+        fifo_clause_i = 0;
+        random_i = 0;
+
+        test_cycles = 20;
+
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+
+        $display("    Setup stage: Load the buffer with sequential values");
+        setup = 1;
+        for(i = 0; i < BUFFER_DEPTH - test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+        $display("   Test stage: Try to overflow the buffer");
+
+        fifo_empty_i = 0;
+        for(i = 0; i < test_cycles + 2; i = i + 1) begin
+            request_i = 0;
+            fifo_clause_i = i;
+            @(negedge clk);
+        end
+        if(!ucb_overflow_o) begin
+            $display("    Test F failed: Overflow not detected, buffer count %0h", buffer_count_o);
+        end else begin
+            $display("    Test F passed");
+        end
+
+        @(negedge clk);
+        
+
+    $display("  Test G: reading the last element");
+        test_passed = 1;
+        // set values to zero
+        reset = 0;
+        setup = 0;
+        ucb_setup_wren_i = 0;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = 0;
+        request_i = 0;
+        write_disable_i = 0;
+        fifo_empty_i = 0;
+        fifo_clause_i = 0;
+        random_i = 0;
+
+        test_cycles = 8;
+
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+
+        $display("    Setup stage: Load the buffer with sequential values");
+        setup = 1;
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+
+        fifo_empty_i = 1;
+        $display("    Test stage: Try to read the last element");
+        random_i = 3'b111 << RANDOM_OFFSET;
+        request_i = 1;
+        @(negedge clk);
+        request_i = 0;
+        @(negedge clk);
+        @(negedge clk);
+        @(negedge clk);
+        if(selected_o !== test_cycles - 1) begin
+            $display("    Test G failed: Expected selection %0h, Got %0h", test_cycles - 1, selected_o);
+            test_passed = 0;
+        end else if(buffer_count_o !== test_cycles - 1) begin
+            $display("    Test G failed: Expected buffer count %0h, Got %0h", test_cycles - 1, buffer_count_o);
+            test_passed = 0;
+        end 
+        fifo_empty_i = 0;
+        fifo_clause_i = {CLAUSE_WIDTH{1'b1}};
+        @(negedge clk);
+        if(uut_ucb_data[test_cycles - 1] !== {CLAUSE_WIDTH{1'b1}}) begin
+            $display("    Test G failed: Expected clause %0h, Got %0h", {CLAUSE_WIDTH{1'b1}}, uut_ucb_data[test_cycles - 1]);
+            test_passed = 0;
+        end
+
+        if(test_passed) begin
+            $display("    Test G passed");
+        end
+
+        @(negedge clk);
+
+    $display("  Test H: write_disable");
+        test_passed = 1;
+        // set values to zero
+        reset = 0;
+        setup = 0;
+        ucb_setup_wren_i = 0;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = 0;
+        request_i = 0;
+        write_disable_i = 0;
+        fifo_empty_i = 1;
+        fifo_clause_i = 0;
+        random_i = 0;
+
+        test_cycles = 8;
+
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+
+        $display("    Setup stage: Load the buffer with sequential values");
+        setup = 1;
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+
+        fifo_empty_i = 0;
+        $display("    Test stage: Try to write when write_disable is set");
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            fifo_clause_i = i;
+            if(i > test_cycles/2 - 1) begin
+                write_disable_i = 1;
+            end
+            @(negedge clk);
+        end
+
+        $display("    Test stage: Check the results");
+        if(buffer_count_o !== test_cycles + test_cycles/2) begin
+            $display("    Test H failed: Expected buffer count %0h, Got %0h", test_cycles + test_cycles/2, buffer_count_o);
+            test_passed = 0;
+        end
+
+        if(test_passed) begin
+            $display("    Test H passed");
+        end
+        
+
+    $display("Unsat Clause Buffer Testbench: End Case Test");
+    $finish;
+        
     end
+        
 
 `elsif TEST_TYPE_1
 /* - - - - - - - - - - - - - - - - - - - - STRESS TESTS - - - - - - - - - - - - - - - - - - - - */
@@ -702,9 +865,6 @@ assign uut_setup = uut.setup;
         $finish;
     end
     
-
-
-
 `else
     $display("No test type selected");
 `endif    

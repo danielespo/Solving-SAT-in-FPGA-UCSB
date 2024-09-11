@@ -6,6 +6,7 @@ Author V1.0: Zeiler Randall-Reed
 Author V1.1: Zeiler Randall-Reed
 Author V1.2: Zeiler Randall-Reed
 Author V2.0: Zeiler Randall-Reed
+Author V2.1: Zeiler Randall-Reed
 
 Description:
 This module handles the data being written to and from the Unsatisfied Clause Buffer. This includes
@@ -60,10 +61,11 @@ V2.0 - 8/29/2024
 V2.1 - 9/10/2024
     changed the way the unsat buffer counter is incremented/decremented
     added a debug signal for division by zero
+    fixed write_disable_i logic
 */
 
 module Unsat_Clause_Selector # (
-    parameter BUFFER_DEPTH = 2048,
+    parameter BUFFER_DEPTH = 2048, // must be power of 2
     parameter RANDOM_NUM_WIDTH = 18,
     parameter RANDOM_OFFSET = 10,
     parameter M_TABLE_WIDTH = 32,
@@ -94,7 +96,7 @@ module Unsat_Clause_Selector # (
 
     output wire [$clog2(BUFFER_DEPTH) - 1 : 0] buffer_count_o,
     output wire [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] selected_o,
-    output reg ucb_overflow_o
+    output wire ucb_overflow_o
 );
 
 localparam RAN_WIDTH = RANDOM_NUM_WIDTH;
@@ -104,8 +106,9 @@ localparam LIT_ADDR_WIDTH = LITERAL_ADDRESS_WIDTH;
 localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
 // unsat buffer signals
-    reg [BUF_ADDR_WIDTH - 1 : 0] ucb_count;
-    assign buffer_count_o = ucb_count;
+    reg [BUF_ADDR_WIDTH : 0] ucb_count;
+    assign buffer_count_o = ucb_count[BUF_ADDR_WIDTH - 1 : 0];
+    assign ucb_overflow_o = ucb_count[BUF_ADDR_WIDTH];
 
     wire ucb_en, ucb_we;
     wire [BUF_ADDR_WIDTH - 1 : 0] ucb_addr;
@@ -179,6 +182,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
             ucb_count <= 0;
         end else begin
             if (setup & ucb_setup_wren_i) ucb_count <= ucb_count + 1; // increment counter during setup
+            else if(~ucb_en) ucb_count <= ucb_count; // if buffer is not enabled, do nothing
             else if(~fifo_empty_i & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
             else if(fifo_empty_i & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
             else if(fifo_empty_i & ~request3) ucb_count <= ucb_count;  // if fifo not empty and we're selecting (1R 1W)
