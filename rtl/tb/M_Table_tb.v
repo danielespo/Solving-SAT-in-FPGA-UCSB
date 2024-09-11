@@ -3,12 +3,14 @@ Version: 1.0
 M_Table_tb.v
 
 Author V1.0: Zeiler Randall-Reed
+Author V1.1: Zeiler Randall-Reed
 
 Description:
-Testbench for the 1/m table module.
+Testbench for the  table module.
 
 Status:
 - V1.0: testbench in progress, no successful testing yet
+- V1.1: all tests passed
 
 */
 
