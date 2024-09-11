@@ -53,6 +53,10 @@ V2.0 - 8/29/2024
     modified selection pipeline to keep track of requests to read the buffer
      - 8/30/2024
     testbench started
+
+V2.1 - 9/10/2024
+    changed the way the unsat buffer counter is incremented/decremented
+
 */
 
 module Unsat_Clause_Selector # (
@@ -75,6 +79,8 @@ module Unsat_Clause_Selector # (
     // controller signals
     input request_i, // should be high for one clock cycle before G1 (first E1)
     input write_disable_i, // should be high if FIFO_last is written to clause register
+    input clear_debug_DIV_BY_ZERO, 
+    output wire debug_DIV_BY_ZERO,
 
     // fifo signals
     input fifo_empty_i,
@@ -164,7 +170,6 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
     assign selected_o = request4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
 
-
 // unsat buffer counter logic
     always @(posedge clk) begin
         if(reset) begin
@@ -179,8 +184,10 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     end
 
 // 1/m table instantiation
-    assign mt_addr = m1;
+    assign mt_addr = ucb_count;
     assign mt_en = 1; //setup ? 1 : mt_en_i;
+    assign mt_clear_debug_DIV_BY_ZERO = clear_debug_DIV_BY_ZERO;
+    assign debug_DIV_BY_ZERO = mt_debug_DIV_BY_ZERO;
 
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
     M_Table #(
@@ -208,7 +215,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
             request2 <= 0;
             selection <= 0;
             request3 <= 0;
-        end else begin // a mod b = a - (a/b) * b
+        end else begin // NR mod m = NR - (NR/m) * m
             // stage 1 (E1)
             N_R1 <= random_i[RANDOM_OFFSET +: RANDOM_NUM_WIDTH];
             m1 <= ucb_count;

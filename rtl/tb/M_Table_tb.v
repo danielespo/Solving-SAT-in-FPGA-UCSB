@@ -78,10 +78,10 @@ initial begin
     // check if data matches
     en = 1;
     
-    for(i = 0; i < BUFFER_DEPTH; i = i + 1) begin
+    for(i = 1; i < BUFFER_DEPTH; i = i + 1) begin
         addr_i = i;
         @(negedge clk);
-        if(data_o !== m_table_expected[i]) begin
+        if(data_o !== m_table_expected[i - 1]) begin
             $display("Error: data_o[%0d] = %0h, expected %0h", i, data_o, m_table_expected[i]);
             test_passed[i] = 1'b0;
             num_passed = num_passed - 1;
@@ -89,7 +89,7 @@ initial begin
     end
     
     $display("M_Table_tb testbench complete");
-    $display("Number of tests passed: %0d/%0d", num_passed, BUFFER_DEPTH);
+    $display("Number of tests passed: %0d/%0d", num_passed - 1, BUFFER_DEPTH - 1);
     $finish;
 
 end

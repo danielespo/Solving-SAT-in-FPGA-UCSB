@@ -37,6 +37,9 @@ module M_Table #(
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i))
     reg [M_TABLE_WIDTH - 1 : 0] m_table [0 : BUFFER_DEPTH - 1];
 
+    // 1/m table address (adjusted)
+    wire [BUFFER_ADDR_WIDTH - 1 : 0] addr_actual = (addr_i == 0) ? 0 : addr_i - 1;
+
     // initial register data and loading 1/M-table
     initial begin
         debug_DIV_BY_ZERO = 0;
@@ -47,7 +50,7 @@ module M_Table #(
     // 1/m table (fixed point)
     always @(posedge clk) begin
         if(en) begin
-            data_o <= m_table[addr_i];
+            data_o <= m_table[addr_actual];
         end else begin
             data_o <= {M_TABLE_WIDTH{1'b0}};
         end

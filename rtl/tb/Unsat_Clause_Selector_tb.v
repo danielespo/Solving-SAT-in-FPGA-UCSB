@@ -18,6 +18,9 @@ Status:
 
 - V2.0: testbench in progress
 */
+//`define VERBOSE
+// `define TEST_TYPE_0 // uncomment for case tests
+`define TEST_TYPE_1 // uncomment for stress test
 
 module Unsat_Clause_Selector_tb;
 
@@ -32,14 +35,7 @@ parameter LITERAL_ADDRESS_WIDTH = 12;
 localparam RAN_WIDTH = RANDOM_NUM_WIDTH;
 localparam BUF_ADDR_WIDTH = $clog2(BUFFER_DEPTH);
 localparam MT_WIDTH = M_TABLE_WIDTH;
-
 localparam CLAUSE_WIDTH = NSAT * LITERAL_ADDRESS_WIDTH;
-
-// test params
-parameter TEST_COUNT = 11;
-parameter TEST_NUMBER = 1;
-
-parameter NUM_EXHAUSTIVE = 20;
 
 // integer vars
 integer i, j;
@@ -59,6 +55,8 @@ genvar n;
     // controller signals
         reg request_i;
         reg write_disable_i;
+        reg clear_debug_DIV_BY_ZERO;
+        wire debug_DIV_BY_ZERO;
     // fifo signals
         reg fifo_empty_i;
         reg [CLAUSE_WIDTH - 1 : 0] fifo_clause_i;
@@ -86,6 +84,8 @@ Unsat_Clause_Selector #(
     .ucb_setup_data_i(ucb_setup_data_i),
     .request_i(request_i),
     .write_disable_i(write_disable_i),
+    .clear_debug_DIV_BY_ZERO(clear_debug_DIV_BY_ZERO),
+    .debug_DIV_BY_ZERO(debug_DIV_BY_ZERO),
     .fifo_empty_i(fifo_empty_i),
     .fifo_clause_i(fifo_clause_i),
     .random_i(random_i),
@@ -95,9 +95,13 @@ Unsat_Clause_Selector #(
 
 // monitor signals
 wire [CLAUSE_WIDTH - 1 : 0] uut_ucb_data [0 : BUFFER_DEPTH - 1];
+wire [CLAUSE_WIDTH - 1 : 0] uut_ucb_data_truncated [0 : 128 - 1];
 generate
     for(n = 0; n < BUFFER_DEPTH; n = n + 1) begin
         assign uut_ucb_data[n] = uut.unsat_buffer.ram[n];
+    end
+    for(n = 0; n < 32; n = n + 1) begin
+        assign uut_ucb_data_truncated[n] = uut.unsat_buffer.ram[n];
     end
 endgenerate
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_selection;
@@ -128,9 +132,17 @@ assign uut_mt_data_o = uut.mt_data_o;
 
 wire uut_ucb_en, uut_ucb_we;
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_ucb_addr;
+wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_data_in;
+wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_data_out;
+wire [BUF_ADDR_WIDTH - 1 : 0] uut_ucb_last_addr;
+wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_last_data;
 assign uut_ucb_en = uut.ucb_en;
 assign uut_ucb_we = uut.ucb_we;
 assign uut_ucb_addr = uut.ucb_addr;
+assign uut_ucb_data_in = uut.ucb_data_in;
+assign uut_ucb_data_out = uut.ucb_data_out;
+assign uut_ucb_last_addr = uut.ucb_last_addr;
+assign uut_ucb_last_data = uut.ucb_last_data;
 
 wire uut_setup;
 assign uut_setup = uut.setup;
@@ -151,159 +163,442 @@ assign uut_setup = uut.setup;
     -> check that the selection is within the range of 0-127
     -> predict selection by knowing random number
     -> make sure count is accurate, and that the writing doesn't overwrite anything
-  - test D: unsat_buffer_count = 2048
-    -> check that the selection is within the range of 0-2047
+  - test D: unsat_buffer_count = 32, (read while loading)
+    -> fifo_empty_i should be set to zero, and data should be fed into fifo_clause_i
+    -> check that the selection is within expected range
     -> predict selection by knowing random number
     -> make sure count is accurate
   - test E: unsat_buffer_count = 0 
     -> check division by zero
     -> make sure selection logic makes sense (and count is zero)
-  - test F: try overfilling the buffer
+  - test F: try overfilling the buffer [incomplete]
     -> check overflow flag
+  - test G: ensure reading the last element in the buffer doesn't duplicate it [incomplete]
+    -> check that the counter decrements, and the next write overwrites it
+  - test H: test write_disable (when the fifo value is sent directly to the clause register) [incomplete]
 
-- edge case
-  - test to make sure that reading from the last element in the buffer doesn't duplicate it (should just be cleared)
+- stress test
+    - plan: load the buffer with 128 values initially
+        - read the buffer as would be expected in the normal operation of the module
+        - load 2048 values as if they came from the FIFO tree 
+            - only write sometimes, other times set fifo_empty and just read
+        - match each output of the buffer with one of the inserted values 
+            - with this many values, there might be duplicates
+            - handle this by marking the first unmarked value that matches
+        - count the number of matches, and the number of duplicates
+        - report the number of matches and duplicates
 */
 
+/* - - - - - - - - - - - - - - - - - - - - CASE TESTS - - - - - - - - - - - - - - - - - - - - */
+`ifdef TEST_TYPE_0
+
+    // test params
+    parameter TEST_COUNT = 2048;
+    parameter READ_WHILE_LOADING = 16;
 
 
-// test data
-reg [31 : 0]                        random                      [0 : TEST_COUNT - 1];
-reg [BUF_ADDR_WIDTH - 1 : 0]        expected_selection_index    [0 : TEST_COUNT - 1];
-reg [BUF_ADDR_WIDTH - 1 : 0]        actual_selection_index      [0 : TEST_COUNT - 1];
-reg [CLAUSE_WIDTH - 1 : 0]          expected_selected_clause    [0 : TEST_COUNT - 1];
-reg [CLAUSE_WIDTH - 1 : 0]          actual_selected_clause      [0 : TEST_COUNT - 1];
+    // test data
+    reg [31 : 0]                        random                      [0 : TEST_COUNT - 1];
+    reg [BUF_ADDR_WIDTH - 1 : 0]        expected_selection_index    [0 : TEST_COUNT - 1];
+    reg [BUF_ADDR_WIDTH - 1 : 0]        actual_selection_index      [0 : TEST_COUNT - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]          expected_selected_clause    [0 : TEST_COUNT - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]          actual_selected_clause      [0 : TEST_COUNT - 1];
+    reg [BUF_ADDR_WIDTH - 1 : 0]        buf_count                   [0 : TEST_COUNT - 1];
 
-reg [CLAUSE_WIDTH - 1 : 0]          sim_buffer                  [0 : BUFFER_DEPTH - 1];
-reg [BUF_ADDR_WIDTH - 1 : 0]        sim_index;
-reg [BUF_ADDR_WIDTH - 1 : 0]        sim_counter;
+    reg [CLAUSE_WIDTH - 1 : 0]          sim_buffer                  [0 : BUFFER_DEPTH - 1];
+    reg [BUF_ADDR_WIDTH - 1 : 0]        sim_index;
+    reg [BUF_ADDR_WIDTH - 1 : 0]        sim_counter;
+    reg [CLAUSE_WIDTH - 1 : 0]          sim_fifo_clause             [0 : READ_WHILE_LOADING - 1];  
+    reg [READ_WHILE_LOADING - 1 : 0]    sim_fifo_counter;        
 
-// reg [$clog2(BUFFER_DEPTH) - 1 : 0]  unsat_buffer_count_exhaustive   [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
-// reg [31 : 0]                        random_exhaustive               [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
-// reg [$clog2(BUFFER_DEPTH) - 1 : 0]  selected_exhaustive             [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]          fifo_count;
 
-// test reg
-reg test_passed;
+    // reg [$clog2(BUFFER_DEPTH) - 1 : 0]  unsat_buffer_count_exhaustive   [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
+    // reg [31 : 0]                        random_exhaustive               [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
+    // reg [$clog2(BUFFER_DEPTH) - 1 : 0]  selected_exhaustive             [0 : BUFFER_DEPTH][0 : NUM_EXHAUSTIVE - 1];
 
-// reg [BUFFER_DEPTH - 1 : 0] e_test_passed [0 : NUM_EXHAUSTIVE - 1];
-// integer e_num_passed [0 : NUM_EXHAUSTIVE - 1];
-// integer e_num_passed_total;
+    // test reg
+    reg test_passed;
+    integer test_cycles;
 
-// testbench
-initial begin
-    $display("Unsat Clause Buffer Testbench: begin test");
+    // reg [BUFFER_DEPTH - 1 : 0] e_test_passed [0 : NUM_EXHAUSTIVE - 1];
+    // integer e_num_passed [0 : NUM_EXHAUSTIVE - 1];
+    // integer e_num_passed_total;
 
-    // set values to zero
-    reset = 0;
-    setup = 0;
-    ucb_setup_wren_i = 0;
-    ucb_setup_addr_i = 0;
-    ucb_setup_data_i = 0;
-    request_i = 0;
-    write_disable_i = 0;
-    fifo_empty_i = 0;
-    fifo_clause_i = 0;
-    random_i = 0;
+    // testbench
+    initial begin
+        $display("Unsat Clause Buffer Testbench: begin case test");
 
-    reset = 1;
-    @(negedge clk);
-    @(negedge clk);
-    reset = 0;
-    
-    // test A: unsat_buffer_count = 1
+        // set values to zero
+        reset = 0;
+        setup = 0;
+        ucb_setup_wren_i = 0;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = 0;
+        request_i = 0;
+        write_disable_i = 0;
+        fifo_empty_i = 0;
+        fifo_clause_i = 0;
+        random_i = 0;
+
+        // test A: unsat_buffer_count = 1
     $display("  Test A: unsat_buffer_count = 1");
-    expected_selected_clause[0] = {3{12'b011001100110}};
-    expected_selection_index[0] = 0;
+        test_cycles = 1;
+        expected_selected_clause[0] = {3{12'b011001100110}};
+        expected_selection_index[0] = 0;
 
-    setup = 1;
-    ucb_setup_wren_i = 1;
-    ucb_setup_addr_i = 0;
-    ucb_setup_data_i = expected_selected_clause[0];
-    @(negedge clk);
-    setup = 0;
-    fifo_empty_i = 1;
-
-    request_i = 1;
-    @(negedge clk);
-    request_i = 0;
-    @(negedge clk);
-    @(negedge clk);
-    actual_selection_index[0] = uut_selection;
-    @(negedge clk);
-    if(selected_o !== expected_selected_clause[0] && actual_selection_index[0] !== expected_selection_index[0]) begin
-        $display("    Test A failed: Expected o utput %0h, Got %0h; Expected index %0h, Got %0h", expected_selected_clause[0], selected_o, expected_selection_index[0], actual_selection_index[0]);
-    end else if(selected_o !== expected_selected_clause[0]) begin
-        $display("    Test A failed: Expected output %0h, Got %0h", expected_selected_clause[0], selected_o);
-    end else if(actual_selection_index[0] !== expected_selection_index[0]) begin
-        $display("    Test A failed: Expected index %0h, Got %0h", expected_selection_index[0], actual_selection_index[0]);
-    end else begin
-        $display("    Test A passed");
-    end
-
-    @(negedge clk);
-    
-    $display("  Test B: unsat_buffer_count = 10");
-    $display("    Pre-setup: Generate expected values");
-    sim_counter = 0;
-    test_passed = 1;
-    // simulate loading
-    for(i = 0; i < 10; i = i + 1) begin
-        random[i] = $random;
-        sim_buffer[i] = i;
-        sim_counter = sim_counter + 1;
-    end
-    // simulate reading
-    for(i = 0; i < 10; i = i + 1) begin
-        sim_index = random[i][RANDOM_OFFSET +: RAN_WIDTH] % (sim_counter);
-        expected_selected_clause[i] = sim_buffer[sim_index];
-        expected_selection_index[i] = sim_index;
-        sim_buffer[sim_index] = sim_buffer[sim_counter - 1];
-        sim_counter = sim_counter - 1;
-    end
-    $display("    Setup stage: Load the buffer with sequential values to test");
-    reset = 1;
-    @(negedge clk);
-    @(negedge clk);
-    reset = 0;
-    setup = 1;
-    for(i = 0; i < 10; i = i + 1) begin
-        ucb_setup_wren_i = 1;
-        ucb_setup_addr_i = i;
-        ucb_setup_data_i = i;
+        reset = 1;
         @(negedge clk);
-    end
-    setup = 0;
-    fifo_empty_i = 1;
+        @(negedge clk);
+        reset = 0;
 
-    $display("    Test stage: Run the module");
-    for(i = 0; i < 10; i = i + 1) begin
-        random_i = random[i];
+        setup = 1;
+        ucb_setup_wren_i = 1;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = expected_selected_clause[0];
+        @(negedge clk);
+        setup = 0;
+        fifo_empty_i = 1;
+
         request_i = 1;
         @(negedge clk);
         request_i = 0;
         @(negedge clk);
         @(negedge clk);
-        actual_selection_index[i] = uut_selection;
+        actual_selection_index[0] = uut_selection;
         @(negedge clk);
-        actual_selected_clause[i] = selected_o;
-    end
-    $display("    Test stage: Check the results");
-    for(i = 0; i < 10; i = i + 1) begin
-        if(actual_selection_index[i] > buffer_count_o) begin
-            $display("    Test B-%0d failed: Selection index %0h is greater than buffer count %0h", i, actual_selection_index[i], buffer_count_o);
-            test_passed = 0;
-        end else if(actual_selection_index[i] !== expected_selection_index[i] || actual_selected_clause[i] !== expected_selected_clause[i]) begin
-            $display("    Test B-%0d failed: Expected output %0h, Got %0h; Expected index %0h, Got %0h", i, expected_selected_clause[i], actual_selected_clause[i], expected_selection_index[i], actual_selection_index[i]);
-            test_passed = 0;
-        end 
-    end
-    if(test_passed) begin
-        $display("    Test B passed");
+        if(selected_o !== expected_selected_clause[0] && actual_selection_index[0] !== expected_selection_index[0]) begin
+            $display("    Test A failed: Expected o utput %0h, Got %0h; Expected index %0h, Got %0h", expected_selected_clause[0], selected_o, expected_selection_index[0], actual_selection_index[0]);
+        end else if(selected_o !== expected_selected_clause[0]) begin
+            $display("    Test A failed: Expected output %0h, Got %0h", expected_selected_clause[0], selected_o);
+        end else if(actual_selection_index[0] !== expected_selection_index[0]) begin
+            $display("    Test A failed: Expected index %0h, Got %0h", expected_selection_index[0], actual_selection_index[0]);
+        end else begin
+            $display("    Test A passed");
+        end
+
+        @(negedge clk);
+
+    $display("  Test B: unsat_buffer_count = 10");
+        $display("    Pre-setup: Generate expected values");
+        test_cycles = 10;
+        sim_counter = 0;
+        test_passed = 1;
+        // simulate loading
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            random[i] = $random;
+            sim_buffer[i] = i;
+            sim_counter = sim_counter + 1;
+        end
+        // simulate reading
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            sim_index = random[i][RANDOM_OFFSET +: RAN_WIDTH] % (sim_counter);
+            expected_selected_clause[i] = sim_buffer[sim_index];
+            expected_selection_index[i] = sim_index;
+            sim_buffer[sim_index] = sim_buffer[sim_counter - 1];
+            sim_counter = sim_counter - 1;
+        end
+        $display("    Setup stage: Load the buffer with sequential values to test");
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+        setup = 1;
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+        fifo_empty_i = 1;
+
+        $display("    Test stage: Run the module");
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            random_i = random[i];
+            request_i = 1;
+            @(negedge clk);
+            request_i = 0;
+            @(negedge clk);
+            @(negedge clk);
+            actual_selection_index[i] = uut_selection;
+            buf_count[i] = buffer_count_o;
+            @(negedge clk);
+            actual_selected_clause[i] = selected_o;
+        end
+        $display("    Test stage: Check the results");
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            if(actual_selection_index[i] > buf_count[i]) begin
+                $display("    Test B-%0d failed: Selection index %0h is greater than buffer count %0h", i, actual_selection_index[i], buf_count[i]);
+                test_passed = 0;
+            end else if(actual_selection_index[i] !== expected_selection_index[i] || actual_selected_clause[i] !== expected_selected_clause[i]) begin
+                $display("    Test B-%0d failed: Expected output %0h, Got %0h; Expected index %0h, Got %0h", i, expected_selected_clause[i], actual_selected_clause[i], expected_selection_index[i], actual_selection_index[i]);
+                test_passed = 0;
+            end 
+        end
+        if(test_passed) begin
+            $display("    Test B passed");
+        end
+
+        @(negedge clk);
+
+    $display("  Test C: unsat_buffer_count = 128");
+        $display("    Pre-setup: Generate expected values");
+        test_cycles = 128;
+        sim_counter = 0;
+        test_passed = 1;
+        // simulate loading
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            random[i] = $random;
+            sim_buffer[i] = i;
+            sim_counter = sim_counter + 1;
+        end
+        for(i = 0; i < READ_WHILE_LOADING; i = i + 1) begin
+            sim_fifo_clause[i] = {12'h001, 24'h000000} | i;
+        end
+        // simulate reading
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            sim_index = random[i][RANDOM_OFFSET +: RAN_WIDTH] % (sim_counter);
+            expected_selected_clause[i] = sim_buffer[sim_index];
+            expected_selection_index[i] = sim_index;
+            sim_buffer[sim_index] = sim_buffer[sim_counter - 1];
+            sim_counter = sim_counter - 1;
+        end
+        $display("    Setup stage: Load the buffer with sequential values to test");
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+        setup = 1;
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+        fifo_empty_i = 1;
+
+        $display("    Test stage: Run the module");
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            random_i = random[i];
+            request_i = 1;
+            @(negedge clk);
+            request_i = 0;
+            @(negedge clk);
+            @(negedge clk);
+            actual_selection_index[i] = uut_selection;
+            buf_count[i] = buffer_count_o;
+            @(negedge clk);
+            actual_selected_clause[i] = selected_o;
+        end
+        $display("    Test stage: Check the results");
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            if(actual_selection_index[i] > buf_count[i]) begin
+                $display("    Test C-%0d failed: Selection index %0h is greater than buffer count %0h", i, actual_selection_index[i], buf_count[i]);
+                test_passed = 0;
+            end else if(actual_selection_index[i] !== expected_selection_index[i] || actual_selected_clause[i] !== expected_selected_clause[i]) begin
+                $display("    Test C-%0d failed: Expected output %0h, Got %0h; Expected index %0h, Got %0h", i, expected_selected_clause[i], actual_selected_clause[i], expected_selection_index[i], actual_selection_index[i]);
+                test_passed = 0;
+            end 
+        end
+        if(test_passed) begin
+            $display("    Test C passed");
+        end
+
+        @(negedge clk);
+
+    $display("  Test D: unsat_buffer_count = 16, (read while loading - %0d)", READ_WHILE_LOADING);
+        $display("    Pre-setup: Generate expected values");
+        test_cycles = 16;
+        sim_counter = 0;
+        sim_fifo_counter = 0;
+        test_passed = 1;
+        // simulate loading
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            random[i] = $random;
+            sim_buffer[i] = i;
+            sim_counter = sim_counter + 1;
+        end
+        // simulate buffer
+        for(i = 0; i < test_cycles + READ_WHILE_LOADING; i = i + 1) begin
+            sim_index = random[i][RANDOM_OFFSET +: RAN_WIDTH] % (sim_counter);
+            expected_selected_clause[i] = sim_buffer[sim_index];
+            expected_selection_index[i] = sim_index;
+            if(sim_fifo_counter < READ_WHILE_LOADING) begin
+                for(j = 0; j < 3; j = j + 1) begin
+                    sim_buffer[sim_counter] = sim_fifo_clause[sim_fifo_counter];
+                    sim_counter = sim_counter + 1;
+                    sim_fifo_counter = sim_fifo_counter + 1;
+                end
+                sim_buffer[sim_index] = sim_fifo_clause[sim_fifo_counter];
+                sim_fifo_counter = sim_fifo_counter + 1;
+            end else begin
+                sim_buffer[sim_index] = sim_buffer[sim_counter - 1];
+                sim_counter = sim_counter - 1;
+            end
+        end
+        $display("    Setup stage: Load the buffer with sequential values to test");
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+        setup = 1;
+        for(i = 0; i < test_cycles; i = i + 1) begin
+            ucb_setup_wren_i = 1;
+            ucb_setup_addr_i = i;
+            ucb_setup_data_i = i;
+            @(negedge clk);
+        end
+        setup = 0;
+        fifo_empty_i = 0;
+        fifo_count = 0;
+
+        $display("    Test stage: Run the module");
+        for(i = 0; i < test_cycles + READ_WHILE_LOADING; i = i + 1) begin
+            random_i = random[i];
+            request_i = 1;
+            if(fifo_count < READ_WHILE_LOADING) begin
+                fifo_clause_i = sim_fifo_clause[fifo_count];
+                fifo_count = fifo_count + 1;
+            end else begin
+                fifo_empty_i = 1;
+            end
+            @(negedge clk);
+            request_i = 0;
+            if(fifo_count < READ_WHILE_LOADING) begin
+                fifo_clause_i = sim_fifo_clause[fifo_count];
+                fifo_count = fifo_count + 1;
+            end else begin
+                fifo_empty_i = 1;
+            end
+            @(negedge clk);
+            if(fifo_count < READ_WHILE_LOADING) begin
+                fifo_clause_i = sim_fifo_clause[fifo_count];
+                fifo_count = fifo_count + 1;
+            end else begin
+                fifo_empty_i = 1;
+            end
+            @(negedge clk);
+            actual_selection_index[i] = uut_selection;
+            buf_count[i] = buffer_count_o;
+            if(fifo_count < READ_WHILE_LOADING) begin
+                fifo_clause_i = sim_fifo_clause[fifo_count];
+                fifo_count = fifo_count + 1;
+            end else begin
+                fifo_empty_i = 1;
+            end
+            @(negedge clk);
+            actual_selected_clause[i] = selected_o;
+        end
+        $display("    Test stage: Check the results");
+        for(i = 0; i < test_cycles + READ_WHILE_LOADING; i = i + 1) begin
+            `ifdef VERBOSE
+                $display("      Test D-%2d:", i);
+                if(actual_selection_index[i] > buf_count[i]) begin
+                    $display("        Test failed: Selection index %0h is greater than buffer count %0h", actual_selection_index[i], buf_count[i]);
+                    test_passed = 0;
+                end else if(actual_selection_index[i] !== expected_selection_index[i] || actual_selected_clause[i] !== expected_selected_clause[i]) begin
+                    $display("        Test failed: Expected output %7h, Got %7h; Expected index %3h, Got %3h", expected_selected_clause[i], actual_selected_clause[i], expected_selection_index[i], actual_selection_index[i]);
+                    test_passed = 0;
+                end else begin
+                    $display("        Test passed: Output %7h, Index %3h", actual_selected_clause[i], actual_selection_index[i]);
+                end
+            `else
+                if(actual_selection_index[i] > buf_count[i]) begin
+                    $display("        Test D-%2d failed: Selection index %0h is greater than buffer count %0h", i, actual_selection_index[i], buf_count[i]);
+                    test_passed = 0;
+                end else if(actual_selection_index[i] !== expected_selection_index[i] || actual_selected_clause[i] !== expected_selected_clause[i]) begin
+                    $display("        Test D-%2d failed: Expected output %7h, Got %7h; Expected index %3h, Got %3h", i, expected_selected_clause[i], actual_selected_clause[i], expected_selection_index[i], actual_selection_index[i]);
+                    test_passed = 0;
+                end
+            `endif
+        end
+        if(test_passed) begin
+            $display("    Test D passed");
+        end
+
+        @(negedge clk);
+
+    $display("  Test E: unsat_buffer_count = 1");
+        test_cycles = 1;
+
+        reset = 1;
+        @(negedge clk);
+        @(negedge clk);
+        reset = 0;
+
+        setup = 1;
+        @(negedge clk);
+        setup = 0;
+        fifo_empty_i = 1;
+
+        request_i = 1;
+        @(negedge clk);
+        request_i = 0;
+        @(negedge clk);
+        if(~debug_DIV_BY_ZERO) begin
+            $display("    Test E failed: Division by zero not detected");
+        end else begin
+            $display("    Test E passed");
+        end
+
+        clear_debug_DIV_BY_ZERO = 1;
+        @(negedge clk);
+        clear_debug_DIV_BY_ZERO = 0;
+
+/* - - - - - - - - - - - - - - - - - - - - STRESS TESTS - - - - - - - - - - - - - - - - - - - - */
+
+
+`elsif TEST_TYPE_1
+    parameter INITIAL_LOAD = 128;
+    parameter FIFO_LOAD = 2048;
+    parameter TEST_COUNT = INITIAL_LOAD + FIFO_LOAD; // 2176
+
+    // test data
+    reg [31 : 0]                random              [0 : TEST_COUNT - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]  init_clauses        [0 : INITIAL_LOAD - 1];
+    reg [CLAUSE_WIDTH - 1 : 0]  fifo_clauses        [0 : FIFO_LOAD - 1];
+
+    reg [CLAUSE_WIDTH - 1 : 0]  all_clauses         [0 : TEST_COUNT - 1];
+    reg                         all_clauses_matched [0 : TEST_COUNT - 1];
+
+    initial begin
+        $display("Unsat Clause Buffer Testbench: begin stress test");
+
+        // set values to zero
+        reset = 0;
+        setup = 0;
+        ucb_setup_wren_i = 0;
+        ucb_setup_addr_i = 0;
+        ucb_setup_data_i = 0;
+        request_i = 0;
+        write_disable_i = 0;
+        fifo_empty_i = 0;
+        fifo_clause_i = 0;
+        random_i = 0;
+
+        // generate random test data
+        for(i = 0; i < INITIAL_LOAD; i = i + 1) begin
+            init_clauses[i][31:0] = $random;
+            init_clauses[i][CLAUSE_WIDTH - 1:32] = $random;
+            all_clauses[i] = init_clauses[i];
+            all_clauses_matched[i] = 0;
+        end
+        for(i = 0; i < FIFO_LOAD; i = i + 1) begin
+            fifo_clauses[i][31:0] = $random;
+            fifo_clauses[i][CLAUSE_WIDTH - 1:32] = $random;
+            all_clauses[INITIAL_LOAD + i] = fifo_clauses[i];
+            all_clauses_matched[INITIAL_LOAD + i] = 0;
+        end
     end
     
-    @(negedge clk);
 
 
+
+`else
+    $display("No test type selected");
+`endif    
 
 //     // generate random test data
 //     for(i = 0; i < TEST_COUNT; i = i + 1) begin
@@ -436,14 +731,7 @@ initial begin
 // e_num_passed_total = 0;
 // e_num_missed_avg = 0;
 
-// $display("Unsat Clause Buffer Testbench: End Test");
-// for(i = 0; i < TEST_COUNT; i = i + 1) if(r_test_passed[i]) r_num_passed = r_num_passed + 1;
-// for(j = 0; j < NUM_EXHAUSTIVE; j = j + 1) for(i = 0; i < BUFFER_DEPTH; i = i + 1) if(e_test_passed[j][i]) e_num_passed[j] = e_num_passed[j] + 1;
-// for(j = 0; j < NUM_EXHAUSTIVE; j = j + 1) e_num_passed_total = e_num_passed_total + e_num_passed[j];
-// $display("    Random Test Results: %0d/%0d tests passed", r_num_passed, TEST_COUNT);
-// for(j = 0; j < NUM_EXHAUSTIVE; j = j + 1) $display("    Exhaustive Test %0d Results: %0d/%0d tests passed", j, e_num_passed[j], BUFFER_DEPTH);
-// $display("    Exhaustive Test Results Total: %0d/%0d tests passed", e_num_passed_total, BUFFER_DEPTH * NUM_EXHAUSTIVE);
-
+$display("Unsat Clause Buffer Testbench: End Test");
 
     $finish;
 
