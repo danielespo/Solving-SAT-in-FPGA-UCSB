@@ -31,6 +31,9 @@ Change Log:
 
 2024/07/24 - Barry Wang
     Remake Clause_Register
+
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
     
 */
 
@@ -41,13 +44,13 @@ module Clause_Table #(
     parameter VARIABLE_ADDRESS_WIDTH = 11,
     parameter NSAT = 3
 )(
-    input clk, 
+    input clk_i, 
     
-    input we,
-    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] waddr, 
-    input [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_i,
+    input wr_en_i,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] wr_addr_i, 
+    input [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] wr_clauses_i,
 
-    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] raddr,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_i,
     output reg [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_o
 );
     
@@ -55,10 +58,10 @@ module Clause_Table #(
     
     reg [WIDTH - 1 : 0] mem [0 : DEPTH - 1];
 
-    always @ (posedge clk)
+    always @ (posedge clk_i)
     begin
-        if (we) mem[waddr] <= clauses_i;
-        clauses_o <= mem[raddr];
+        if (we) mem[wr_addr_i] <= wr_clauses_i;
+        clauses_o <= mem[wr_addr_i];
     end
     
 endmodule

@@ -23,39 +23,44 @@ Change Log:
 2024/07/24 - Barry Wang
     Remake Address_Translation_Table.v
 
+2024/09/11 - Zeiler Randall-Reed
+    Changed "VARIABLE_ADDRESS_WIDTH" to "LITERAL_ADDRESS_WIDTH" to match naming in other modules
+    naming convention parity
+
 -----------------------------------------------------*/
 
 module Address_Translation_Table # (
     parameter CLAUSE_COUNT = 20,
-    parameter VARIABLE_ADDRESS_WIDTH = 11,
+    parameter LITERAL_ADDRESS_WIDTH = 12,
     parameter CLAUSE_TABLE_ADDRESS_WIDTH = 11
 )(
-    input       clk, 
+    input       clk_i, 
 
     // setup write io  
-    input       wr_en,
-    input       [VARIABLE_ADDRESS_WIDTH : 0] wr_addr_i, 
-    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] data_i,
+    input                                                           wr_en_i,
+    input       [LITERAL_ADDRESS_WIDTH : 0]                         wr_addr_i, 
+    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] wr_data_i,
 
     // runtime read io
-    input       [VARIABLE_ADDRESS_WIDTH : 0] rd_addr_i,
+    input       [LITERAL_ADDRESS_WIDTH : 0]          rd_addr_i,
     output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1 : 0] addr_o,
-    output wire [CLAUSE_COUNT - 1 : 0] mask_o
+    output wire [CLAUSE_COUNT - 1 : 0]               mask_o
 );
 
-    localparam DEPTH = 2 ** (VARIABLE_ADDRESS_WIDTH);
+    localparam DEPTH = 2 ** (LITERAL_ADDRESS_WIDTH);
     localparam WIDTH = CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT;
     
     reg [WIDTH - 1 : 0] ram [0 : DEPTH - 1];
     
     reg [WIDTH - 1 : 0] dout;
     
+    // assign {addr_o, mask_o} = dout; // potential alternative, but unclear
     assign mask_o = dout[CLAUSE_COUNT - 1 : 0];
     assign addr_o = dout[WIDTH - 1 : CLAUSE_COUNT];
     
-    always @(posedge clk)
+    always @(posedge clk_i)
     begin
-        if (wr_en) ram[wr_addr_i] <= data_i;
+        if (wr_en_i) ram[wr_addr_i] <= wr_data_i;
         dout <= ram[rd_addr_i];
     end
 

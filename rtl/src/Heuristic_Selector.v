@@ -26,8 +26,6 @@ module Heuristic_Selector #(
                             // - if the LSFR input is above this number, the selector will random walk
                             // - if we want greedy move probability around 4.3, we can use 1846835936
 )(
-    // input clk,
-    // input reset,
     input [NSAT * $clog2(MAX_CLAUSES_PER_VARIABLE) - 1 : 0] break_values_i,
     input [NSAT - 1 : 0] break_values_valid_i, // this is a vector of valid bits for each break value
     input [31 : 0] random_i, 

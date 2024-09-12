@@ -19,6 +19,11 @@ Change Log:
 2024/07/25 - Barry Wang
     Created Variable_Table_Cluster.v
 
+2024/09/11 - Zeiler Randall-Reed
+    update for changes in Variable Table
+    unify runtime write signals (Variable Table changes are synced)
+    axi interface 
+
 -----------------------------------------------------*/
 
 module Variable_Table_Cluster #(
@@ -26,29 +31,35 @@ module Variable_Table_Cluster #(
     // Total number of variable tables will be CLUSTER_SIZE,
     parameter CLUSTER_SIZE = 20 * 2
 )(
-    input   clk,
-    input   [CLUSTER_SIZE - 1 : 0] en_a, en_b, 
-    input   [(VARIABLE_ADDRESS_WIDTH * CLUSTER_SIZE) - 1 : 0] addr_a, addr_b,
-    input   [CLUSTER_SIZE - 1 : 0] we_a, we_b,
-    input   [CLUSTER_SIZE - 1 : 0] din_a, din_b,
-    output  [CLUSTER_SIZE - 1 : 0] dout_a, dout_b
+    input  clk_i,
+    
+    // runtime interface
+    input  en_i, wr_en_i,
+    input  [CLUSTER_SIZE * VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_mi, 
+    input                                                  data_i, // common runtime data input
+    output [CLUSTER_SIZE - 1 : 0]                          data_mo,
+
+    // axi interface (should write simultaneously)
+    input  axi_en_i, axi_wr_en_i,
+    input  [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
+    input  axi_data_i // common data input
 );
     genvar i;
     generate
         for (i = 0; i < CLUSTER_SIZE; i = i + 1)
         begin
             Variable_Table # (VARIABLE_ADDRESS_WIDTH) (
-                .clk(clk),
-                .en_a(en_a[i]),
-                .en_b(en_b[i]),
-                .we_a(we_a[i]),
-                .we_b(we_b[i]),
-                .addr_a(addr_a[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
-                .addr_b(addr_b[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
-                .din_a(din_a[i]),
-                .din_b(din_b[i]),
-                .dout_a(dout_a[i]),
-                .dout_b(dout_b[i])
+                .clk_i(clk_i),
+                .en_i(en_i),
+                .wr_en_i(wr_en_i),
+                .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
+                .data_i(data_i),
+                .data_o(data_mo[i]),
+                .axi_en_i(axi_en_i),
+                .axi_wr_en_i(axi_wr_en_i),
+                .axi_addr_i(axi_addr_i),
+                .axi_data_i(axi_data_i),
+                .axi_data_o()
             );
         end
     endgenerate

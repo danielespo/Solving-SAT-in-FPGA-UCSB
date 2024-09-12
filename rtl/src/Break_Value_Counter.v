@@ -46,8 +46,6 @@ module Break_Value_Counter #(
     parameter NUM_CLAUSES = 20,
     parameter NUM_ROWS = 3
 )(
-    // input                                   clk,                // Clock signal
-    // input                                   reset,              // Reset signal
     input       [NUM_CLAUSES - 1 : 0]           clause_broken_i,    // bits indicating if the clause is broken / unsatisfied
     input       [NUM_CLAUSES - 1 : 0]           mask_bits_i,        // valid mask from the clause table
     output reg  [$clog2(NUM_CLAUSES) - 1 : 0]   break_value_o,      // number of clauses that are broken

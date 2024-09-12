@@ -62,6 +62,9 @@ V2.1 - 9/10/2024
     changed the way the unsat buffer counter is incremented/decremented
     added a debug signal for division by zero
     fixed write_disable_i logic
+
+    9/11/2024
+    naming updates
 */
 
 module Unsat_Clause_Selector # (
@@ -72,20 +75,20 @@ module Unsat_Clause_Selector # (
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 12
 )(
-    input clk,
-    input reset,
+    input clk_i,
+    input rst_i,
 
-    input setup, output ready, // control signals maybe?
+    input setup_i, output ready_o, // control signals maybe?
     // loading Unsat Buffer Clauses
-    input                                           ucb_setup_wren_i,
+    input                                           ucb_setup_wr_en_i,
     input [$clog2(BUFFER_DEPTH) - 1 : 0]            ucb_setup_addr_i,
     input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]    ucb_setup_data_i,
 
     // controller signals
     input request_i, // should be high for one clock cycle before G1 (first E1)
     input write_disable_i, // should be high if FIFO_last is written to clause register
-    input clear_debug_DIV_BY_ZERO, 
-    output wire debug_DIV_BY_ZERO,
+    input clear_debug_DIV_BY_ZERO_i, 
+    output wire debug_DIV_BY_ZERO_o,
 
     // fifo signals
     input fifo_empty_i,
@@ -133,22 +136,22 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     wire mt_debug_DIV_BY_ZERO;
 
 // unsat buffer instantiation
-    assign ucb_en = setup ? 
+    assign ucb_en = setup_i ? 
                         1'b1: 
                         ~write_disable_i;
-    assign ucb_we = setup ? 
-                        ucb_setup_wren_i: 
+    assign ucb_we = setup_i ? 
+                        ucb_setup_wr_en_i: 
                         fifo_empty_i ?
                             request3 ?
                                 !(selection == ucb_last_addr): 
                                 0 :  
                             1;
-    assign ucb_addr = setup ? 
+    assign ucb_addr = setup_i ? 
                         ucb_setup_addr_i: 
                         request3 ? 
                             selection: 
                             ucb_count;
-    assign ucb_data_in = setup ? 
+    assign ucb_data_in = setup_i ? 
                         ucb_setup_data_i: 
                         fifo_empty_i ? 
                             ucb_last_data: 
@@ -160,8 +163,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         .VARIABLE_ADDRESS_(LIT_ADDR_WIDTH),
         .DEPTH(BUFFER_DEPTH)
     ) unsat_buffer (
-        .clk_a(clk),
-        .clk_b(clk),
+        .clk_i(clk_i),
         .en_a(ucb_en),
         .en_b(1),
         .we_a(ucb_we),
@@ -177,11 +179,11 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     assign selected_o = request4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
 
 // unsat buffer counter logic
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             ucb_count <= 0;
         end else begin
-            if (setup & ucb_setup_wren_i) ucb_count <= ucb_count + 1; // increment counter during setup
+            if (setup_i & ucb_setup_wr_en_i) ucb_count <= ucb_count + 1; // increment counter during setup
             else if(~ucb_en) ucb_count <= ucb_count; // if buffer is not enabled, do nothing
             else if(~fifo_empty_i & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
             else if(fifo_empty_i & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
@@ -192,8 +194,8 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
 // 1/m table instantiation
     assign mt_addr = ucb_count;
-    assign mt_en = 1; //setup ? 1 : mt_en_i;
-    assign mt_clear_debug_DIV_BY_ZERO = clear_debug_DIV_BY_ZERO;
+    assign mt_en = 1; //setup_i ? 1 : mt_en_i;
+    assign mt_clear_debug_DIV_BY_ZERO = clear_debug_DIV_BY_ZERO_i;
     assign debug_DIV_BY_ZERO = mt_debug_DIV_BY_ZERO;
 
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
@@ -202,7 +204,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         .M_TABLE_WIDTH(MT_WIDTH),
         .M_TABLE_NAME("M_table_roundup.mem")
     ) m_table (
-        .clk(clk),
+        .clk_i(clk_i),
         .en(mt_en),
         .addr_i(mt_addr),
         .clear_debug_DIV_BY_ZERO(mt_clear_debug_DIV_BY_ZERO),
@@ -211,8 +213,8 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     );
 
 // selection logic     
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             N_R1 <= 0;
             m1 <= 0;
             request1 <= 0;

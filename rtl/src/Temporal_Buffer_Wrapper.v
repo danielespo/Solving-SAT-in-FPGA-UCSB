@@ -18,18 +18,20 @@ Testing:
 
 module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
-    parameter VARIABLE_ADDRESS_WIDTH = 11, 
-    parameter MAX_CLAUSE_MEMBERSHIP = 20 
+    parameter LITERAL_ADDRESS_WIDTH = 12, 
+    parameter MAX_CLAUSE_MEMBERSHIP = 20,
+    localparam LAW = LITERAL_ADDRESS_WIDTH,
+    localparam MC = MAX_CLAUSE_MEMBERSHIP
 )(
-    input                                   clk,                // Clock signal
-    input                                   reset,              // Reset signal
+    input                                   clk_i,                // Clock signal
+    input                                   rst_i,              // Reset signal
 
-    input   [$clog2(NSAT)-1:0]              write_index_i,      // which flip is currently being evaluated
-    input                                   write_en_i,         // write enable signal
-    input   [(NSAT - 1) * MAX_CLAUSE_MEMBERSHIP * (VARIABLE_ADDRESS_WIDTH + 1) - 1 : 0] literals_multi_i,   // literals from clause table for each flip
+    input   [$clog2(NSAT) - 1 : 0]          wr_index_i,      // which flip is currently being evaluated
+    input                                   wr_en_i,         // write enable signal
+    input   [(NSAT - 1) * MC * LAW - 1 : 0] wr_literals_mi,   // literals from clause table for each flip
 
-    input   [$clog2(NSAT)-1:0]              read_index_i,       // which flip was selected by the heuristic selector
-    output  [(NSAT - 1) * MAX_CLAUSE_MEMBERSHIP * (VARIABLE_ADDRESS_WIDTH + 1) - 1 : 0] literals_multi_o    // literals from clause table for selected flip
+    input   [$clog2(NSAT) - 1 : 0]          rd_index_i,       // which flip was selected by the heuristic selector
+    output  [(NSAT - 1) * MC * LAW - 1 : 0] literals_mo    // literals from clause table for selected flip
 );
 
     localparam MC = MAX_CLAUSE_MEMBERSHIP;
@@ -45,7 +47,7 @@ module Temporal_Buffer_Wrapper #(
                 .LAW(LAW),
                 .SIZE(NSAT-1)
             ) TB (
-                .clk(clk),
+                .clk_i(clk_i),
                 .reset(reset),
                 .write_index_i(write_index_i),
                 .write_en_i(write_en_i),

@@ -27,14 +27,14 @@ module Variable_Flip_Selector #(
     parameter NSAT = 3,
     parameter P = 'h6E147AE0
 )(
-    input clk,
-    input reset,
+    input clk_i,
+    input rst_i,
     input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_i,
     input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] mask_bits_i,
     input [NSAT - 1 : 0] break_values_valid_i,
     input [31:0] random_i,
 
-    input [$clog2(NSAT) - 1 : 0] wren_i,    // controller signal 
+    input [$clog2(NSAT) - 1 : 0] wr_en_i,    // controller signal 
     // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
     
     output reg [$clog2(NSAT) - 1 : 0] selected_o,
@@ -70,7 +70,7 @@ module Variable_Flip_Selector #(
     endgenerate
 
     // nice simple logic to check onehot
-    wire control_one_hot = ~|(wren_i & (wren_i - 1)) & |wren_i;
+    wire control_one_hot = ~|(wr_en_i & (wr_en_i - 1)) & |wr_en_i;
 
 
     // initialize break_value_counter and heuristic_selector
@@ -90,15 +90,16 @@ module Variable_Flip_Selector #(
         .P(P)
     ) hs (
         .break_values_i(all_break_values),
-        .break_values_valid_i(&wren_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
+        .break_values_valid_i(&wr_en_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
         .random_i(random_i),
-        .enable_i(&wren_i),
-        .select_o(select_o)
+        .enable_i(&wr_en_i),
+        .select_o(select_o),
+        .random_selection_o()
     );
 
     // break_values_reg and break_bits_reg
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             for(i = 0; i < NSAT - 1; i = i + 1) begin
                 break_values_reg[i] <= 0;
                 break_bits_reg[i] <= 0;
@@ -106,13 +107,13 @@ module Variable_Flip_Selector #(
             selected_o <= 2'b11;
             clause_valid_bits_o <= 0;
         end else begin
-            for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wren_i is one hot
-                if(wren_i[i] == 1 && control_one_hot) begin
+            for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wr_en_i is one hot
+                if(wr_en_i[i] == 1 && control_one_hot) begin
                     break_values_reg[i] <= break_value;
                     break_bits_reg[i] <= break_bits;
                 end
             end
-            if(&wren_i) begin // when we are using the data (all ones)
+            if(&wr_en_i) begin // when we are using the data (all ones)
                 break_bits_reg[NSAT - 1] <= break_bits;
                 selected_o <= select_o;
                 clause_valid_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];

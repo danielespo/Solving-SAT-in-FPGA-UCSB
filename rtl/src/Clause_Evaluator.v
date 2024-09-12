@@ -29,6 +29,10 @@ Change Log:
     Passed testbench
 2024/07/25 - Barry Wang
     Changed default implementation to output gated
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
+    formatting changes
+
 -----------------------------------------------------*/
 
 module Clause_Evaluator #(
@@ -41,46 +45,36 @@ module Clause_Evaluator #(
     // to be unsat
     parameter REDUCE = 1
 )(
-    // Clock signal
-    input   wire    clk_i,
-    // Reset signal
-    input   wire    reset_i,
+    input clk_i,
+    input rst_i,
     // Variable values and negation
-    input   wire    [(NSAT - REDUCE) - 1 : 0]  var_val_i,
-    input   wire    [(NSAT - REDUCE) - 1 : 0]  var_neg_i,
-    output  wire    break_o
+    input [(NSAT - REDUCE) - 1 : 0] var_val_i,
+    input [(NSAT - REDUCE) - 1 : 0] var_neg_i,
+    output wire                     break_o
 );
-
-    if (IMPLEMENTATION == "INPUT_GATED")
-    begin
+    if (IMPLEMENTATION == "INPUT_GATED") begin
         reg [(NSAT - REDUCE) - 1 : 0] var_val;
         reg [(NSAT - REDUCE) - 1 : 0] var_neg;
-        wire [(NSAT - REDUCE) - 1 : 0] negated = var_val ^ var_neg;
-        assign break_o = ~|negated;
-        always @ (posedge clk_i)
-          begin
-            if (reset_i)
-              begin
+        assign break_o = ~|(var_val ^ var_neg);
+        always @ (posedge clk_i) begin
+            if (rst_i) begin
                 var_val <= {((NSAT - REDUCE)){1'b1}};
                 var_neg <= 0;
-              end else begin
+            end else begin
                 var_val <= var_val_i;
                 var_neg <= var_neg_i;
-              end
-          end
+            end
+        end
     end else begin
         reg break;
         assign break_o = break;
-        wire [(NSAT - REDUCE) - 1 : 0] negated = var_val_i ^ var_neg_i;
-        always @ (posedge clk_i)
-          begin
-            if (reset_i)
-              begin
+        always @ (posedge clk_i) begin
+            if (rst_i) begin
                 break <= 1'b0;
-              end else begin
-                break <= ~|negated;
-              end
-          end
+            end else begin
+                break <= ~|(var_val_i ^ var_neg_i);
+            end
+        end
     end
 
 endmodule
