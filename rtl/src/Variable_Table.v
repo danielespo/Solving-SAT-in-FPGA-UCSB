@@ -31,17 +31,17 @@ module Variable_Table #(
 )(
     input       clk_i, 
     
-    // runtime interface
-    input       en_i, wr_en_i,
-    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_i, 
-    input       data_i,
-    output reg  data_o, 
-
     // axi interface
     input       axi_en_i, axi_wr_en_i,
     input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
     input       axi_data_i,
-    output reg  axi_data_o // unused
+    //output reg  axi_data_o, // unused
+
+    // runtime interface
+    input       en_i, wr_en_i,
+    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_i, 
+    input       data_i,
+    output reg  data_o 
 );
 
     reg ram [0 : 2 ** VARIABLE_ADDRESS_WIDTH - 1];
@@ -60,7 +60,7 @@ module Variable_Table #(
         if (axi_en_i)
         begin
             if (axi_wr_en_i) ram[axi_addr_i] <= axi_data_i;
-            axi_data_o <= ram[axi_addr_i]; // unused
+            //axi_data_o <= ram[axi_addr_i]; // unused
         end
     end
     

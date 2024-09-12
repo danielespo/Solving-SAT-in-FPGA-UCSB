@@ -45,7 +45,8 @@ Change Log:
     Skeleton of the module created
 
 9/11/2024 - Zeiler Randall-Reed 
-    Naming convention
+    Added all modules and signals
+    Naming convention fixes
     
 */
 module Datapath #(
@@ -97,8 +98,8 @@ genvar n, m;
 
     wire [CLAUSE_WIDTH - 1 : 0] _selected_clause_negated;
 
-    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _selected_literal;
-    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _negated_literal;
+    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _cr_selected_literal;
+    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _cr_negated_literal;
 
     wire [MC - 1 : 0]                       att_mask_out; 
     wire [VARIABLE_ADDRESS_WIDTH - 1 : 0]   att_addr_out; // avoid using _out but att is ambiguous
@@ -111,9 +112,9 @@ genvar n, m;
 
     wire [CLAUSE_WIDTH - 1 : 0] cnlb_clause;
 
-    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _negated_literal;
-    wire                                    _negated_literal_neg_bit;
-    wire [VARIABLE_ADDRESS_WIDTH - 1 : 0]   _negated_literal_addr;
+    wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _selected_literal_negated;
+    wire                                    _selected_literal_negated_neg_bit;
+    wire [VARIABLE_ADDRESS_WIDTH - 1 : 0]   _selected_literal_negated_addr;
 
     wire [(NSAT - 1) * MC - 1 : 0] nb_negation_bits;
 
@@ -162,7 +163,7 @@ genvar n, m;
     );
 
 /* --- address translation table --- */     // [TODO] - write interface
-    assign _selected_literal = att_src[1] ? 
+    assign _cr_selected_literal = att_src[1] ? 
         (att_src[0] ? 
             {LITERAL_ADDRESS_WIDTH{1'bx}} : // potential errors by propagating x
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 2 +: LITERAL_ADDRESS_WIDTH]) 
@@ -171,7 +172,7 @@ genvar n, m;
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 1 +: LITERAL_ADDRESS_WIDTH] : 
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 0 +: LITERAL_ADDRESS_WIDTH]);
 
-    assign _negated_literal = {~selected_literal[LITERAL_ADDRESS_WIDTH - 1], selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0]};
+    assign _cr_negated_literal = {~_cr_selected_literal[LITERAL_ADDRESS_WIDTH - 1], _cr_selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0]};
 
     Address_Translation_Table #(
         .CLAUSE_COUNT(MAX_CLAUSE_MEMBERSHIP),
@@ -179,10 +180,10 @@ genvar n, m;
         .CLAUSE_TABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH)
     ) address_translation_table (
         .clk_i(clk_i),
-        .wr_en_i(),
-        .wr_addr_i(),
-        .wr_data_i(),
-        .rd_addr_i(_negated_literal),
+        .axi_wr_en_i(),
+        .axi_wr_addr_i(),
+        .axi_wr_data_i(),
+        .rd_addr_i(_cr_negated_literal),
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
     );
@@ -205,8 +206,8 @@ genvar n, m;
 
     assign cnlb_clause = clause_negated_literals_buffer;
 
-    assign {_negated_literal_neg_bit, _negated_literal_addr} = _negated_literal;
-    assign _negated_literal = vfs_selected[1] ? 
+    assign {_selected_literal_negated_neg_bit, _selected_literal_negated_addr} = _selected_literal_negated;
+    assign _selected_literal_negated = vfs_selected[1] ? 
         (vfs_selected[0] ? 
             {LITERAL_ADDRESS_WIDTH{1'bx}} : 
             {cnlb_clause[LITERAL_ADDRESS_WIDTH * 2 +: LITERAL_ADDRESS_WIDTH]}) 
@@ -215,7 +216,7 @@ genvar n, m;
             {cnlb_clause[LITERAL_ADDRESS_WIDTH * 1 +: LITERAL_ADDRESS_WIDTH]} : 
             {cnlb_clause[LITERAL_ADDRESS_WIDTH * 0 +: LITERAL_ADDRESS_WIDTH]});
 
-/* --- clause table --- */
+/* --- clause table --- */                 // [TODO] - write interface
     // wire [LITERAL_ADDRESS_WIDTH - 1 : 0] ct_clauses_packed [NSAT - 2 : 0][MC - 1 : 0];
     // generate
     //     for(n = 0; n < MC; n = n + 1) for(m = 0; m < NSAT - 1; m = m + 1) begin
@@ -230,9 +231,9 @@ genvar n, m;
         .NSAT(NSAT)
     ) clause_table (
         .clk_i(clk_i),
-        .wr_en_i(),
-        .wr_addr_i(),
-        .wr_clauses_i(),
+        .axi_wr_en_i(),
+        .axi_wr_addr_i(),
+        .axi_wr_clauses_i(),
         .rd_addr_i(att_addr_out),
         .clauses_o(ct_clauses)
     );
@@ -276,24 +277,24 @@ genvar n, m;
     end
     assign nb_negation_bits = negation_buffer;
 
-/* --- variable table cluster --- */
-    assign _vtc_address_m = vt_addr_src ? {(NSAT - 1) * MC{_negated_literal_addr}} : ct_variable_addresses;
-    assign _vtc_data = _negated_literal_neg_bit;
+/* --- variable table cluster --- */       // [TODO] - write interface
+    assign _vtc_address_m = vt_addr_src ? {(NSAT - 1) * MC{_selected_literal_negated_addr}} : ct_variable_addresses;
+    assign _vtc_data = _selected_literal_negated_neg_bit;
 
     Variable_Table_Cluster #(
         .VARIABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH),
         .CLUSTER_SIZE((NSAT - 1) * MC)
     ) variable_table_cluster (
         .clk_i(clk_i),
+        .axi_en_i(),
+        .axi_wr_en_i(),
+        .axi_addr_i(),
+        .axi_data_i()
         .en_i(vt_en_i)
         .wr_en_i(vt_wr_en_i),
         .addr_mi(_vtc_address_m),
         .data_i(_vtc_data),
         .data_mo(vtc_value_bits),
-        .axi_en_i(),
-        .axi_wr_en_i(),
-        .axi_addr_i(),
-        .axi_data_i()
     );
 
 /* --- temporal buffer wrapper --- */
@@ -313,7 +314,7 @@ genvar n, m;
 
     generate
         for(n = 0; n < MC; n = n + 1) begin
-            assign _broken_clauses[n * CLAUSE_WIDTH +: CLAUSE_WIDTH] = {tbw_literals_multi_out[n * (NSAT - 1) * LITERAL_ADDRESS_WIDTH +: (NSAT - 1) * LITERAL_ADDRESS_WIDTH], _negated_literal};
+            assign _broken_clauses[n * CLAUSE_WIDTH +: CLAUSE_WIDTH] = {tbw_literals_multi_out[n * (NSAT - 1) * LITERAL_ADDRESS_WIDTH +: (NSAT - 1) * LITERAL_ADDRESS_WIDTH], _selected_literal_negated};
         end
     endgenerate
 
@@ -335,13 +336,13 @@ genvar n, m;
     end
     assign nb2_negation_bits = negation_buffer_2;
 
-/* --- variable table cluster 2 --- */
-    assign _vtc2_address_m = vt_addr_src ? {NSAT{_negated_literal_addr}} : usc_selected_clause_addresses;
-    assign _vtc2_data = _negated_literal_neg_bit;
+/* --- variable table cluster 2 --- */     // [TODO] - write interface
+    assign _vtc2_address_m = vt_addr_src ? {NSAT{_selected_literal_negated_addr}} : usc_selected_clause_addresses;
+    assign _vtc2_data = _selected_literal_negated_neg_bit;
 
     Variable_Table_Cluster #(
         .VARIABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH),
-        .CLUSTER_SIZE((NSAT - 1) * NSAT)
+        .CLUSTER_SIZE(NSAT)
     ) variable_table_cluster_2 (
         .clk_i(clk_i),
         .en_i(vt_en_i)
@@ -417,7 +418,7 @@ genvar n, m;
         .clause_o(fifo_clause)
     );
 
-/* --- unsat clause selector --- */
+/* --- unsat clause selector --- */       // [TODO] - write interface
     Unsat_Clause_Selector #(
         .BUFFER_DEPTH(UNSAT_CLAUSE_BUFFER_DEPTH),
         .RANDOM_NUM_WIDTH(18),
@@ -437,6 +438,14 @@ genvar n, m;
         .write_disable_i(~ce2_break),
         .clear_debug_DIV_BY_ZERO(),
         .debug_DIV_BY_ZERO(),
+        .fifo_empty_i(fifo_empty),
+        .fifo_clause_i(fifo_clause),
+        .random_i(prng_random_number),
+        .buffer_count_o(),
+        .selected_o(ucs_selected_clause),
+        .ucb_overflow_o()
     );
+
+    assign _selected_unsatisfied_clause = ce2_break ? ucs_selected_clause : fifo_clause;
 
 endmodule

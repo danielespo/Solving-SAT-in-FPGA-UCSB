@@ -33,16 +33,16 @@ module Variable_Table_Cluster #(
 )(
     input  clk_i,
     
+    // axi interface (should write simultaneously)
+    input  axi_en_i, axi_wr_en_i,
+    input  [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
+    input  axi_data_i, // common data input
+
     // runtime interface
     input  en_i, wr_en_i,
     input  [CLUSTER_SIZE * VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_mi, 
     input                                                  data_i, // common runtime data input
-    output [CLUSTER_SIZE - 1 : 0]                          data_mo,
-
-    // axi interface (should write simultaneously)
-    input  axi_en_i, axi_wr_en_i,
-    input  [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
-    input  axi_data_i // common data input
+    output [CLUSTER_SIZE - 1 : 0]                          data_mo
 );
     genvar i;
     generate
@@ -50,16 +50,16 @@ module Variable_Table_Cluster #(
         begin
             Variable_Table # (VARIABLE_ADDRESS_WIDTH) (
                 .clk_i(clk_i),
-                .en_i(en_i),
-                .wr_en_i(wr_en_i),
-                .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
-                .data_i(data_i),
-                .data_o(data_mo[i]),
                 .axi_en_i(axi_en_i),
                 .axi_wr_en_i(axi_wr_en_i),
                 .axi_addr_i(axi_addr_i),
                 .axi_data_i(axi_data_i),
-                .axi_data_o()
+                //.axi_data_o(),
+                .en_i(en_i),
+                .wr_en_i(wr_en_i),
+                .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
+                .data_i(data_i),
+                .data_o(data_mo[i])
             );
         end
     endgenerate

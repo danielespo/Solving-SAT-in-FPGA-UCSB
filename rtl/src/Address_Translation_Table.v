@@ -37,9 +37,9 @@ module Address_Translation_Table # (
     input       clk_i, 
 
     // setup write io  
-    input                                                           wr_en_i,
-    input       [LITERAL_ADDRESS_WIDTH : 0]                         wr_addr_i, 
-    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] wr_data_i,
+    input                                                           axi_wr_en_i,
+    input       [LITERAL_ADDRESS_WIDTH : 0]                         axi_wr_addr_i, 
+    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] axi_wr_data_i,
 
     // runtime read io
     input       [LITERAL_ADDRESS_WIDTH : 0]          rd_addr_i,
@@ -60,7 +60,7 @@ module Address_Translation_Table # (
     
     always @(posedge clk_i)
     begin
-        if (wr_en_i) ram[wr_addr_i] <= wr_data_i;
+        if (axi_wr_en_i) ram[axi_wr_addr_i] <= axi_wr_data_i;
         dout <= ram[rd_addr_i];
     end
 

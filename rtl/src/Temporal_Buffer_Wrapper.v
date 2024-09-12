@@ -20,22 +20,21 @@ module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 12, 
     parameter MAX_CLAUSE_MEMBERSHIP = 20,
+    localparam NSAT_BITS = $clog2(NSAT);
     localparam LAW = LITERAL_ADDRESS_WIDTH,
     localparam MC = MAX_CLAUSE_MEMBERSHIP
 )(
-    input                                   clk_i,                // Clock signal
-    input                                   rst_i,              // Reset signal
+    input                                   clk_i,           // Clock signal
+    input                                   rst_i,           // Reset signal
 
-    input   [$clog2(NSAT) - 1 : 0]          wr_index_i,      // which flip is currently being evaluated
+    input   [NSAT_BITS - 1 : 0]             wr_index_i,      // which flip is currently being evaluated
     input                                   wr_en_i,         // write enable signal
-    input   [(NSAT - 1) * MC * LAW - 1 : 0] wr_literals_mi,   // literals from clause table for each flip
+    input   [(NSAT - 1) * MC * LAW - 1 : 0] wr_literals_mi,  // literals from clause table for each flip
 
-    input   [$clog2(NSAT) - 1 : 0]          rd_index_i,       // which flip was selected by the heuristic selector
-    output  [(NSAT - 1) * MC * LAW - 1 : 0] literals_mo    // literals from clause table for selected flip
+    input   [NSAT_BITS - 1 : 0]             rd_index_i,      // which flip was selected by the heuristic selector
+    output  [(NSAT - 1) * MC * LAW - 1 : 0] literals_mo      // literals from clause table for selected flip
 );
 
-    localparam MC = MAX_CLAUSE_MEMBERSHIP;
-    localparam NSAT_BITS = $clog2(NSAT);
 
     // signals 
     genvar index;

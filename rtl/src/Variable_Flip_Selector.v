@@ -26,25 +26,26 @@ module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
     parameter P = 'h6E147AE0
+    localparam NSAT_BITS = $clog2(NSAT);
 )(
     input clk_i,
     input rst_i,
+
     input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_broken_i,
     input [MAX_CLAUSES_PER_VARIABLE - 1 : 0] mask_bits_i,
-    input [NSAT - 1 : 0] break_values_valid_i,
-    input [31:0] random_i,
+    input [NSAT - 1 : 0]                     break_values_valid_i,
+    input [31:0]                             random_i,
 
-    input [$clog2(NSAT) - 1 : 0] wr_en_i,    // controller signal 
+    input [NSAT_BITS - 1 : 0] wr_en_i,    // controller signal 
     // (all zeros = idle, 1 hot = write to respective bv reg, all ones = heurstic select)
     
-    output reg [$clog2(NSAT) - 1 : 0] selected_o,
+    output reg [NSAT_BITS - 1 : 0]                selected_o,
     output reg [MAX_CLAUSES_PER_VARIABLE - 1 : 0] clause_valid_bits_o
 );
 
     // localparams
     localparam MC = MAX_CLAUSES_PER_VARIABLE;
     localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
-    localparam NSAT_BITS = $clog2(NSAT);
 
     // integer vars
     integer i, j;
@@ -54,12 +55,12 @@ module Variable_Flip_Selector #(
     reg [MC  - 1 : 0] break_bits_reg    [NSAT - 2 : 0];
 
     // internal wires
-    wire [       MCB - 1 : 0] break_value;
-    wire [       MC  - 1 : 0] break_bits;
+    wire [MCB - 1 : 0] break_value;
+    wire [MC  - 1 : 0] break_bits;
 
     wire [NSAT * MCB - 1 : 0] all_break_values;
 
-    wire [NSAT_BITS - 1 : 0] select_o;
+    wire [NSAT_BITS - 1 : 0] select;
 
     genvar n;
     generate
@@ -93,7 +94,7 @@ module Variable_Flip_Selector #(
         .break_values_valid_i(&wr_en_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
         .random_i(random_i),
         .enable_i(&wr_en_i),
-        .select_o(select_o),
+        .select_o(select),
         .random_selection_o()
     );
 
@@ -115,8 +116,8 @@ module Variable_Flip_Selector #(
             end
             if(&wr_en_i) begin // when we are using the data (all ones)
                 break_bits_reg[NSAT - 1] <= break_bits;
-                selected_o <= select_o;
-                clause_valid_bits_o <= select_o == 2'b10 ? break_bits : break_bits_reg[select_o];
+                selected_o <= select;
+                clause_valid_bits_o <= select == 2'b10 ? break_bits : break_bits_reg[select];
             end
         end
     end

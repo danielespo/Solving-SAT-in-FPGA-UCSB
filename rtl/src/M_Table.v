@@ -24,12 +24,13 @@ module M_Table #(
     parameter M_TABLE_WIDTH = 32,
     parameter M_TABLE_NAME = "M_table_roundup.mem"
 )(
-    input clk,
-    input en,
-    input [$clog2(BUFFER_DEPTH) - 1 : 0] addr_i,
-    input clear_debug_DIV_BY_ZERO,
-    output reg [M_TABLE_WIDTH - 1 : 0] data_o,
-    output reg debug_DIV_BY_ZERO
+    input                                     clk_i,
+    input                                     en_i,
+    input      [$clog2(BUFFER_DEPTH) - 1 : 0] addr_i,
+    output reg [M_TABLE_WIDTH - 1 : 0]        data_o,
+
+    input      clear_debug_DIV_BY_ZERO_i,
+    output reg debug_DIV_BY_ZERO_o
 );
     //(* rom_style = "block" *) reg [M_TABLE_WIDTH - 1 : 0] data;
     localparam BUFFER_ADDR_WIDTH = $clog2(BUFFER_DEPTH);
@@ -42,26 +43,26 @@ module M_Table #(
 
     // initial register data and loading 1/M-table
     initial begin
-        debug_DIV_BY_ZERO = 0;
+        debug_DIV_BY_ZERO_o = 0;
         data_o = {M_TABLE_WIDTH{1'b0}};
         $readmemh(M_TABLE_NAME, m_table);
     end
 
     // 1/m table (fixed point)
-    always @(posedge clk) begin
-        if(en) begin
+    always @(posedge clk_i) begin
+        if(en_i) begin
             data_o <= m_table[addr_actual];
         end else begin
             data_o <= {M_TABLE_WIDTH{1'b0}};
         end
     end
     // debug signal to indicate division by zero
-    always @(posedge clk) begin
-        if(en) begin
+    always @(posedge clk_i) begin
+        if(en_i) begin
             if(addr_i == 0) begin
-                debug_DIV_BY_ZERO <= 1;
-            end else if(clear_debug_DIV_BY_ZERO) begin
-                debug_DIV_BY_ZERO <= 0;
+                debug_DIV_BY_ZERO_o <= 1;
+            end else if(clear_debug_DIV_BY_ZERO_i) begin
+                debug_DIV_BY_ZERO_o <= 0;
             end
         end
     end
