@@ -1,21 +1,38 @@
 {"signal": [
-  {"name": "clk",   "wave": "p......", "phase": 4, "period": 1},
-  {"name": "stage", "wave": "x227xx", "data": "E1 G1 G2"},
+  {"name": "clk",   "wave": "p......"},
+  {"name": "stage", "wave": "2222272", "data": "C D E1 G1 G2 G3 G4"},
   {},
-  ["M Table",
-   {"name": "en", "wave": "010..."},
-   {"name": "addr_i", "wave": "x2xxxx", "data": "UNSAT_counter"},
-   {"name": "data_o", "wave": "9.7...", "data": "Invalid Valid"}
+  ["UNSAT Clause Selector I/O",
+    {"name": "request_i",       "wave": "010...."},
+    {"name": "write_disable_i", "wave": "0......"},
+    {"name": "fifo_empty_i",    "wave": "0......"},
+    {"name": "fifo_clause_i",   "wave": "2222222", "data": "C1 C2 C3 C4 C5 C6 C7"},
+    {"name": "random_i",        "wave": "3732222", "data": "R3 R4 R5 R6 R7 R8 R9"},
+    {"name": "buffer_count_o",  "wave": "3732992", "data": "23 24 25 26 27 27 28"},
+    {"name": "selected_o",      "wave": "x....7x", "data": "C(R4%24)"}
   ],
-  {},
-  ["UNSAT Clause Selector",
-   ["sel_stage",
-    {"name": "[1]", "wave": "10.1.."},
-    {"name": "[0]", "wave": "10101."}
-   ],
-   {},
-   {"name": "buffer_count_i", "wave": "x2xxxx", "data": "UNSAT_counter"},
-   {"name": "random_i",       "wave": "222222"},
-   {"name": "selected_o",     "wave": "0..70.", "data": "selection_addr"}
+  ["UNSAT Clause Selector Internal",
+    ["Stage 1",
+      {"name": "N_R1",          "wave": "2373222", "data": "R2 R3 R4 R5 R6 R7 R8"},
+      {"name": "m1",            "wave": "2373222", "data": "22 23 24 25 26 27 27"},
+      {"name": "request1",      "wave": "0.10..."}
+    ],
+    ["M Table",
+      {"name": "addr_i",        "wave": "2373222", "data": "22 23 24 25 26 27 27"},
+      {"name": "data_o",        "wave": "2237322", "data": "1/21 1/22 1/23 1/24 1/25 1/26 1/27"}
+    ],
+    ["Stage 2",
+      {"name": "N_R2",          "wave": "2237322", "data": "R1 R2 R3 R4 R5 R6 R7"},
+      {"name": "m2",            "wave": "2237322", "data": "21 22 23 24 25 26 27"},
+      {"name": "product2",      "wave": "2237322", "data": "R1/21 R2/22 R3/23 R4/24 R5/25 R6/26 R7/27"},
+      {"name": "request2",      "wave": "0..10.."}
+    ],
+    ["Stage 3",
+      {"name": "selection",     "wave": "2223732", "data": "R0%20 R1%21 R2%22 R3%23 R4%24 R5%25 R6%26"},
+      {"name": "request3",      "wave": "0...10."}
+    ],
+    ["Stage 4",
+      {"name": "request4",      "wave": "0....10"}
+    ]
   ]
-], "config": {"hscale":4}}
+], "config": {"hscale":2}}

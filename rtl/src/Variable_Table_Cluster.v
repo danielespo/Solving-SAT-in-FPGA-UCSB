@@ -27,8 +27,9 @@ module Variable_Table_Cluster #(
     parameter CLUSTER_SIZE = 20 * 2
 )(
     input   clk,
-    input   [CLUSTER_SIZE - 1 : 0] en_a, en_b, we_a, we_b,
+    input   [CLUSTER_SIZE - 1 : 0] en_a, en_b, 
     input   [(VARIABLE_ADDRESS_WIDTH * CLUSTER_SIZE) - 1 : 0] addr_a, addr_b,
+    input   [CLUSTER_SIZE - 1 : 0] we_a, we_b,
     input   [CLUSTER_SIZE - 1 : 0] din_a, din_b,
     output  [CLUSTER_SIZE - 1 : 0] dout_a, dout_b
 );
