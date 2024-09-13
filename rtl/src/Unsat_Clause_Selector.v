@@ -74,7 +74,7 @@ module Unsat_Clause_Selector # (
     parameter M_TABLE_WIDTH = 32,
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 12,
-    localparam BUF_ADDR_WIDTH = $clog2(BUFFER_DEPTH);
+    localparam BUF_ADDR_WIDTH = $clog2(BUFFER_DEPTH)
 )(
     input clk_i,
     input rst_i,
@@ -162,7 +162,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
     Unsat_Clause_Buffer #(
         .NSAT(NSAT),
-        .VARIABLE_ADDRESS_(LIT_ADDR_WIDTH),
+        .LITERAL_ADDRESS_WIDTH(LIT_ADDR_WIDTH),
         .DEPTH(BUFFER_DEPTH)
     ) unsat_buffer (
         .clk_i(clk_i),

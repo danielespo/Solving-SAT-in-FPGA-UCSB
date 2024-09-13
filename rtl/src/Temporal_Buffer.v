@@ -47,7 +47,7 @@ module Temporal_Buffer #(
 
     localparam NSAT_BITS = $clog2(NSAT);
     
-    integer i, j;
+    integer i;
     
     /* Internal Signals */
     reg [SIZE * LAW - 1 : 0] stored_literals [NSAT - 1 : 0]; 

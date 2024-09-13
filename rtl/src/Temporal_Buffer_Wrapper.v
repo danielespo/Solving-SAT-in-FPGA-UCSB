@@ -20,7 +20,7 @@ module Temporal_Buffer_Wrapper #(
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 12, 
     parameter MAX_CLAUSE_MEMBERSHIP = 20,
-    localparam NSAT_BITS = $clog2(NSAT);
+    localparam NSAT_BITS = $clog2(NSAT),
     localparam LAW = LITERAL_ADDRESS_WIDTH,
     localparam MC = MAX_CLAUSE_MEMBERSHIP
 )(
@@ -37,22 +37,22 @@ module Temporal_Buffer_Wrapper #(
 
 
     // signals 
-    genvar index;
+    genvar n;
     
     generate
-        for(index = 0; index < MC; index = index + 1) begin : gen_temp_buf
+        for(n = 0; n < MC; n = n + 1) begin : gen_temp_buf
             Temporal_Buffer #(
                 .NSAT(NSAT),
                 .LAW(LAW),
                 .SIZE(NSAT-1)
             ) TB (
                 .clk_i(clk_i),
-                .reset(reset),
-                .write_index_i(write_index_i),
-                .write_en_i(write_en_i),
-                .literals_i(literals_multi_i[index*(NSAT-1)*(LAW+1)+:(NSAT-1)*(LAW+1)]),
-                .read_index_i(read_index_i),
-                .literals_o(literals_multi_o[index*(NSAT-1)*(LAW+1)+:(NSAT-1)*(LAW+1)])
+                .rst_i(rst_i),
+                .wr_index_i(wr_index_i),
+                .wr_en_i(wr_en_i),
+                .wr_literals_i(wr_literals_mi[n * (NSAT-1) * LAW +:(NSAT-1) * LAW]),
+                .rd_index_i(rd_index_i),
+                .literals_o(literals_mo[n * (NSAT-1) * LAW +: (NSAT-1) * LAW])
             );
         end
     endgenerate

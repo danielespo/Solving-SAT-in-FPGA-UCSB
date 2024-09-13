@@ -60,10 +60,10 @@ module Datapath #(
     input clk_i, rst_i,
     // controller signal : [x_xx_x_x_x_xx_x_xx_x_x]
     // CR_wren, ATT_src(2), VT_rden, VT_addr_src, VT_wren, VFS_wren(2), CFLB_wren, TB_wr_index(2), FIFO_wren, FIFO_rden 
-    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i,
+    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i
     // in progress
     
-)
+);
 
 // local parameters
 localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);      // naming change
@@ -120,9 +120,9 @@ genvar n, m;
 
     wire [(NSAT - 1) * MC * VARIABLE_ADDRESS_WIDTH - 1 : 0] _vtc_address_m;
     wire                                                    _vtc_data;
-    wire [(NSAT - 1) * MC - 1 : 0]                          vtc_value_bits
+    wire [(NSAT - 1) * MC - 1 : 0]                          vtc_value_bits;
 
-    wire [(NSAT - 1) * MC * VARIABLE_ADDRESS_WIDTH - 1 : 0] tbw_literals_multi_out;
+    wire [(NSAT - 1) * MC * LITERAL_ADDRESS_WIDTH - 1 : 0] tbw_literals_multi_out;
 
     wire [31 : 0] prng_random_number;
 
@@ -141,10 +141,10 @@ genvar n, m;
     wire [NSAT_BITS - 1 : 0] vfs_selected;
     wire [MC - 1 : 0]        vfs_clause_valid_bits;
 
-    wire [CLAUSE_WIDTH] fifo_clause;
-    wire                fifo_empty;
+    wire [CLAUSE_WIDTH - 1 : 0] fifo_clause;
+    wire                        fifo_empty;
 
-    wire [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]  ucs_selected_clause
+    wire [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]  ucs_selected_clause;
     wire [NSAT - 1 : 0]                          ucs_selected_clause_negation_bits;
     wire [NSAT * VARIABLE_ADDRESS_WIDTH - 1 : 0] usc_selected_clause_addresses;
 
@@ -190,8 +190,8 @@ genvar n, m;
 
 /* --- clause negated literals buffer --- */
     generate
-        for(i = 0; i < NSAT; i = i + 1) begin
-            assign _selected_clause_negated[LITERAL_ADDRESS_WIDTH * i +: LITERAL_ADDRESS_WIDTH] = {cr_selected_clause[LITERAL_ADDRESS_WIDTH * (i + 1) - 1], cr_selected_clause[LITERAL_ADDRESS_WIDTH * i +: VARIABLE_ADDRESS_WIDTH]};
+        for(n = 0; n < NSAT; n = n + 1) begin
+            assign _selected_clause_negated[LITERAL_ADDRESS_WIDTH * n +: LITERAL_ADDRESS_WIDTH] = {cr_selected_clause[LITERAL_ADDRESS_WIDTH * (n + 1) - 1], cr_selected_clause[LITERAL_ADDRESS_WIDTH * n +: VARIABLE_ADDRESS_WIDTH]};
         end
     endgenerate
 
@@ -253,7 +253,7 @@ genvar n, m;
     reg [MC - 1 : 0] mask_buffer_0;
     reg [MC - 1 : 0] mask_buffer_1;
     reg [MC - 1 : 0] mask_buffer_2;
-    always @ (posedge clk) begin
+    always @ (posedge clk_i) begin
         if (rst_i) begin
             mask_buffer_0 <= 0;
             mask_buffer_1 <= 0;
@@ -289,12 +289,12 @@ genvar n, m;
         .axi_en_i(),
         .axi_wr_en_i(),
         .axi_addr_i(),
-        .axi_data_i()
-        .en_i(vt_en_i)
+        .axi_data_i(),
+        .en_i(vt_en_i),
         .wr_en_i(vt_wr_en_i),
         .addr_mi(_vtc_address_m),
         .data_i(_vtc_data),
-        .data_mo(vtc_value_bits),
+        .data_mo(vtc_value_bits)
     );
 
 /* --- temporal buffer wrapper --- */
@@ -309,7 +309,7 @@ genvar n, m;
         .wr_en_i(~(&tb_wr_index)),
         .wr_literals_mi(ct_clauses),
         .rd_index_i(vfs_selected),
-        .literals_multi_o(tbw_literals_multi_out)
+        .literals_mo(tbw_literals_multi_out)
     );
 
     generate
@@ -327,7 +327,7 @@ genvar n, m;
 
 /* --- negation buffer 2 --- */
     reg [NSAT - 1 : 0] negation_buffer_2;
-    always @ (posedge clk) begin
+    always @ (posedge clk_i) begin
         if (rst_i) begin
             negation_buffer_2 <= 0;
         end else begin
@@ -345,7 +345,7 @@ genvar n, m;
         .CLUSTER_SIZE(NSAT)
     ) variable_table_cluster_2 (
         .clk_i(clk_i),
-        .en_i(vt_en_i)
+        .en_i(vt_en_i),
         .wr_en_i(vt_wr_en_i),
         .addr_mi(_vtc2_address_m),
         .data_i(_vtc2_data),
@@ -365,9 +365,9 @@ genvar n, m;
     ) clause_evaluator_cluster (
         .clk_i(clk_i),
         .rst_i(rst_i),
-        .var_val_i(vtc_value_bits),
-        .var_neg_i(nb_negation_bits),
-        .break_o(ce1_break_bits)
+        .var_val_mi(vtc_value_bits),
+        .var_neg_mi(nb_negation_bits),
+        .break_mo(ce1_break_bits)
     );
 
 /* --- clause evaluator 2 --- */
@@ -404,7 +404,7 @@ genvar n, m;
     FIFO_Tree #(
         .CLAUSE_COUNT(MC),
         .CLAUSE_WIDTH(CLAUSE_WIDTH),
-        .DEPTH(FIFO_DEPTH)
+        .BUFFER_DEPTH(FIFO_DEPTH)
     ) fifo_tree (
         .clk_i(clk_i),
         .rst_i(rst_i),

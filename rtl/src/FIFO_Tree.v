@@ -35,7 +35,7 @@ Change Log:
 
 -----------------------------------------------------*/
 
-module FIFO_tree #(
+module FIFO_Tree #(
     parameter CLAUSE_COUNT = 20,
     parameter CLAUSE_WIDTH = 36,
     parameter BUFFER_DEPTH = 32
@@ -43,7 +43,7 @@ module FIFO_tree #(
     input clk_i,
     input rst_i,
     input [CLAUSE_WIDTH * CLAUSE_COUNT - 1 : 0] clauses_i,
-    input [CLAUSE_COUNT - 1 : 0]                clause_valid_i,
+    input [CLAUSE_COUNT - 1 : 0]                clauses_valid_i,
     input wr_en_i,          // write enable
     input rd_en_i,          // read enable
     input cOF_i,            // clear overflow flag
@@ -169,8 +169,8 @@ module FIFO_tree #(
     // L0 read and write enables
     // These signals are mostly combinational
     for (i = 0; i < 4; i = i + 1) begin
-        assign L0wr_en[i] = wr_en_i ? clause_valid_i[i * 5] :
-            clause_valid_i[i * 5 + L0src] & (L0src < 5);
+        assign L0wr_en[i] = wr_en_i ? clauses_valid_i[i * 5] :
+            clauses_valid_i[i * 5 + L0src] & (L0src < 5);
     end
     
     for (i = 0; i < 2; i = i + 1) begin

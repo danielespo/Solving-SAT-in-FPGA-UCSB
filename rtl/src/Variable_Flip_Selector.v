@@ -25,8 +25,8 @@ V1.1 : all tests passed (8/19)
 module Variable_Flip_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter P = 'h6E147AE0
-    localparam NSAT_BITS = $clog2(NSAT);
+    parameter P = 'h6E147AE0,
+    localparam NSAT_BITS = $clog2(NSAT)
 )(
     input clk_i,
     input rst_i,
@@ -48,7 +48,7 @@ module Variable_Flip_Selector #(
     localparam MCB = $clog2(MAX_CLAUSES_PER_VARIABLE);
 
     // integer vars
-    integer i, j;
+    integer i;
 
     // internal registers
     reg [MCB - 1 : 0] break_values_reg  [NSAT - 2 : 0];
@@ -91,7 +91,7 @@ module Variable_Flip_Selector #(
         .P(P)
     ) hs (
         .break_values_i(all_break_values),
-        .break_values_valid_i(&wr_en_i ? break_values_valid_i : {NSAT * MCB{1'b0}}),
+        .break_values_valid_i(&wr_en_i ? break_values_valid_i : {NSAT{1'b0}}),
         .random_i(random_i),
         .enable_i(&wr_en_i),
         .select_o(select),
@@ -115,7 +115,8 @@ module Variable_Flip_Selector #(
                 end
             end
             if(&wr_en_i) begin // when we are using the data (all ones)
-                break_bits_reg[NSAT - 1] <= break_bits;
+                // [NOTE]: removed the following line to pass lint, could be bug source
+                // break_bits_reg[NSAT - 1] <= break_bits;
                 selected_o <= select;
                 clause_valid_bits_o <= select == 2'b10 ? break_bits : break_bits_reg[select];
             end

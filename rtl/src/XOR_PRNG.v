@@ -24,7 +24,7 @@ module XOR_PRNG(
     end
     
     // Output the current state of the LFSR
-    always @(posedge clk) begin
+    always @(posedge clk_i) begin
         data_o <= lfsr_reg;
     end
 
