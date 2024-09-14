@@ -44,6 +44,9 @@ module Heuristic_Selector #(
     wire [NSAT - 1 : 0] is_zero;
     wire has_zero;
 
+    wire [NSAT - 1 : 0] bvvi;
+    assign bvvi = break_values_valid_i;
+
     genvar n;
     generate
         for(n = 0; n < NSAT; n = n + 1) begin
@@ -77,7 +80,14 @@ module Heuristic_Selector #(
 
     // combinational logic for deterministic selection
     wire [NSAT_BITS-1:0] num_valid, det_sel_1, det_sel_2, det_sel_3;
-    assign num_valid = break_values_valid_i[0] + break_values_valid_i[1] + break_values_valid_i[2];
+
+    assign num_valid = {(bvvi[0] & bvvi[1]) | (bvvi[0] & bvvi[2]) | (bvvi[1] & bvvi[2]), 
+                        bvvi[0] ^ bvvi[1] ^ bvvi[2]};
+    // assign num_valid =  bvvi[0] ? bvvi[1] ? bvvi[2] ? 2'b11 : 2'b10 :
+    //                                         bvvi[2] ? 2'b10 : 2'b01 :
+    //                               bvvi[1] ? bvvi[2] ? 2'b10 : 2'b01 :
+    //                                         bvvi[2] ? 2'b01 : 2'b00 ;
+
     assign det_sel_1 =  bvv_001 ? 2'b00 :
                         bvv_010 ? 2'b01 : 
                         bvv_100 ? 2'b10 : 

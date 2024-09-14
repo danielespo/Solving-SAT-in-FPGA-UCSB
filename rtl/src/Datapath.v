@@ -419,10 +419,11 @@ genvar n, m;
     );
 
 /* --- unsat clause selector --- */       // [TODO] - write interface
+    localparam RANDOM_NUM_WIDTH = 18;
+    localparam RANDOM_OFFSET = 10;
     Unsat_Clause_Selector #(
         .BUFFER_DEPTH(UNSAT_CLAUSE_BUFFER_DEPTH),
-        .RANDOM_NUM_WIDTH(18),
-        .RANDOM_OFFSET(10),
+        .RANDOM_NUM_WIDTH(RANDOM_NUM_WIDTH),
         .M_TABLE_WIDTH(32),
         .NSAT(NSAT),
         .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
@@ -430,7 +431,7 @@ genvar n, m;
         .clk_i(clk_i),
         .rst_i(rst_i),
         .setup_i(),
-        .ready_o(),
+        // .ready_o(),
         .ucb_setup_wr_en_i(),
         .ucb_setup_addr_i(),
         .ucb_setup_data_i(),
@@ -440,7 +441,7 @@ genvar n, m;
         .debug_DIV_BY_ZERO(),
         .fifo_empty_i(fifo_empty),
         .fifo_clause_i(fifo_clause),
-        .random_i(prng_random_number),
+        .random_i(prng_random_number[RANDOM_OFFSET +: RANDOM_NUM_WIDTH]),
         .buffer_count_o(),
         .selected_o(ucs_selected_clause),
         .ucb_overflow_o()

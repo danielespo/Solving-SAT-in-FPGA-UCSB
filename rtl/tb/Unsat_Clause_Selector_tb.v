@@ -51,8 +51,8 @@ genvar n;
         reg reset;
     // setup
         reg setup;
-        wire ready;
-        reg                                 ucb_setup_wren_i;
+        //wire ready;
+        reg                                 ucb_setup_wr_en_i;
         reg [$clog2(BUFFER_DEPTH) - 1 : 0]  ucb_setup_addr_i;
         reg [CLAUSE_WIDTH - 1 : 0]          ucb_setup_data_i;
     // controller signals
@@ -74,31 +74,30 @@ genvar n;
 Unsat_Clause_Selector #(
     .BUFFER_DEPTH(BUFFER_DEPTH),
     .RANDOM_NUM_WIDTH(RANDOM_NUM_WIDTH),
-    .RANDOM_OFFSET(RANDOM_OFFSET),
     .M_TABLE_WIDTH(M_TABLE_WIDTH),
     .NSAT(NSAT),
     .LITERAL_ADDRESS_WIDTH(LITERAL_ADDRESS_WIDTH)
 ) uut (
-    .clk(clk),
-    .reset(reset),
-    .setup(setup),
-    .ready(ready),
-    .ucb_setup_wren_i(ucb_setup_wren_i),
+    .clk_i(clk),
+    .rst_i(reset),
+    .setup_i(setup),
+    //.ready(ready),
+    .ucb_setup_wr_en_i(ucb_setup_wr_en_i),
     .ucb_setup_addr_i(ucb_setup_addr_i),
     .ucb_setup_data_i(ucb_setup_data_i),
     .request_i(request_i),
     .write_disable_i(write_disable_i),
-    .clear_debug_DIV_BY_ZERO(clear_debug_DIV_BY_ZERO),
-    .debug_DIV_BY_ZERO(debug_DIV_BY_ZERO),
+    .clear_debug_DIV_BY_ZERO_i(clear_debug_DIV_BY_ZERO),
+    .debug_DIV_BY_ZERO_o(debug_DIV_BY_ZERO),
     .fifo_empty_i(fifo_empty_i),
     .fifo_clause_i(fifo_clause_i),
-    .random_i(random_i),
+    .random_i(random_i[RANDOM_OFFSET +: RANDOM_NUM_WIDTH]),
     .buffer_count_o(buffer_count_o),
     .selected_o(selected_o),
     .ucb_overflow_o(ucb_overflow_o)
 );
 
-// monitor signals
+// internal signals for testing
 wire [CLAUSE_WIDTH - 1 : 0] uut_ucb_data [0 : BUFFER_DEPTH - 1];
 wire [CLAUSE_WIDTH - 1 : 0] uut_ucb_data_truncated [0 : 128 - 1];
 generate
@@ -110,37 +109,36 @@ generate
     end
 endgenerate
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_selection;
-assign uut_selection = uut.selection;
+assign uut_selection = uut.selection_q3;
 
-wire [RAN_WIDTH + M_TABLE_WIDTH - 1 : 0] uut_product2;
-wire [RAN_WIDTH - 1 : 0] der_quotient;
-wire [RAN_WIDTH - 1 : 0] uut_N_R1, uut_N_R2;
-wire [BUF_ADDR_WIDTH - 1 : 0] uut_m1, uut_m2;
-wire uut_request1, uut_request2, uut_request3, uut_request4;
-assign uut_product2 = uut.product2;
-assign der_quotient = uut.product2[M_TABLE_WIDTH +: RAN_WIDTH] ;
-assign uut_N_R1 = uut.N_R1;
-assign uut_N_R2 = uut.N_R2;
-assign uut_m1 = uut.m1;
-assign uut_m2 = uut.m2;
-assign uut_request1 = uut.request1;
-assign uut_request2 = uut.request2;
-assign uut_request3 = uut.request3;
-assign uut_request4 = uut.request4;
+// monitor
+wire [RAN_WIDTH - 1 : 0] uut_product2;
+wire [RAN_WIDTH - 1 : 0] uut_random_number_q1, uut_random_number_q2;
+wire [BUF_ADDR_WIDTH - 1 : 0] uut_buf_count_q1, uut_buf_count_q2;
+wire uut_request_q1, uut_request_q2, uut_request_q3, uut_request_q4;
+assign uut_product2 = uut.product_q2;
+assign uut_random_number_q1 = uut.random_number_q1;
+assign uut_random_number_q2 = uut.random_number_q2;
+assign uut_buf_count_q1 = uut.buf_count_q1;
+assign uut_buf_count_q2 = uut.buf_count_q2;
+assign uut_request_q1 = uut.request_q1;
+assign uut_request_q2 = uut.request_q2;
+assign uut_request_q3 = uut.request_q3;
+assign uut_request_q4 = uut.request_q4;
 
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_mt_addr;
 wire [MT_WIDTH - 1 : 0] uut_mt_data_o;
 assign uut_mt_addr = uut.mt_addr;
 assign uut_mt_data_o = uut.mt_data_o;
 
-wire uut_ucb_en, uut_ucb_we;
+wire uut_ucb_en, uut_ucb_wr_en;
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_ucb_addr;
 wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_data_in;
 wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_data_out;
 wire [BUF_ADDR_WIDTH - 1 : 0] uut_ucb_last_addr;
 wire [CLAUSE_WIDTH - 1 : 0]   uut_ucb_last_data;
 assign uut_ucb_en = uut.ucb_en;
-assign uut_ucb_we = uut.ucb_we;
+assign uut_ucb_wr_en = uut.ucb_wr_en;
 assign uut_ucb_addr = uut.ucb_addr;
 assign uut_ucb_data_in = uut.ucb_data_in;
 assign uut_ucb_data_out = uut.ucb_data_out;
@@ -148,7 +146,7 @@ assign uut_ucb_last_addr = uut.ucb_last_addr;
 assign uut_ucb_last_data = uut.ucb_last_data;
 
 wire uut_setup;
-assign uut_setup = uut.setup;
+assign uut_setup = uut.setup_i;
 
 /* Testing plan:
 - 1/m table loaded during its initial block (make sure this works) -- done separate testbench
@@ -234,7 +232,7 @@ assign uut_setup = uut.setup;
         // set values to zero
         reset = 0;
         setup = 0;
-        ucb_setup_wren_i = 0;
+        ucb_setup_wr_en_i = 0;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = 0;
         request_i = 0;
@@ -255,7 +253,7 @@ assign uut_setup = uut.setup;
         reset = 0;
 
         setup = 1;
-        ucb_setup_wren_i = 1;
+        ucb_setup_wr_en_i = 1;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = expected_selected_clause[0];
         @(negedge clk);
@@ -307,7 +305,7 @@ assign uut_setup = uut.setup;
         reset = 0;
         setup = 1;
         for(i = 0; i < test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -373,7 +371,7 @@ assign uut_setup = uut.setup;
         reset = 0;
         setup = 1;
         for(i = 0; i < test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -447,7 +445,7 @@ assign uut_setup = uut.setup;
         reset = 0;
         setup = 1;
         for(i = 0; i < test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -553,7 +551,7 @@ assign uut_setup = uut.setup;
         // set values to zero
         reset = 0;
         setup = 0;
-        ucb_setup_wren_i = 0;
+        ucb_setup_wr_en_i = 0;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = 0;
         request_i = 0;
@@ -572,7 +570,7 @@ assign uut_setup = uut.setup;
         $display("    Setup stage: Load the buffer with sequential values");
         setup = 1;
         for(i = 0; i < BUFFER_DEPTH - test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -600,7 +598,7 @@ assign uut_setup = uut.setup;
         // set values to zero
         reset = 0;
         setup = 0;
-        ucb_setup_wren_i = 0;
+        ucb_setup_wr_en_i = 0;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = 0;
         request_i = 0;
@@ -619,7 +617,7 @@ assign uut_setup = uut.setup;
         $display("    Setup stage: Load the buffer with sequential values");
         setup = 1;
         for(i = 0; i < test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -661,7 +659,7 @@ assign uut_setup = uut.setup;
         // set values to zero
         reset = 0;
         setup = 0;
-        ucb_setup_wren_i = 0;
+        ucb_setup_wr_en_i = 0;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = 0;
         request_i = 0;
@@ -680,7 +678,7 @@ assign uut_setup = uut.setup;
         $display("    Setup stage: Load the buffer with sequential values");
         setup = 1;
         for(i = 0; i < test_cycles; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = i;
             @(negedge clk);
@@ -750,7 +748,7 @@ assign uut_setup = uut.setup;
         // set values to zero
         reset = 0;
         setup = 0;
-        ucb_setup_wren_i = 0;
+        ucb_setup_wr_en_i = 0;
         ucb_setup_addr_i = 0;
         ucb_setup_data_i = 0;
         request_i = 0;
@@ -783,7 +781,7 @@ assign uut_setup = uut.setup;
         reset = 0;
         setup = 1;
         for(i = 0; i < INITIAL_LOAD; i = i + 1) begin
-            ucb_setup_wren_i = 1;
+            ucb_setup_wr_en_i = 1;
             ucb_setup_addr_i = i;
             ucb_setup_data_i = init_clauses[i];
             @(negedge clk);

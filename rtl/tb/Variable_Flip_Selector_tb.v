@@ -40,9 +40,9 @@ integer i, j;
 
 /* I/O */
 // clock and reset
-reg clk = 0;
-always #5 clk = ~clk;
-reg reset;
+reg clk_i = 0;
+always #5 clk_i = ~clk_i;
+reg rst_i;
 
 // data inputs
 reg [MC - 1 : 0] clause_broken_i;
@@ -51,11 +51,11 @@ reg [NSAT - 1 : 0] break_values_valid_i;
 reg [31:0] random_i;
 
 // control inputs
-reg [NSAT_BITS - 1 : 0] wren_i;
+reg [NSAT_BITS - 1 : 0] wr_en_i;
 
 // data outputs
 wire [NSAT_BITS - 1 : 0] selected_o;
-wire [MC - 1 : 0] clause_broken_bits_o;
+wire [MC - 1 : 0] clause_valid_bits_o;
 
 // instantiate the unit under test (UUT)
 Variable_Flip_Selector #(
@@ -65,15 +65,15 @@ Variable_Flip_Selector #(
     //.NSAT_BITS(NSAT_BITS),
     .P(P)
 ) uut (
-    .clk(clk),
-    .reset(reset),
+    .clk_i(clk_i),
+    .rst_i(rst_i),
     .clause_broken_i(clause_broken_i),
     .mask_bits_i(mask_bits_i),
     .break_values_valid_i(break_values_valid_i),
     .random_i(random_i),
-    .wren_i(wren_i),
+    .wr_en_i(wr_en_i),
     .selected_o(selected_o),
-    .clause_broken_bits_o(clause_broken_bits_o)
+    .clause_valid_bits_o(clause_valid_bits_o)
 );
 
 genvar n;
@@ -100,7 +100,7 @@ endgenerate
     - deterministic selection no duplicates
     - deterministic selection w/ duplicates (deprioritize first flip)
     - random selection 
-    clause_broken_bits_o
+    clause_valid_bits_o
     - mask bit check 
     - break bit check
     - random assignment check
@@ -114,7 +114,7 @@ reg [31:0]       random_num [NSAT + 1 : 0]  [NUM_TESTS - 1 : 0];
 
 // expected results
 reg [NSAT_BITS - 1 : 0] select              [NUM_TESTS - 1 : 0];
-reg [MC - 1 : 0] clause_broken_bits         [NUM_TESTS - 1 : 0];
+reg [MC - 1 : 0] clause_valid_bits         [NUM_TESTS - 1 : 0];
 
 // test register
 reg [NUM_TESTS - 1 : 0] test_pass;
@@ -134,7 +134,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
     random_num[3][0] = 32'b0;
     random_num[4][0] = $random;
     select[0] = 2'b10; // when all are zeros, the last one is prioritized
-    clause_broken_bits[0] = break_bits[select[0]][0] & mask_bits[select[0]][0];
+    clause_valid_bits[0] = break_bits[select[0]][0] & mask_bits[select[0]][0];
     // case 1: zero overrride no duplicates (3 tests)
     for(j = 0; j < 3; j = j + 1) begin
         for(i = 0; i < NSAT; i = i + 1) begin
@@ -146,7 +146,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         random_num[3][1 + j] = $random; // should be irrelevant because of zero
         random_num[4][1 + j] = $random; 
         select[1 + j] = j; // zero override
-        clause_broken_bits[1 + j] = break_bits[select[1 + j]][1 + j] & mask_bits[select[1 + j]][1 + j];
+        clause_valid_bits[1 + j] = break_bits[select[1 + j]][1 + j] & mask_bits[select[1 + j]][1 + j];
     end
     // case 2: zero override with duplicates (3 tests)
     for(j = 0; j < 3; j = j + 1) begin
@@ -159,7 +159,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         random_num[3][4 + j] = $random; // should be irrelevant because of zero
         random_num[4][4 + j] = $random;
         select[4 + j] = (j == 2 ? 2'b01 : 2'b10); // zero override
-        clause_broken_bits[4 + j] = break_bits[select[4 + j]][4 + j] & mask_bits[select[4 + j]][4 + j];
+        clause_valid_bits[4 + j] = break_bits[select[4 + j]][4 + j] & mask_bits[select[4 + j]][4 + j];
     end
     // case 3: deterministic selection no duplicates (3 tests)
     for(j = 0; j < 3; j = j + 1) begin
@@ -172,7 +172,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         random_num[3][7 + j] = 0; // needs to be below threshold
         random_num[4][7 + j] = $random;
         select[7 + j] = j; // deterministic selection
-        clause_broken_bits[7 + j] = break_bits[select[7 + j]][7 + j] & mask_bits[select[7 + j]][7 + j];
+        clause_valid_bits[7 + j] = break_bits[select[7 + j]][7 + j] & mask_bits[select[7 + j]][7 + j];
     end
     // case 4: deterministic selection with duplicates (3 tests)
     for(j = 0; j < 3; j = j + 1) begin
@@ -185,7 +185,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         random_num[3][10 + j] = 0; // needs to be below threshold
         random_num[4][10 + j] = $random;
         select[10 + j] = (j == 1 ? 2'b10 : 2'b01); // deterministic selection - first flip deprioritized
-        clause_broken_bits[10 + j] = break_bits[select[10 + j]][10 + j] & mask_bits[select[10 + j]][10 + j];
+        clause_valid_bits[10 + j] = break_bits[select[10 + j]][10 + j] & mask_bits[select[10 + j]][10 + j];
     end
     // case 5: random selection (9 tests)
     for(j = 0; j < 9; j = j + 1) begin
@@ -198,7 +198,7 @@ $display("Break Counter Selector Testbench: Begin Simulation");
         random_num[3][13 + j] = 32'hFF00_0000 + j; // matters for random selection
         random_num[4][13 + j] = $random;
         select[13 + j] = j % NSAT; // random selection (based on random[5:0])
-        clause_broken_bits[13 + j] = break_bits[select[13 + j]][13 + j] & mask_bits[select[13 + j]][13 + j];
+        clause_valid_bits[13 + j] = break_bits[select[13 + j]][13 + j] & mask_bits[select[13 + j]][13 + j];
     end
 
 // initialize values
@@ -206,15 +206,15 @@ clause_broken_i = 20'b0;
 mask_bits_i = 20'b0;
 break_values_valid_i = 3'b0;
 random_i = 32'b0;
-wren_i = 2'b00;
+wr_en_i = 2'b00;
 test_pass = {NUM_TESTS{1'b1}};
 num_passed = 0;
 
 // reset the system
-reset = 1;
-@(negedge clk);
-@(negedge clk);
-reset = 0;
+rst_i = 1;
+@(negedge clk_i);
+@(negedge clk_i);
+rst_i = 0;
 
 $display("Running tests...");
 // case tests
@@ -223,32 +223,32 @@ for(i = 0; i < NUM_TESTS; i = i + 1) begin
     clause_broken_i = 20'bx;
     mask_bits_i = 20'bx;
     random_i = random_num[0][i];
-    wren_i = 2'b00;
-    @(negedge clk);
+    wr_en_i = 2'b00;
+    @(negedge clk_i);
     // E1_1
     clause_broken_i = break_bits[0][i];
     mask_bits_i = mask_bits[0][i];
     random_i = random_num[1][i];
-    wren_i = 2'b01;
-    @(negedge clk);
+    wr_en_i = 2'b01;
+    @(negedge clk_i);
     // E1_2
     clause_broken_i = break_bits[1][i];
     mask_bits_i = mask_bits[1][i];
     random_i = random_num[2][i];
-    wren_i = 2'b10;
-    @(negedge clk);
+    wr_en_i = 2'b10;
+    @(negedge clk_i);
     // E1_3
     clause_broken_i = break_bits[2][i];
     mask_bits_i = mask_bits[2][i];
     random_i = random_num[3][i];
-    wren_i = 2'b11;
+    wr_en_i = 2'b11;
     break_values_valid_i = break_valid[i];
-    @(negedge clk);
+    @(negedge clk_i);
     // E2
     clause_broken_i = 20'bx;
     mask_bits_i = 20'bx;
     random_i = random_num[4][i];
-    wren_i = 2'b00;
+    wr_en_i = 2'b00;
     break_values_valid_i = 0;
 
     // check the results
@@ -256,15 +256,15 @@ for(i = 0; i < NUM_TESTS; i = i + 1) begin
         $display("    Test %0d: selected_o failed. Expected %0d, got %0d", i, select[i], selected_o);
         test_pass[i] = 1'b0;
     end
-    if(clause_broken_bits_o !== clause_broken_bits[i]) begin
-        $display("    Test %0d: clause_broken_bits_o failed. Expected %b, got %b", i, clause_broken_bits[i], clause_broken_bits_o);
+    if(clause_valid_bits_o !== clause_valid_bits[i]) begin
+        $display("    Test %0d: clause_valid_bits_o failed. Expected %b, got %b", i, clause_valid_bits[i], clause_valid_bits_o);
         test_pass[i] = 1'b0;
     end
 
     // give the system some time to settle
-    @(negedge clk);
-    @(negedge clk);
-    @(negedge clk);
+    @(negedge clk_i);
+    @(negedge clk_i);
+    @(negedge clk_i);
 end
 
 for(i = 0; i < NUM_TESTS; i = i + 1) if(test_pass[i]) num_passed = num_passed + 1;

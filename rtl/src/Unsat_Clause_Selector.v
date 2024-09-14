@@ -70,7 +70,6 @@ V2.1 - 9/10/2024
 module Unsat_Clause_Selector # (
     parameter BUFFER_DEPTH = 2048, // must be power of 2
     parameter RANDOM_NUM_WIDTH = 18,
-    parameter RANDOM_OFFSET = 10,
     parameter M_TABLE_WIDTH = 32,
     parameter NSAT = 3,
     parameter LITERAL_ADDRESS_WIDTH = 12,
@@ -79,7 +78,9 @@ module Unsat_Clause_Selector # (
     input clk_i,
     input rst_i,
 
-    input setup_i, output ready_o, // control signals maybe?
+    // control signals maybe?
+    input setup_i, 
+    // output ready_o, 
 
     // loading Unsat Buffer Clauses
     input                                        ucb_setup_wr_en_i,
@@ -97,7 +98,7 @@ module Unsat_Clause_Selector # (
     input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] fifo_clause_i,
 
     // prng signal
-    input [31 : 0] random_i,
+    input [RANDOM_NUM_WIDTH - 1 : 0] random_i,
 
     // outputs
     output wire [BUF_ADDR_WIDTH - 1 : 0]               buffer_count_o,
@@ -229,7 +230,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
             request_q4 <= 0;
         end else begin // NR mod m = NR - (NR/m) * m
             // stage 1 (E1)
-            random_number_q1 <= random_i[RANDOM_OFFSET +: RANDOM_NUM_WIDTH];
+            random_number_q1 <= random_i;
             buf_count_q1 <= ucb_count;
             request_q1 <= request_i;
             // stage 2
@@ -238,7 +239,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
             product_q2 <= random_number_q1 * mt_data_o;
             request_q2 <= request_q1;
             // stage 3 
-            selection_q3 <= (buf_count_q2 == 1) ? 0 : random_number_q2 - (product_q2[M_TABLE_WIDTH +: RAN_WIDTH] * buf_count_q2);
+            selection_q3 <= (buf_count_q2 == 1) ? 0 : random_number_q2 - ((product_q2 >> MT_WIDTH) * buf_count_q2); // changed from vector range to bitshift
             request_q3 <= request_q2;
             // stage 4
             request_q4 <= request_q3;
