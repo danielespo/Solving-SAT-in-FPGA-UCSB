@@ -1,9 +1,8 @@
-module lfsr_prng(
-    input clk,          // Clock signal
-    input reset,        // Reset signal
-    output reg [31:0] out // 32-bit output
+module XOR_PRNG(
+    input             clk_i, // Clock signal
+    input             rst_i, // Reset signal
+    output reg [31:0] data_o // 32-bit output
 );
-
     // Internal register to hold the current state
     reg [31:0] lfsr_reg;
     
@@ -12,8 +11,8 @@ module lfsr_prng(
     // The choice of polynomial depends on the number of bits in the LFSR.
     wire feedback = lfsr_reg[31] ^ lfsr_reg[21] ^ lfsr_reg[1] ^ lfsr_reg[0];
     
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
+    always @(posedge clk_i or posedge rst_i) begin
+        if (rst_i) begin
             // Reset or initialize LFSR with a non-zero value
             // Non-zero to avoid the LFSR getting stuck in a zero state
             lfsr_reg <= 32'b1;
@@ -25,8 +24,8 @@ module lfsr_prng(
     end
     
     // Output the current state of the LFSR
-    always @(posedge clk) begin
-        out <= lfsr_reg;
+    always @(posedge clk_i) begin
+        data_o <= lfsr_reg;
     end
 
 endmodule

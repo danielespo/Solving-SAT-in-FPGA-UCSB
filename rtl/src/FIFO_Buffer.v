@@ -29,11 +29,11 @@ module FIFO_Buffer #(
     parameter DATA_WIDTH = 36,
     parameter BUFFER_ADDR_WIDTH = 5
 )(
-    input                       clk,            // Clock signal
-    input                       reset,          // Reset signal
+    input                       clk_i,            // Clock signal
+    input                       rst_i,          // rst_i signal
     input      [DATA_WIDTH-1:0] data_i,         // Data input
-    input                       rden_i,         // Read signal
-    input                       wren_i,         // Write signal
+    input                       rd_en_i,         // Read signal
+    input                       wr_en_i,         // Write signal
     
     output reg [DATA_WIDTH-1:0] data_o,         // Data output
     output                      empty_o,        // Empty flag
@@ -47,24 +47,24 @@ module FIFO_Buffer #(
     assign empty_o  = ~(|counter);
     assign full_o   = &counter;
     
-    always @ (posedge clk) begin
-        if (reset) begin
+    always @ (posedge clk_i) begin
+        if (rst_i) begin
             read_ptr        <= 0;
             write_ptr       <= 0;
             counter         <= 0;
             data_o          <= 0;
-        end else if (wren_i && rden_i) begin            // concurrent rw is always valid
+        end else if (wr_en_i && rd_en_i) begin            // concurrent rw is always valid
             buffer[write_ptr]   <= data_i;
             data_o              <= buffer[read_ptr];
             write_ptr           <= write_ptr + 1;
             read_ptr            <= read_ptr + 1;
         end else begin
-            if (wren_i && !full_o) begin                // if write enable is high and the buffer is not full
+            if (wr_en_i && !full_o) begin                // if write enable is high and the buffer is not full
                 buffer[write_ptr]   <= data_i;              // write the data to buffer at the write_ptr index
                 write_ptr           <= write_ptr + 1;       // increment write_ptr
                 counter             <= counter + 1;         // increment counter
             end
-            if (rden_i && !empty_o) begin               // if read enable is high and the buffer is not empty
+            if (rd_en_i && !empty_o) begin               // if read enable is high and the buffer is not empty
                 data_o          <= buffer[read_ptr];        // output the data at the read_ptr index
                 read_ptr        <= read_ptr + 1;            // increment read_ptr
                 counter         <= counter - 1;             // decrement counter

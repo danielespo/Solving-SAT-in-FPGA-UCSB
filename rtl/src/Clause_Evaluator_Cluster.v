@@ -24,6 +24,8 @@ Change Log:
     Added reduce logic
 2024/07/25 - Barry Wang
     Make version 2.0
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
 
 -----------------------------------------------------*/
 
@@ -39,14 +41,12 @@ module Clause_Evaluator_Cluster #(
     // to be unsat
     parameter REDUCE = 1
 )(
-    // Clock signal
-    input   wire    clk,
-    // Reset signal
-    input   wire    reset,
+    input clk_i,
+    input rst_i,
     // Variable values and negation
-    input   wire    [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_val_i,
-    input   wire    [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_neg_i,
-    output  wire    [CLUSTER_SIZE - 1 : 0] break_o
+    input          [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_val_mi,
+    input          [((NSAT - REDUCE) * CLUSTER_SIZE - 1) : 0] var_neg_mi,
+    output wire    [CLUSTER_SIZE - 1 : 0]                     break_mo
 );
     
     genvar i;
@@ -58,11 +58,11 @@ module Clause_Evaluator_Cluster #(
                 .IMPLEMENTATION(IMPLEMENTATION),
                 .REDUCE(REDUCE)
             ) ce (
-                .clk_i(clk),
-                .reset_i(reset),
-                .var_val_i(var_val_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
-                .var_neg_i(var_neg_i[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
-                .break_o(break_o[i])
+                .clk_i(clk_i),
+                .rst_i(rst_i),
+                .var_val_i(var_val_mi[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
+                .var_neg_i(var_neg_mi[i * (NSAT - REDUCE) +: (NSAT - REDUCE)]),
+                .break_o(break_mo[i])
             );
           end
     endgenerate

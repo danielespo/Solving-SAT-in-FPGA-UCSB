@@ -22,12 +22,10 @@ Testing:
 module Heuristic_Selector #(
     parameter MAX_CLAUSES_PER_VARIABLE = 20,
     parameter NSAT = 3,
-    parameter P = 'h6E147AE0, // can be assigned any value 0 to 4294967295 
+    parameter P = 'h6E147AE0 // can be assigned any value 0 to 4294967295 
                             // - if the LSFR input is above this number, the selector will random walk
                             // - if we want greedy move probability around 4.3, we can use 1846835936
 )(
-    // input clk,
-    // input reset,
     input [NSAT * $clog2(MAX_CLAUSES_PER_VARIABLE) - 1 : 0] break_values_i,
     input [NSAT - 1 : 0] break_values_valid_i, // this is a vector of valid bits for each break value
     input [31 : 0] random_i, 
@@ -46,14 +44,15 @@ module Heuristic_Selector #(
     wire [NSAT - 1 : 0] is_zero;
     wire has_zero;
 
-    integer i, j;
+    wire [NSAT - 1 : 0] bvvi;
+    assign bvvi = break_values_valid_i;
 
-    genvar index;
+    genvar n;
     generate
-        for(index = 0; index < NSAT; index = index + 1) begin
-            // assign break_values[index] = {(~break_values_valid_i[index]), break_values_i[index*MCB+:MCB]};
-            assign break_values[index] = break_values_i[index*MCB+:MCB];
-            assign is_zero[index] = ~(|break_values[index]);
+        for(n = 0; n < NSAT; n = n + 1) begin
+            // assign break_values[n] = {(~break_values_valid_i[n]), break_values_i[n*MCB+:MCB]};
+            assign break_values[n] = break_values_i[n * MCB +: MCB];
+            assign is_zero[n] = ~(|break_values[n]);
         end
     endgenerate
 
@@ -81,7 +80,14 @@ module Heuristic_Selector #(
 
     // combinational logic for deterministic selection
     wire [NSAT_BITS-1:0] num_valid, det_sel_1, det_sel_2, det_sel_3;
-    assign num_valid = break_values_valid_i[0] + break_values_valid_i[1] + break_values_valid_i[2];
+
+    assign num_valid = {(bvvi[0] & bvvi[1]) | (bvvi[0] & bvvi[2]) | (bvvi[1] & bvvi[2]), 
+                        bvvi[0] ^ bvvi[1] ^ bvvi[2]};
+    // assign num_valid =  bvvi[0] ? bvvi[1] ? bvvi[2] ? 2'b11 : 2'b10 :
+    //                                         bvvi[2] ? 2'b10 : 2'b01 :
+    //                               bvvi[1] ? bvvi[2] ? 2'b10 : 2'b01 :
+    //                                         bvvi[2] ? 2'b01 : 2'b00 ;
+
     assign det_sel_1 =  bvv_001 ? 2'b00 :
                         bvv_010 ? 2'b01 : 
                         bvv_100 ? 2'b10 : 

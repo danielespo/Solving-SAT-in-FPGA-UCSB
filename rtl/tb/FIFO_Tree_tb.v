@@ -52,31 +52,31 @@ always #5 clk <= ~clk;
 reg reset;
 
 reg [CW * CC - 1 : 0] clauses_i; // 20*36 = 720
-reg [CC - 1 : 0] clause_valid_i;
-reg wren;
-reg rden;
-reg cOF;
+reg [CC - 1 : 0] clauses_valid_i;
+reg wr_en_i;
+reg rd_en_i;
+reg cOF_i;
 
 // Output
-wire empty;
-wire OF;
+wire empty_o;
+wire OF_o;
 wire [CW - 1 : 0] clause_o;
 
 // Instantiate the Unit Under Test (UUT)
-FIFO_tree #(
+FIFO_Tree #(
     .CLAUSE_COUNT(CC),
     .CLAUSE_WIDTH(CW),
     .BUFFER_DEPTH(BUFFER_DEPTH)
 ) uut (
-    .clk(clk),
-    .reset(reset),
+    .clk_i(clk),
+    .rst_i(reset),
     .clauses_i(clauses_i),
-    .clause_valid_i(clause_valid_i),
-    .wren(wren),
-    .rden(rden),
-    .cOF(cOF),
-    .empty(empty),
-    .OF(OF),
+    .clauses_valid_i(clauses_valid_i),
+    .wr_en_i(wr_en_i),
+    .rd_en_i(rd_en_i),
+    .cOF_i(cOF_i),
+    .empty_o(empty_o),
+    .OF_o(OF_o),
     .clause_o(clause_o)
 );
 
@@ -108,11 +108,11 @@ reg has_match;
 reg  [NUM_TESTS - 1 : 0] test_passed; // tracked for each test for summary report
 
 // monitor signals
-    wire [3:0] uut_L0E, uut_L0F, uut_L0wren, uut_L0rden;
+    wire [3:0] uut_L0E, uut_L0F, uut_L0wr_en, uut_L0rd_en;
     assign uut_L0E = uut.L0E;
     assign uut_L0F = uut.L0F;
-    assign uut_L0wren = uut.L0wren;
-    assign uut_L0rden = uut.L0rden;
+    assign uut_L0wr_en = uut.L0wr_en;
+    assign uut_L0rd_en = uut.L0rd_en;
     wire [CW - 1 : 0] uut_L0dout_packed [3:0];
     wire [CW - 1 : 0] uut_L0din_packed [3:0];
     for(n = 0; n < 4; n = n + 1) begin
@@ -130,11 +130,11 @@ reg  [NUM_TESTS - 1 : 0] test_passed; // tracked for each test for summary repor
     wire [$clog2(BUFFER_DEPTH) - 1 : 0] uut_L0_FIFO_3_write_ptr;
 
 
-    wire [1:0] uut_L1E, uut_L1F, uut_L1rden, uut_L1wren;
+    wire [1:0] uut_L1E, uut_L1F, uut_L1rd_en, uut_L1wr_en;
     assign uut_L1E = uut.L1E;
     assign uut_L1F = uut.L1F;
-    assign uut_L1rden = uut.L1rden;
-    assign uut_L1wren = uut.L1wren;
+    assign uut_L1rd_en = uut.L1rd_en;
+    assign uut_L1wr_en = uut.L1wr_en;
     wire [CW - 1 : 0] uut_L1dout_packed [1:0];
     wire [CW - 1 : 0] uut_L1din_packed [1:0];
     for(n = 0; n < 2; n = n + 1) begin
@@ -147,11 +147,11 @@ reg  [NUM_TESTS - 1 : 0] test_passed; // tracked for each test for summary repor
     wire [CW - 1 : 0] uut_L1_FIFO_1_buffer [0 : BUFFER_DEPTH - 1];
 
 
-    wire uut_L2E, uut_L2F, uut_L2rden, uut_L2wren;
+    wire uut_L2E, uut_L2F, uut_L2rd_en, uut_L2wr_en;
     assign uut_L2E = uut.L2E;
     assign uut_L2F = uut.L2F;
-    assign uut_L2rden = uut.L2rden;
-    assign uut_L2wren = uut.L2wren;
+    assign uut_L2rd_en = uut.L2rd_en;
+    assign uut_L2wr_en = uut.L2wr_en;
     wire [CW - 1 : 0] uut_L2dout, uut_L2din;
     assign uut_L2dout = uut.L2dout;
     assign uut_L2din = uut.L2din;
@@ -248,10 +248,10 @@ end
 $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
     // initialize signals
     clauses_i = 0;
-    clause_valid_i = 0;
-    wren = 0;
-    rden = 0;
-    cOF = 0;
+    clauses_valid_i = 0;
+    wr_en_i = 0;
+    rd_en_i = 0;
+    cOF_i = 0;
 
     // Reset the system
     reset = 1;
@@ -278,24 +278,24 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
 
         // load the FIFO tree data
         clauses_i = clauses[i];
-        clause_valid_i = valid_bits[i];
-        wren = 1;
-        rden = 0;
+        clauses_valid_i = valid_bits[i];
+        wr_en_i = 1;
+        rd_en_i = 0;
 
         // wait on data to sift to the bottom of the FIFO tree
-        while(empty == 1) begin
+        while(empty_o == 1) begin
             @(negedge clk);
-            wren = 0;
+            wr_en_i = 0;
         end
 
         // read data out of the FIFO tree
-        rden = 1;
+        rd_en_i = 1;
         for(j = 0; j < TEST_CYCLES; j = j + 1) begin
             $display(" .* Cycle %0d", j);
             @(negedge clk);
-            wren = 0;
+            wr_en_i = 0;
             has_match = 0;
-            if(empty == 1) begin
+            if(empty_o == 1) begin
                 $display(" ..* tree is empty");
             end else begin
                 if(clause_o === {CW{1'bx}}) begin

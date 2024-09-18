@@ -1,0 +1,18 @@
+{"signal": [
+    {"name": "clk",               "wave": "p......|......."},
+    {"name": "stage",             "wave": "2722272|2722272", "data": "C D E1 G1 G2 G3 G4 C D E1 G1 G2 G3 G4"},
+    {},
+    ["UNSAT Clause Selector I/O",
+      {"name": "request_i",       "wave": "010....|.10...."                                                                       },
+      {"name": "write_disable_i", "wave": "0......|......."                                                                       },
+      {"name": "fifo_empty_i",    "wave": "0......|.1.01.0"                                                                       },
+      {"name": "fifo_clause_i",   "wave": "2222422|2x.2x.2", "node": "....a.......c.."                                            },
+      {"name": "random_i",        "wave": "2722222|2722222", "data": ["  ", "R ", "  ", "  ", "  ", "  ", "  ", "  ", "R "]       },
+      {                           "node": "..........M.N.."                                                                       },
+      {"name": "buffer_count_o",  "wave": "2722992|2722992", "data": ["23", "24", "25", "26", "27", "27", "28", "23", "24", "24", "24", "25", "24", "24"], "node": ".....b.......d."},
+      {"name": "selected_o",      "wave": "x....7x|x....7x"                                                                       }
+    ]
+  ], 
+  "edge" : ["a~b replaces selected clause", "M+N count const", "c~d count decr"],
+  "config": {"hscale":1}
+}

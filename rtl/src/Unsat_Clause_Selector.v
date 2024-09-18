@@ -62,45 +62,51 @@ V2.1 - 9/10/2024
     changed the way the unsat buffer counter is incremented/decremented
     added a debug signal for division by zero
     fixed write_disable_i logic
+
+    9/11/2024
+    naming updates
 */
 
 module Unsat_Clause_Selector # (
     parameter BUFFER_DEPTH = 2048, // must be power of 2
     parameter RANDOM_NUM_WIDTH = 18,
-    parameter RANDOM_OFFSET = 10,
     parameter M_TABLE_WIDTH = 32,
     parameter NSAT = 3,
-    parameter LITERAL_ADDRESS_WIDTH = 12
+    parameter LITERAL_ADDRESS_WIDTH = 12,
+    localparam BUF_ADDR_WIDTH = $clog2(BUFFER_DEPTH)
 )(
-    input clk,
-    input reset,
+    input clk_i,
+    input rst_i,
 
-    input setup, output ready, // control signals maybe?
+    // control signals maybe?
+    input setup_i, 
+    // output ready_o, 
+
     // loading Unsat Buffer Clauses
-    input                                           ucb_setup_wren_i,
-    input [$clog2(BUFFER_DEPTH) - 1 : 0]            ucb_setup_addr_i,
-    input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]    ucb_setup_data_i,
+    input                                        ucb_setup_wr_en_i,
+    input [BUF_ADDR_WIDTH - 1 : 0]               ucb_setup_addr_i,
+    input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] ucb_setup_data_i,
 
     // controller signals
-    input request_i, // should be high for one clock cycle before G1 (first E1)
-    input write_disable_i, // should be high if FIFO_last is written to clause register
-    input clear_debug_DIV_BY_ZERO, 
-    output wire debug_DIV_BY_ZERO,
+    input       request_i, // should be high for one clock cycle before G1 (first E1)
+    input       write_disable_i, // should be high if FIFO_last is written to clause register
+    input       clear_debug_DIV_BY_ZERO_i, 
+    output wire debug_DIV_BY_ZERO_o,
 
     // fifo signals
     input fifo_empty_i,
     input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] fifo_clause_i,
 
     // prng signal
-    input [31 : 0] random_i,
+    input [RANDOM_NUM_WIDTH - 1 : 0] random_i,
 
-    output wire [$clog2(BUFFER_DEPTH) - 1 : 0] buffer_count_o,
+    // outputs
+    output wire [BUF_ADDR_WIDTH - 1 : 0]               buffer_count_o,
     output wire [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0] selected_o,
-    output wire ucb_overflow_o
+    output wire                                        ucb_overflow_o
 );
 
 localparam RAN_WIDTH = RANDOM_NUM_WIDTH;
-localparam BUF_ADDR_WIDTH = $clog2(BUFFER_DEPTH);
 localparam MT_WIDTH = M_TABLE_WIDTH;
 localparam LIT_ADDR_WIDTH = LITERAL_ADDRESS_WIDTH;
 localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
@@ -110,7 +116,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     assign buffer_count_o = ucb_count[BUF_ADDR_WIDTH - 1 : 0];
     assign ucb_overflow_o = ucb_count[BUF_ADDR_WIDTH];
 
-    wire ucb_en, ucb_we;
+    wire ucb_en, ucb_wr_en;
     wire [BUF_ADDR_WIDTH - 1 : 0] ucb_addr;
     wire [CLAUSE_WIDTH - 1 : 0] ucb_data_in;
     wire [CLAUSE_WIDTH - 1 : 0] ucb_data_out;
@@ -119,11 +125,11 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     wire [CLAUSE_WIDTH - 1 : 0] ucb_last_data;
 
 // selection internal signals
-    reg [RAN_WIDTH + M_TABLE_WIDTH - 1 : 0] product2;
-    reg [RAN_WIDTH - 1 : 0] N_R1, N_R2;
-    reg [BUF_ADDR_WIDTH - 1 : 0] m1, m2;
-    reg [BUF_ADDR_WIDTH - 1 : 0] selection;
-    reg request1, request2, request3, request4;
+    reg [RAN_WIDTH + M_TABLE_WIDTH - 1 : 0] product_q2;
+    reg [RAN_WIDTH - 1 : 0] random_number_q1, random_number_q2;
+    reg [BUF_ADDR_WIDTH - 1 : 0] buf_count_q1, buf_count_q2;
+    reg [BUF_ADDR_WIDTH - 1 : 0] selection_q3;
+    reg request_q1, request_q2, request_q3, request_q4;
 
 // m table signals
     wire mt_en;
@@ -133,22 +139,22 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     wire mt_debug_DIV_BY_ZERO;
 
 // unsat buffer instantiation
-    assign ucb_en = setup ? 
+    assign ucb_en = setup_i ? 
                         1'b1: 
                         ~write_disable_i;
-    assign ucb_we = setup ? 
-                        ucb_setup_wren_i: 
+    assign ucb_wr_en = setup_i ? 
+                        ucb_setup_wr_en_i: 
                         fifo_empty_i ?
-                            request3 ?
-                                !(selection == ucb_last_addr): 
+                            request_q3 ?
+                                !(selection_q3 == ucb_last_addr): 
                                 0 :  
                             1;
-    assign ucb_addr = setup ? 
+    assign ucb_addr = setup_i ? 
                         ucb_setup_addr_i: 
-                        request3 ? 
-                            selection: 
+                        request_q3 ? 
+                            selection_q3: 
                             ucb_count;
-    assign ucb_data_in = setup ? 
+    assign ucb_data_in = setup_i ? 
                         ucb_setup_data_i: 
                         fifo_empty_i ? 
                             ucb_last_data: 
@@ -157,44 +163,43 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
 
     Unsat_Clause_Buffer #(
         .NSAT(NSAT),
-        .VARIABLE_ADDRESS_(LIT_ADDR_WIDTH),
+        .LITERAL_ADDRESS_WIDTH(LIT_ADDR_WIDTH),
         .DEPTH(BUFFER_DEPTH)
     ) unsat_buffer (
-        .clk_a(clk),
-        .clk_b(clk),
-        .en_a(ucb_en),
-        .en_b(1),
-        .we_a(ucb_we),
-        .we_b(0),
-        .addr_a(ucb_addr),
-        .addr_b(ucb_last_addr),
-        .din_a(ucb_data_in),
-        .din_b(),
-        .dout_a(ucb_data_out),
-        .dout_b(ucb_last_data)
+        .clk_i(clk_i),
+        .a_en_i(ucb_en),
+        .b_en_i(1),
+        .a_wr_en_i(ucb_wr_en),
+        .b_wr_en_i(0),
+        .a_addr_i(ucb_addr),
+        .b_addr_i(ucb_last_addr),
+        .a_data_i(ucb_data_in),
+        .b_data_i(),
+        .a_data_o(ucb_data_out),
+        .b_data_o(ucb_last_data)
     );
 
-    assign selected_o = request4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
+    assign selected_o = request_q4 ? ucb_data_out : {CLAUSE_WIDTH{1'bx}};
 
 // unsat buffer counter logic
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             ucb_count <= 0;
         end else begin
-            if (setup & ucb_setup_wren_i) ucb_count <= ucb_count + 1; // increment counter during setup
-            else if(~ucb_en) ucb_count <= ucb_count; // if buffer is not enabled, do nothing
-            else if(~fifo_empty_i & ~request3) ucb_count <= ucb_count + 1;  // if fifo not empty and no selection (0R 1W)
-            else if(fifo_empty_i & request3) ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
-            else if(fifo_empty_i & ~request3) ucb_count <= ucb_count;  // if fifo not empty and we're selecting (1R 1W)
-            else if(~fifo_empty_i & request3) ucb_count <= ucb_count; // if fifo empty and no selection (0R 0W)
+            if (setup_i & ucb_setup_wr_en_i)     ucb_count <= ucb_count + 1; // increment counter during setup
+            else if(~ucb_en)                     ucb_count <= ucb_count;     // if buffer is not enabled, do nothing
+            else if(~fifo_empty_i & ~request_q3) ucb_count <= ucb_count + 1; // if fifo not empty and no selection (0R 1W)
+            else if(fifo_empty_i & request_q3)   ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
+            else if(fifo_empty_i & ~request_q3)  ucb_count <= ucb_count;     // if fifo not empty and we're selecting (1R 1W)
+            else if(~fifo_empty_i & request_q3)  ucb_count <= ucb_count;     // if fifo empty and no selection (0R 0W)
         end
     end
 
 // 1/m table instantiation
     assign mt_addr = ucb_count;
-    assign mt_en = 1; //setup ? 1 : mt_en_i;
-    assign mt_clear_debug_DIV_BY_ZERO = clear_debug_DIV_BY_ZERO;
-    assign debug_DIV_BY_ZERO = mt_debug_DIV_BY_ZERO;
+    assign mt_en = 1; //setup_i ? 1 : mt_en_i;
+    assign mt_clear_debug_DIV_BY_ZERO = clear_debug_DIV_BY_ZERO_i;
+    assign debug_DIV_BY_ZERO_o = mt_debug_DIV_BY_ZERO;
 
     // 1/m table (fixed point - all 32 bits are fractional, at index i, the value is 1/(i+1))
     M_Table #(
@@ -202,41 +207,42 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
         .M_TABLE_WIDTH(MT_WIDTH),
         .M_TABLE_NAME("M_table_roundup.mem")
     ) m_table (
-        .clk(clk),
-        .en(mt_en),
+        .clk_i(clk_i),
+        .en_i(mt_en),
         .addr_i(mt_addr),
-        .clear_debug_DIV_BY_ZERO(mt_clear_debug_DIV_BY_ZERO),
         .data_o(mt_data_o),
-        .debug_DIV_BY_ZERO(mt_debug_DIV_BY_ZERO)
+        .clear_debug_DIV_BY_ZERO_i(mt_clear_debug_DIV_BY_ZERO),
+        .debug_DIV_BY_ZERO_o(mt_debug_DIV_BY_ZERO)
     );
 
-// selection logic     
-    always @(posedge clk) begin
-        if(reset) begin
-            N_R1 <= 0;
-            m1 <= 0;
-            request1 <= 0;
-            N_R2 <= 0;
-            m2 <= 0;
-            product2 <= 0;
-            request2 <= 0;
-            selection <= 0;
-            request3 <= 0;
+// selection registers and mod calculation     
+    always @(posedge clk_i) begin
+        if(rst_i) begin
+            random_number_q1 <= 0;
+            random_number_q2 <= 0;
+            buf_count_q1 <= 0;
+            buf_count_q2 <= 0;
+            product_q2 <= 0;
+            selection_q3 <= 0;
+            request_q1 <= 0;
+            request_q2 <= 0;
+            request_q3 <= 0;
+            request_q4 <= 0;
         end else begin // NR mod m = NR - (NR/m) * m
             // stage 1 (E1)
-            N_R1 <= random_i[RANDOM_OFFSET +: RANDOM_NUM_WIDTH];
-            m1 <= ucb_count;
-            request1 <= request_i;
+            random_number_q1 <= random_i;
+            buf_count_q1 <= ucb_count;
+            request_q1 <= request_i;
             // stage 2
-            N_R2 <= N_R1;
-            m2 <= m1;
-            product2 <= N_R1 * mt_data_o;
-            request2 <= request1;
+            random_number_q2 <= random_number_q1;
+            buf_count_q2 <= buf_count_q1;
+            product_q2 <= random_number_q1 * mt_data_o;
+            request_q2 <= request_q1;
             // stage 3 
-            selection <= (m2 == 1) ? 0 : N_R2 - (product2[M_TABLE_WIDTH +: RAN_WIDTH] * m2);
-            request3 <= request2;
+            selection_q3 <= (buf_count_q2 == 1) ? 0 : random_number_q2 - ((product_q2 >> MT_WIDTH) * buf_count_q2); // changed from vector range to bitshift
+            request_q3 <= request_q2;
             // stage 4
-            request4 <= request3;
+            request_q4 <= request_q3;
         end
     end
 

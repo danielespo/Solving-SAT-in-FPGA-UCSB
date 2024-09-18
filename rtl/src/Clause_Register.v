@@ -19,21 +19,26 @@ Change Log:
 2024/07/24 - Barry Wang
     Remake Clause_Register
 
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
+
 -----------------------------------------------------*/
 
 module Clause_Register# (
     parameter NSAT = 3,
-    parameter LITERAL_ADDRESS_WIDTH = 11
+    parameter LITERAL_ADDRESS_WIDTH = 12
 )(
-    input       clk, reset, we,
-    input       [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0] din,
-    output reg  [(LITERAL_ADDRESS_WIDTH + 1) * NSAT - 1 : 0] dout
-    );
+    input       clk_i, rst_i, 
+    input       wr_en_i,
     
-    always @ (posedge clk)
+    input       [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] data_i,
+    output reg  [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] data_o
+);
+    
+    always @ (posedge clk_i)
     begin
-        if (reset) dout <= 0;
-        else if (we) dout <= din;
+        if (rst_i) data_o <= 0;
+        else if (wr_en_i) data_o <= data_i;
     end
     
 endmodule

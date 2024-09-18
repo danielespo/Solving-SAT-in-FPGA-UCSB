@@ -20,35 +20,47 @@ Change Log:
 2024/07/25 - Barry Wang
     Remake variable table
 
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
+    separate axi interface 
+
 -----------------------------------------------------*/
 
 module Variable_Table #(
     parameter VARIABLE_ADDRESS_WIDTH = 11
 )(
-    input       clk, en_a, en_b, we_a, we_b,
-    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_a, addr_b,
-    input       din_a, din_b,
-    output reg  dout_a, dout_b
+    input       clk_i, 
+    
+    // axi interface
+    input       axi_en_i, axi_wr_en_i,
+    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
+    input       axi_data_i,
+    //output reg  axi_data_o, // unused
+
+    // runtime interface
+    input       en_i, wr_en_i,
+    input       [VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_i, 
+    input       data_i,
+    output reg  data_o 
 );
 
     reg ram [0 : 2 ** VARIABLE_ADDRESS_WIDTH - 1];
     
-    
-    always @(posedge clk)
+    always @(posedge clk_i)
     begin
-        if (en_a)
+        if (en_i)
         begin
-            if (we_a) ram[addr_a] <= din_a;
-            dout_a <= ram[addr_a];
+            if (wr_en_i) ram[addr_i] <= data_i;
+            data_o <= ram[addr_i];
         end
     end
     
-    always @(posedge clk)
+    always @(posedge clk_i)
     begin
-        if (en_b)
+        if (axi_en_i)
         begin
-            if (we_b) ram[addr_b] <= din_b;
-            dout_b <= ram[addr_b];
+            if (axi_wr_en_i) ram[axi_addr_i] <= axi_data_i;
+            //axi_data_o <= ram[axi_addr_i]; // unused
         end
     end
     

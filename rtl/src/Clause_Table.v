@@ -31,6 +31,9 @@ Change Log:
 
 2024/07/24 - Barry Wang
     Remake Clause_Register
+
+2024/09/11 - Zeiler Randall-Reed
+    naming changes
     
 */
 
@@ -39,26 +42,24 @@ module Clause_Table #(
     parameter CLAUSE_COUNT = 20,
     parameter DEPTH = 2048,
     parameter VARIABLE_ADDRESS_WIDTH = 11,
-    parameter NSAT = 3
+    parameter NSAT = 3,
+    localparam CT_WIDTH = (VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT
 )(
-    input clk, 
+    input clk_i, 
     
-    input we,
-    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] waddr, 
-    input [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_i,
+    input                                  axi_wr_en_i,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_wr_addr_i, 
+    input [CT_WIDTH - 1 : 0]               axi_wr_clauses_i,
 
-    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] raddr,
-    output reg [(VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT - 1 : 0] clauses_o
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_i,
+    output reg [CT_WIDTH - 1 : 0]          clauses_o
 );
-    
-    localparam WIDTH = (VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT;
-    
-    reg [WIDTH - 1 : 0] mem [0 : DEPTH - 1];
+    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1];
 
-    always @ (posedge clk)
+    always @ (posedge clk_i)
     begin
-        if (we) mem[waddr] <= clauses_i;
-        clauses_o <= mem[raddr];
+        if (axi_wr_en_i) mem[axi_wr_addr_i] <= axi_wr_clauses_i;
+        clauses_o <= mem[rd_addr_i];
     end
     
 endmodule

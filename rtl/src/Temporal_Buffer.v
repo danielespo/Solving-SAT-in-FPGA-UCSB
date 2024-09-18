@@ -23,41 +23,45 @@ Notes:
 
 Testing:
 - This module will be tested with the Temporal Buffer Wrapper
+
+Change Log:
+- 2024/09/11 - Zeiler Randall-Reed
+    naming changes
 */
 
 module Temporal_Buffer #(
     parameter NSAT = 3,
-    parameter LAW = 11,  // LAW = LITERAL_ADDRESS_WIDTH
+    parameter LAW = 12,  // LAW = LITERAL_ADDRESS_WIDTH
     parameter SIZE = 2
 )(
-    input                           clk,            // Clock signal
-    input                           reset,          // Reset signal
+    input                           clk_i,          // Clock signal
+    input                           rst_i,          // Reset signal
 
-    input [$clog2(NSAT)-1:0]           write_index_i,  // which flip is currently being evaluated
-    input                           write_en_i,     // write enable signal
-    input [SIZE*(LAW+1)-1:0]        literals_i,     // clause_table literals input by literals because need to put selected literal together with clause_table literals
+    input [$clog2(NSAT) - 1 : 0]    wr_index_i,     // which flip is currently being evaluated
+    input                           wr_en_i,        // write enable signal
+    input [SIZE * LAW - 1 : 0]      wr_literals_i,  // clause_table literals input by literals because need to put selected literal together with clause_table literals
 
-    input [$clog2(NSAT)-1:0]           read_index_i,   // which flip was selected by the heuristic selector
-    output reg [SIZE*(LAW+1)-1:0]   literals_o      // output clause with selected flip if broken
+    input [$clog2(NSAT) - 1 : 0]    rd_index_i,     // which flip was selected by the heuristic selector
+    output reg [SIZE * LAW - 1 : 0] literals_o      // output clause with selected flip if broken
 );
 
     localparam NSAT_BITS = $clog2(NSAT);
     
-    integer i,j;
+    integer i;
     
     /* Internal Signals */
-    reg [SIZE*(LAW+1)-1:0] stored_literals [NSAT-1:0]; 
+    reg [SIZE * LAW - 1 : 0] stored_literals [NSAT - 1 : 0]; 
     
     /* Logic */
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             for(i = 0; i < NSAT; i = i + 1) begin
                 stored_literals[i] <= 0;
             end
         end else begin
-            if(write_en_i) stored_literals[write_index_i] <= literals_i;
-            if(read_index_i == 2) literals_o <= literals_i; 
-            if(read_index_i != 2) literals_o <= stored_literals[read_index_i];
+            if(wr_en_i) stored_literals[wr_index_i] <= wr_literals_i;
+            if(rd_index_i == 2) literals_o <= wr_literals_i; 
+            if(rd_index_i != 2) literals_o <= stored_literals[rd_index_i];
         end
     end
     

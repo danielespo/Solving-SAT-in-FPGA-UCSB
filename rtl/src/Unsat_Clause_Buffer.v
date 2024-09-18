@@ -22,32 +22,38 @@ Change Log:
 
 module Unsat_Clause_Buffer # (
     parameter NSAT = 3, 
-    parameter VARIABLE_ADDRESS_ = 11,
+    parameter LITERAL_ADDRESS_WIDTH = 12,
     parameter DEPTH = 2048
 )(
-    input       clk_a, clk_b, en_a, en_b, we_a, we_b,
-    input       [$clog2(DEPTH) - 1 : 0]                     addr_a, addr_b,
-    input       [(VARIABLE_ADDRESS_ + 1) * NSAT - 1 : 0]    din_a,  din_b,
-    output reg  [(VARIABLE_ADDRESS_ + 1) * NSAT - 1 : 0]    dout_a, dout_b
+    input clk_i, 
+
+    // control signals
+    input a_en_i,    b_en_i,
+    input a_wr_en_i, b_wr_en_i,
+
+    // data signals
+    input      [$clog2(DEPTH) - 1 : 0]                a_addr_i, b_addr_i,
+    input      [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] a_data_i, b_data_i,
+    output reg [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] a_data_o, b_data_o
 );
-    localparam CLAUSE_SIZE = (VARIABLE_ADDRESS_ + 1);
-    reg [CLAUSE_SIZE * NSAT - 1 : 0] ram [0 : DEPTH - 1];
+    localparam CLAUSE_WIDTH = LITERAL_ADDRESS_WIDTH * NSAT;
+    reg [CLAUSE_WIDTH - 1 : 0] ram [0 : DEPTH - 1];
     
-    always @(posedge clk_a)
+    always @(posedge clk_i)
     begin
-        if (en_a)
+        if (a_en_i)
         begin
-            if (we_a) ram[addr_a] <= din_a;
-            dout_a <= ram[addr_a];
+            if (a_wr_en_i) ram[a_addr_i] <= a_data_i;
+            a_data_o <= ram[a_addr_i];
         end
     end
     
-    always @(posedge clk_b)
+    always @(posedge clk_i)
     begin
-        if (en_b)
+        if (b_en_i)
         begin
-            if (we_b) ram[addr_b] <= din_b;
-            dout_b <= ram[addr_b];
+            if (b_wr_en_i) ram[b_addr_i] <= b_data_i;
+            b_data_o <= ram[b_addr_i];
         end
     end
 
