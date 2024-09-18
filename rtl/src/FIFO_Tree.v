@@ -145,13 +145,9 @@ module FIFO_Tree #(
         .full_o (L2F)
     );
     
-    // controller logic
-    
-    reg overflow;
-    
+    // controller logic    
     always @ (posedge clk_i) begin
         if (rst_i) begin
-            overflow <= 0;
             L0src <= 0;
         end else if (wr_en_i) begin
             L0src <= 1;

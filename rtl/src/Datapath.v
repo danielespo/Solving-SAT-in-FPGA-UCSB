@@ -157,7 +157,7 @@ genvar n, m;
     ) clause_register (
         .clk_i(clk_i),
         .rst_i(rst_i),
-        .wr_en_i(CR_wr_en),
+        .wr_en_i(cr_wr_en),
         .data_i(ucs_selected_clause),
         .data_o(cr_selected_clause)
     );
@@ -290,8 +290,8 @@ genvar n, m;
         .axi_wr_en_i(),
         .axi_addr_i(),
         .axi_data_i(),
-        .en_i(vt_en_i),
-        .wr_en_i(vt_wr_en_i),
+        .en_i(vt_en),
+        .wr_en_i(vt_wr_en),
         .addr_mi(_vtc_address_m),
         .data_i(_vtc_data),
         .data_mo(vtc_value_bits)
@@ -345,8 +345,8 @@ genvar n, m;
         .CLUSTER_SIZE(NSAT)
     ) variable_table_cluster_2 (
         .clk_i(clk_i),
-        .en_i(vt_en_i),
-        .wr_en_i(vt_wr_en_i),
+        .en_i(vt_en),
+        .wr_en_i(vt_wr_en),
         .addr_mi(_vtc2_address_m),
         .data_i(_vtc2_data),
         .data_mo(vtc2_value_bits),
@@ -394,7 +394,7 @@ genvar n, m;
         .clause_broken_i(ce1_break_bits),
         .mask_bits_i(mb_mask_bits),
         .break_values_valid_i(),
-        .random_i(random_number),
+        .random_i(prng_random_number),
         .wr_en_i(vfs_wr_en),
         .selected_o(vfs_selected),
         .clause_valid_bits_o(vfs_clause_valid_bits)
@@ -437,8 +437,8 @@ genvar n, m;
         .ucb_setup_data_i(),
         .request_i(ucs_request),
         .write_disable_i(~ce2_break),
-        .clear_debug_DIV_BY_ZERO(),
-        .debug_DIV_BY_ZERO(),
+        .clear_debug_DIV_BY_ZERO_i(),
+        .debug_DIV_BY_ZERO_o(),
         .fifo_empty_i(fifo_empty),
         .fifo_clause_i(fifo_clause),
         .random_i(prng_random_number[RANDOM_OFFSET +: RANDOM_NUM_WIDTH]),
@@ -447,6 +447,12 @@ genvar n, m;
         .ucb_overflow_o()
     );
 
+    generate
+        for(n = 0; n < NSAT; n = n + 1) begin
+            assign ucs_selected_clause_negation_bits[n] = ucs_selected_clause[LITERAL_ADDRESS_WIDTH * (n + 1) - 1];
+            assign usc_selected_clause_addresses[n * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH] = ucs_selected_clause[LITERAL_ADDRESS_WIDTH * n +: VARIABLE_ADDRESS_WIDTH];
+        end
+    endgenerate
     assign _selected_unsatisfied_clause = ce2_break ? ucs_selected_clause : fifo_clause;
 
 endmodule
