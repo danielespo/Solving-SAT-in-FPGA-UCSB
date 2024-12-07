@@ -23,3 +23,12 @@ vivado_*.*
 
 # Generated reports
 NA
+
+# ModelSim Files
+rtl/src/src/
+rtl/src/work/
+*.qdb
+*.qpg
+*.qtl
+_info
+_vmake
