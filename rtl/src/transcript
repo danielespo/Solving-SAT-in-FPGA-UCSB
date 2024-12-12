@@ -1,6 +1,3 @@
-# vsim -c top_file_controller_tb 
-# Start time: 15:55:36 on Dec 04,2024
-# ** Note: (vsim-3812) Design is being optimized...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.30.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -14,6 +11,10 @@
 # //  is prohibited from disclosure under the Trade Secrets Act,
 # //  18 U.S.C. Section 1905.
 # //
-# Loading work.top_file_controller_tb(fast)
-# End time: 16:43:45 on Dec 04,2024, Elapsed time: 0:48:09
-# Errors: 0, Warnings: 0
+# Loading project decode_test
+# reading /fs/ece/mentor/ModelSimSE-10.7d/modeltech/linux_x86_64/../modelsim.ini
+pwd
+# /fs/student/harim_choe/sharing-arch/src
+# Loading project controller_check
+pwd
+# /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB

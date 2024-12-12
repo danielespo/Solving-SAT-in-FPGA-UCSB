@@ -1,0 +1,102 @@
+# do simulate.tcl
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+# Start time: 14:57:14 on Dec 11,2024
+# vlog -sv ../src/top_file_controller.v 
+# -- Compiling module top_file_controller
+# 
+# Top level modules:
+# 	top_file_controller
+# End time: 14:57:14 on Dec 11,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+# Start time: 14:57:14 on Dec 11,2024
+# vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/top_file_controller_tb.v 
+# -- Compiling module top_file_controller_tb
+# 
+# Top level modules:
+# 	top_file_controller_tb
+# End time: 14:57:14 on Dec 11,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -c top_file_controller_tb -do "run -all; quit" 
+# Start time: 14:57:14 on Dec 11,2024
+# ** Note: (vsim-8009) Loading existing optimized design _opt
+# //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.30.1.el8_10.x86_64
+# //
+# //  Copyright 1991-2019 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.top_file_controller_tb(fast)
+# run -all
+# INFO: Reset active at time=5000 ns. State machine re-initializing.
+# INFO: Reset active at time=15000 ns. State machine re-initializing.
+# INFO: Reset active at time=25000 ns. State machine re-initializing.
+# INFO: Reset active at time=35000 ns. State machine re-initializing.
+# INFO: Reset active at time=45000 ns. State machine re-initializing.
+# Time=55000 ns | state_counter=0 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 0
+# Time=65000 ns | state_counter=0 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 0
+# Time=75000 ns | state_counter=0 | start=1 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Detected start in IDLE state, FSM should move to LOAD next.
+# INFO: Control signals match expected for state 0
+# INFO: FSM advanced to LOAD state as expected
+# Time=85000 ns | state_counter=1 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 1
+# INFO: FSM advanced to state 2 as expected
+# Time=95000 ns | state_counter=2 | start=0 | rst=0 | done=0 | control_signal_o=10000000000001
+# INFO: Control signals match expected for state 2
+# INFO: FSM advanced to state 3 as expected
+# Time=105000 ns | state_counter=3 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 3
+# INFO: FSM advanced to state 4 as expected
+# Time=115000 ns | state_counter=4 | start=0 | rst=0 | done=0 | control_signal_o=00001000001000
+# INFO: Control signals match expected for state 4
+# INFO: FSM advanced to state 5 as expected
+# Time=125000 ns | state_counter=5 | start=0 | rst=0 | done=0 | control_signal_o=00000001110000
+# INFO: Control signals match expected for state 5
+# INFO: FSM advanced to state 6 as expected
+# Time=135000 ns | state_counter=6 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 6
+# INFO: FSM advanced to state 7 as expected
+# Time=145000 ns | state_counter=7 | start=0 | rst=0 | done=0 | control_signal_o=00000000000100
+# INFO: Control signals match expected for state 7
+# INFO: FSM advanced to state 8 as expected
+# Time=155000 ns | state_counter=8 | start=0 | rst=0 | done=0 | control_signal_o=00000000000010
+# INFO: Control signals match expected for state 8
+# INFO: FSM advanced to state 9 as expected
+# Time=165000 ns | state_counter=9 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 9
+# INFO: FSM is in DONE state, no further state transitions expected
+# INFO: First run completed successfully. Re-applying start and reset...
+# Time=175000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 9
+# INFO: FSM is in DONE state, no further state transitions expected
+# INFO: Reached DONE state as expected. Test sequence completed.
+# Time=185000 ns | state_counter=9 | start=1 | rst=0 | done=1 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 9
+# INFO: FSM is in DONE state, no further state transitions expected
+# INFO: Reached DONE state as expected. Test sequence completed.
+# Time=195000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 9
+# INFO: FSM is in DONE state, no further state transitions expected
+# INFO: Reached DONE state as expected. Test sequence completed.
+# Time=205000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
+# INFO: Control signals match expected for state 9
+# INFO: FSM is in DONE state, no further state transitions expected
+# INFO: Reached DONE state as expected. Test sequence completed.
+# INFO: Second run completed successfully.
+# All tests completed successfully!
+# ** Note: $finish    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/top_file_controller_tb.v(138)
+#    Time: 215 ns  Iteration: 0  Instance: /top_file_controller_tb
+# End time: 14:57:15 on Dec 11,2024, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0

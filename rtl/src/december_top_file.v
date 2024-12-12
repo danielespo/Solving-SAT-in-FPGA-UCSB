@@ -1,8 +1,8 @@
 /*
-Version: 0.0
+Version: 0.1
 Datapath.v
 
-V0.0 Author: Zeiler Randall-Reed
+V0.1 Author: Zeiler Randall-Reed, Harim Choe
 
 Description:
 This is the top module for the datapath. It instantiates all of the modules that are needed for the
@@ -51,7 +51,7 @@ Change Log:
 12/04/2024 - Harim Choe
     Added controller
 */
-module Datapath #(
+module december_top_file #(
     parameter NSAT = 3,
     parameter NUM_VARIABLES = 2048,
     parameter MAX_CLAUSE_MEMBERSHIP = 20,

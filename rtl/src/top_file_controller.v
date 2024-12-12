@@ -46,6 +46,13 @@ Notes:
 Change Log:
 12/04/2024:
     Started working on the controller
+
+12/11/2024:
+    Had some issues with the done stage. Fixed it by using an always block for the done flag.
+    Added TB_WR_INDEX signal to control the temporal buffer wrapper where:
+        We start writing to the temporal buffer in the READ_CLAUSE_TABLE state, using index 00.
+        We continue writing in the READ_VARIABLE_TABLE state, using index 01.
+        We finish writing in the EVALUATE_CLAUSE state, using index 10.
 */
 
 module top_file_controller #(
@@ -54,7 +61,7 @@ module top_file_controller #(
     parameter MAX_CLAUSE_MEMBERSHIP = 20,
     parameter FIFO_DEPTH = 32,
     parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048,
-    parameter CONTROLLER_SIGNAL_WIDTH = 14 // will change
+    parameter CONTROLLER_SIGNAL_WIDTH = 14
 ) (
     input clk, 
     input rst,
@@ -79,7 +86,6 @@ reg [3:0] state, next_state;
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         state <= IDLE;
-        done <= 1'b0;
     end else begin
         state <= next_state;
     end
@@ -87,7 +93,6 @@ end
 
 always @(*) begin
     next_state = state;
-    done = 1'b0;
     control_signal_o = {CONTROLLER_SIGNAL_WIDTH{1'b0}}; // Default all signals to 0
 
     case (state)
@@ -106,17 +111,20 @@ always @(*) begin
         end
         READ_CLAUSE_TABLE: begin // Step B
             control_signal_o[12:11] = 2'b00; // ATT_SRC_BITS
+            control_signal_o[4:3] = 2'b00;  //TB_WR_INDEX - Start writing to first index
             next_state = READ_VARIABLE_TABLE;
         end
         READ_VARIABLE_TABLE: begin // Step C
             control_signal_o[9] = 1'b1;     // VT_EN_BIT
             control_signal_o[8] = 1'b0;     // VT_WR_EN_BIT
             control_signal_o[10] = 1'b0;    // VT_ADDR_SRC_BIT
+            control_signal_o[4:3] = 2'b01;  //TB_WR_INDEX - Write to second index
             next_state = EVALUATE_CLAUSE;
         end
         EVALUATE_CLAUSE: begin // Step D
             control_signal_o[7:6] = 2'b01;  // VFS_WR_EN_BITS
             control_signal_o[5] = 1'b1;     // CFLB_WR_EN_BIT
+            control_signal_o[4:3] = 2'b10;  // TB_WR_INDEX - Write to third index
             next_state = COUNT_UNSAT_CLAUSES;
         end
         COUNT_UNSAT_CLAUSES: begin // Step E
@@ -129,16 +137,30 @@ always @(*) begin
         end
         SELECT_UNSAT_CLAUSES_AGAIN: begin // Step G
             control_signal_o[1] = 1'b1;     // FIFO_RD_EN_BIT
-            next_state = DONE;
+            next_state = DONE;  // Go to DONE state after completing the cycle
         end
         DONE: begin
-            done = 1'b1;
-            if (!start) begin
-                next_state = IDLE;
+            control_signal_o = {CONTROLLER_SIGNAL_WIDTH{1'b0}}; // All signals off in DONE state
+            if (start) begin
+                next_state = LOAD;
             end
         end
         default: next_state = IDLE;
     endcase
+end
+
+// Latch the done flag
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        done <= 1'b0;
+    end else if (state == DONE) begin
+        done <= 1'b1;
+    end else if (state == LOAD) begin
+        done <= 1'b0;
+    end
+    else begin
+        done <= 1'b0;
+    end
 end
 
 endmodule
