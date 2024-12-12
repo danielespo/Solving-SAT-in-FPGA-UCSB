@@ -1,0 +1,29 @@
+# vsim -c Clause_Table_tb -do "run -all; quit" 
+# Start time: 13:41:51 on Dec 11,2024
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.27.1.el8_10.x86_64
+# //
+# //  Copyright 1991-2019 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.Clause_Table_tb(fast)
+# run -all
+# Time=0, axi_wr_en_input=0, axi_wr_addr_input=   0, axi_wr_clauses_input=                                                                                                                                                0, clauses_output=                                                                                                                                                x
+# Time=100, axi_wr_en_input=1, axi_wr_addr_input=   1, axi_wr_clauses_input=                                                                                                                                             2050, clauses_output=                                                                                                                                                x
+# Time=200, axi_wr_en_input=0, axi_wr_addr_input=   1, axi_wr_clauses_input=                                                                                                                                             2050, clauses_output=                                                                                                                                                x
+# Time=310, axi_wr_en_input=0, axi_wr_addr_input=   1, axi_wr_clauses_input=                                                                                                                                             2050, clauses_output=                                                                                                                                             2050
+# ** Note: $stop    : rtl/tb/Clause_Table_tb.v(88)
+#    Time: 2300 ns  Iteration: 0  Instance: /Clause_Table_tb
+# Break at rtl/tb/Clause_Table_tb.v line 88
+# Stopped at rtl/tb/Clause_Table_tb.v line 88
+#  quit
+# End time: 13:41:52 on Dec 11,2024, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
