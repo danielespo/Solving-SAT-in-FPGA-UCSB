@@ -168,9 +168,9 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     ) unsat_buffer (
         .clk_i(clk_i),
         .a_en_i(ucb_en),
-        .b_en_i(1),
+        .b_en_i(1'b1),
         .a_wr_en_i(ucb_wr_en),
-        .b_wr_en_i(0),
+        .b_wr_en_i(1'b0),
         .a_addr_i(ucb_addr),
         .b_addr_i(ucb_last_addr),
         .a_data_i(ucb_data_in),

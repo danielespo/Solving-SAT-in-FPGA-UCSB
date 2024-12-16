@@ -1,26 +1,6 @@
-# do simulate.tcl
-# ** Warning: (vlib-34) Library already exists at "work".
-# Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 14:57:14 on Dec 11,2024
-# vlog -sv ../src/top_file_controller.v 
-# -- Compiling module top_file_controller
-# 
-# Top level modules:
-# 	top_file_controller
-# End time: 14:57:14 on Dec 11,2024, Elapsed time: 0:00:00
-# Errors: 0, Warnings: 0
-# Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 14:57:14 on Dec 11,2024
-# vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/top_file_controller_tb.v 
-# -- Compiling module top_file_controller_tb
-# 
-# Top level modules:
-# 	top_file_controller_tb
-# End time: 14:57:14 on Dec 11,2024, Elapsed time: 0:00:00
-# Errors: 0, Warnings: 0
-# vsim -c top_file_controller_tb -do "run -all; quit" 
-# Start time: 14:57:14 on Dec 11,2024
-# ** Note: (vsim-8009) Loading existing optimized design _opt
+# vsim -c december_top_file_tb -do "run -al; quit" 
+# Start time: 20:50:07 on Dec 15,2024
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.30.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -34,69 +14,73 @@
 # //  is prohibited from disclosure under the Trade Secrets Act,
 # //  18 U.S.C. Section 1905.
 # //
-# Loading sv_std.std
-# Loading work.top_file_controller_tb(fast)
-# run -all
-# INFO: Reset active at time=5000 ns. State machine re-initializing.
-# INFO: Reset active at time=15000 ns. State machine re-initializing.
-# INFO: Reset active at time=25000 ns. State machine re-initializing.
-# INFO: Reset active at time=35000 ns. State machine re-initializing.
-# INFO: Reset active at time=45000 ns. State machine re-initializing.
-# Time=55000 ns | state_counter=0 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 0
-# Time=65000 ns | state_counter=0 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 0
-# Time=75000 ns | state_counter=0 | start=1 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Detected start in IDLE state, FSM should move to LOAD next.
-# INFO: Control signals match expected for state 0
-# INFO: FSM advanced to LOAD state as expected
-# Time=85000 ns | state_counter=1 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 1
-# INFO: FSM advanced to state 2 as expected
-# Time=95000 ns | state_counter=2 | start=0 | rst=0 | done=0 | control_signal_o=10000000000001
-# INFO: Control signals match expected for state 2
-# INFO: FSM advanced to state 3 as expected
-# Time=105000 ns | state_counter=3 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 3
-# INFO: FSM advanced to state 4 as expected
-# Time=115000 ns | state_counter=4 | start=0 | rst=0 | done=0 | control_signal_o=00001000001000
-# INFO: Control signals match expected for state 4
-# INFO: FSM advanced to state 5 as expected
-# Time=125000 ns | state_counter=5 | start=0 | rst=0 | done=0 | control_signal_o=00000001110000
-# INFO: Control signals match expected for state 5
-# INFO: FSM advanced to state 6 as expected
-# Time=135000 ns | state_counter=6 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 6
-# INFO: FSM advanced to state 7 as expected
-# Time=145000 ns | state_counter=7 | start=0 | rst=0 | done=0 | control_signal_o=00000000000100
-# INFO: Control signals match expected for state 7
-# INFO: FSM advanced to state 8 as expected
-# Time=155000 ns | state_counter=8 | start=0 | rst=0 | done=0 | control_signal_o=00000000000010
-# INFO: Control signals match expected for state 8
-# INFO: FSM advanced to state 9 as expected
-# Time=165000 ns | state_counter=9 | start=0 | rst=0 | done=0 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 9
-# INFO: FSM is in DONE state, no further state transitions expected
-# INFO: First run completed successfully. Re-applying start and reset...
-# Time=175000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 9
-# INFO: FSM is in DONE state, no further state transitions expected
-# INFO: Reached DONE state as expected. Test sequence completed.
-# Time=185000 ns | state_counter=9 | start=1 | rst=0 | done=1 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 9
-# INFO: FSM is in DONE state, no further state transitions expected
-# INFO: Reached DONE state as expected. Test sequence completed.
-# Time=195000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 9
-# INFO: FSM is in DONE state, no further state transitions expected
-# INFO: Reached DONE state as expected. Test sequence completed.
-# Time=205000 ns | state_counter=9 | start=0 | rst=0 | done=1 | control_signal_o=00000000000000
-# INFO: Control signals match expected for state 9
-# INFO: FSM is in DONE state, no further state transitions expected
-# INFO: Reached DONE state as expected. Test sequence completed.
-# INFO: Second run completed successfully.
-# All tests completed successfully!
-# ** Note: $finish    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/top_file_controller_tb.v(138)
-#    Time: 215 ns  Iteration: 0  Instance: /top_file_controller_tb
-# End time: 14:57:15 on Dec 11,2024, Elapsed time: 0:00:01
-# Errors: 0, Warnings: 0
+# Loading work.december_top_file_tb(fast)
+# Loading work.Address_Translation_Table(fast)
+# ** Warning: (vsim-3015) [PCDPC] - Port size (13) does not match connection size (12) for port 'rd_addr_i'. The port definition is at: ../src/Address_Translation_Table.v(45).
+#    Time: 0 ps  Iteration: 0  Instance: /december_top_file_tb/dut/address_translation_table File: ../src/december_top_file.v Line: 185
+# run -al
+# Starting reset test
+# Reset test passed: Controller in IDLE state and control signals cleared
+# Testing IDLE to LOAD transition
+# IDLE to LOAD transition test failed
+# Testing LOAD to SELECT_UNSAT_CLAUSES transition
+# LOAD to SELECT_UNSAT_CLAUSES transition test failed
+# Testing SELECT_UNSAT_CLAUSES state
+# SELECT_UNSAT_CLAUSES state test failed
+# Testing READ_CLAUSE_TABLE state
+# READ_CLAUSE_TABLE state test failed
+# Testing READ_VARIABLE_TABLE state
+# READ_VARIABLE_TABLE state test failed
+# Testing EVALUATE_CLAUSE state
+# EVALUATE_CLAUSE state test failed
+# Testing COUNT_UNSAT_CLAUSES state
+# COUNT_UNSAT_CLAUSES state test failed
+# Testing GATHER_UNSAT_CLAUSES state
+# GATHER_UNSAT_CLAUSES state test failed
+# Testing SELECT_UNSAT_CLAUSES_AGAIN state
+# SELECT_UNSAT_CLAUSES_AGAIN state test failed
+# Testing DONE state
+# DONE state test passed
+# Testing full cycle
+# Full cycle test passed
+# Testing multiple cycles
+# Multiple cycles test passed
+# Testing reset during operation
+# Reset during operation test passed
+# Testing start signal timing
+# Start signal timing test failed
+# Testing Clause Register operation
+# Clause Register operation test failed
+# Testing Address Translation Table
+# Address Translation Table test passed
+# Testing Clause Table operation
+# Clause Table operation test passed
+# Testing Variable Table Cluster operation
+# Variable Table Cluster operation test failed
+# Testing Temporal Buffer Wrapper operation
+# Temporal Buffer Wrapper operation test passed
+# Testing XOR PRNG operation
+# XOR PRNG operation test passed
+# Testing Clause Evaluator Cluster operation
+# Clause Evaluator Cluster operation test passed
+# Testing Variable Flip Selector operation
+# Variable Flip Selector operation test passed
+# Testing FIFO Tree operation
+# FIFO Tree operation test passed
+# Testing Unsat Clause Selector operation
+# Unsat Clause Selector operation test passed
+# Testing Controller state transitions
+# Controller state transitions test failed
+# Testing Control signal propagation
+# Control signal propagation test passed
+# Testing Done signal assertion
+# Done signal assertion test failed
+# Testing Start signal debounce
+# Start signal debounce test failed
+# Testing Reset signal priority
+# Reset signal priority test passed
+# Passed tests: 15, Failed tests: 15
+# ** Note: $finish    : december_top_file_tb.v(133)
+#    Time: 1953 ns  Iteration: 0  Instance: /december_top_file_tb
+# End time: 20:50:09 on Dec 15,2024, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 1

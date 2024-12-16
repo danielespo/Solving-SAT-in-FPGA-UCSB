@@ -62,8 +62,11 @@ module december_top_file #(
     input clk_i, rst_i,
     // controller signal : [x_xx_x_x_x_xx_x_xx_x_x]
     // CR_wren, ATT_src(2), VT_rden, VT_addr_src, VT_wren, VFS_wren(2), CFLB_wren, TB_wr_index(2), FIFO_wren, FIFO_rden 
-    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i
+    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i,
     // in progress
+
+    input start_i,
+    output done_signal
 );
 
 // local parameters
@@ -166,14 +169,14 @@ genvar n, m;
 /* --- address translation table --- */     // [TODO] - write interface
     assign _cr_selected_literal = att_src[1] ? 
         (att_src[0] ? 
-            {LITERAL_ADDRESS_WIDTH{1'bx}} : // potential errors by propagating x
+            {LITERAL_ADDRESS_WIDTH{1'b0}} : // Use 0 instead of x
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 2 +: LITERAL_ADDRESS_WIDTH]) 
         : 
         (att_src[0] ? 
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 1 +: LITERAL_ADDRESS_WIDTH] : 
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 0 +: LITERAL_ADDRESS_WIDTH]);
 
-    assign _cr_negated_literal = {~_cr_selected_literal[LITERAL_ADDRESS_WIDTH - 1], _cr_selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0]};
+    assign _cr_negated_literal = {1'b0, ~_cr_selected_literal[LITERAL_ADDRESS_WIDTH - 1], _cr_selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0]};
 
     Address_Translation_Table #(
         .CLAUSE_COUNT(MAX_CLAUSE_MEMBERSHIP),

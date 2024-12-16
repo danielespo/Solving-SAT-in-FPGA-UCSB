@@ -24,6 +24,10 @@ Change Log:
     unify runtime write signals (Variable Table changes are synced)
     axi interface 
 
+2024/12/13 - Harim Choe
+    Each instantiation of the Variable_Table inside the generate loop must have an instance name
+    Verilog requires that every module instantiation is followed by an instance name before port connections
+
 -----------------------------------------------------*/
 
 module Variable_Table_Cluster #(
@@ -46,15 +50,13 @@ module Variable_Table_Cluster #(
 );
     genvar i;
     generate
-        for (i = 0; i < CLUSTER_SIZE; i = i + 1)
-        begin
-            Variable_Table # (VARIABLE_ADDRESS_WIDTH) (
+        for (i = 0; i < CLUSTER_SIZE; i = i + 1) begin: variable_table_gen
+            Variable_Table #(VARIABLE_ADDRESS_WIDTH) vt_inst (
                 .clk_i(clk_i),
                 .axi_en_i(axi_en_i),
                 .axi_wr_en_i(axi_wr_en_i),
                 .axi_addr_i(axi_addr_i),
                 .axi_data_i(axi_data_i),
-                //.axi_data_o(),
                 .en_i(en_i),
                 .wr_en_i(wr_en_i),
                 .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
@@ -63,4 +65,5 @@ module Variable_Table_Cluster #(
             );
         end
     endgenerate
+
 endmodule
