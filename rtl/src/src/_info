@@ -9,248 +9,336 @@ z2
 cModel Technology
 Z0 d/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src
 vAddress_Translation_Table
-!s110 1733555458
+!s110 1734333077
 !i10b 1
 !s100 oFWRocfgheklIFO=:hE_N2
 IQ]:O`^?o=[l[_G4LaG5:m1
 Z1 VDg1SIo80bB@j0V0VzS_@n1
 R0
-Z2 w1730715366
+w1734324618
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Address_Translation_Table.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Address_Translation_Table.v
-Z3 L0 32
-Z4 OL;L;10.7d;67
+Z2 L0 32
+Z3 OL;L;10.7d;67
 r1
 !s85 0
 31
-!s108 1733555458.000000
+!s108 1734333077.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Address_Translation_Table.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Address_Translation_Table.v|
 !i113 0
-Z5 o-nologo -work src -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
-Z6 tCvgOpt 0
+Z4 o-nologo -work src -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z5 tCvgOpt 0
 n@address_@translation_@table
 vBreak_Value_Counter
-!s110 1733941669
+!s110 1734333382
 !i10b 1
 !s100 2h@MPKKhUZndn?7M8Q0ji1
 I8R?DR[PFEElAe_?JmJghV3
 R1
 R0
-R2
+Z6 w1730715366
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v
 L0 45
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733941669.000000
+!s108 1734333382.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v|
 !i113 0
+R4
 R5
-R6
 n@break_@value_@counter
 vClause_Evaluator
-!s110 1733955401
+!s110 1734333279
 !i10b 1
 !s100 1>HfgCO`BOEfXYBPWb:IT1
 IUN<=d8?maR3Hdecn7iGAG3
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator.v
-L0 38
-R4
+Z7 L0 38
+R3
 r1
 !s85 0
 31
-!s108 1733955401.000000
+!s108 1734333279.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator.v|
 !i113 0
+R4
 R5
-R6
 n@clause_@evaluator
 vClause_Evaluator_Cluster
-!s110 1733941589
+!s110 1734333236
 !i10b 1
 !s100 ]=70C_@ZHEY]SlhlmkWDB3
 IXcehO3S7Tb2A[D6Lj6Lfm0
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v
+R2
 R3
-R4
 r1
 !s85 0
 31
-!s108 1733941589.000000
+!s108 1734333236.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v|
 !i113 0
+R4
 R5
-R6
 n@clause_@evaluator_@cluster
 vClause_Register
-!s110 1733555446
+!s110 1734332733
 !i10b 1
 !s100 X_X2aknjZXX1JWHnT<[dI0
 Ie6J0Bi5cYm]K_9?`3Ye<41
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v
 L0 27
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733555446.000000
+!s108 1734332733.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v|
 !i113 0
+R4
 R5
-R6
 n@clause_@register
 vClause_Table
-!s110 1733956058
+!s110 1734337114
 !i10b 1
 !s100 Q]QJ`0_4;nV38Ld<=1TS20
 IbgHU^G1=cd2J?Ve^LWJF81
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Table.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Table.v
 L0 40
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733956058.000000
+!s108 1734337114.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Table.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Table.v|
 !i113 0
+R4
 R5
-R6
 n@clause_@table
 vDatapath
-!s110 1733956332
+!s110 1734337496
 !i10b 1
-!s100 WCl?]Q8<PicMLJTWOjQeb0
-Ile9Yf[A[KA<6hIAM>WZ^?0
+!s100 nR;e7S?P^mnKG9iK^J^2=0
+IiOmA;m^^9gHA26dk1C1oz0
 R1
 R0
-w1733955166
-Z7 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v
-Z8 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v
-Z9 L0 54
-R4
+R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Datapath.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Datapath.v
+L0 52
+R3
 r1
 !s85 0
 31
-!s108 1733956332.000000
-Z10 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v|
-Z11 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v|
+!s108 1734337496.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Datapath.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Datapath.v|
 !i113 0
+R4
 R5
-R6
 n@datapath
 vdecember_top_file
-!s110 1733958056
+!s110 1734342420
 !i10b 1
-!s100 CZm8f8f_Bc9z9j=iTVzR70
-I3]8a[Xo1T?Go>>Bon6H561
+!s100 QjYg3D8A=N2eBf1l1?XFR3
+IiKn_<?@SkfE6U5CI>S?K71
 R1
 R0
-w1733956549
-R7
-R8
-R9
-R4
+w1734342420
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v
+L0 54
+R3
 r1
 !s85 0
 31
-!s108 1733958056.000000
-R10
-R11
+!s108 1734342420.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/december_top_file.v|
 !i113 0
+R4
 R5
-R6
 vFIFO_Buffer
-!s110 1733955362
+!s110 1734333435
 !i10b 1
 !s100 LTD[ZkS]Qj9A_zmS2_RmC1
 IY_E3B?NehhHZbbUP;oUo[2
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v
 L0 28
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733955361.000000
+!s108 1734333435.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v|
 !i113 0
+R4
 R5
-R6
 n@f@i@f@o_@buffer
-vTemporal_Buffer
-!s110 1733955783
+vFIFO_Tree
+!s110 1734333327
 !i10b 1
-!s100 ]b8`:h9^BMJ4iZCoF]B@00
-IeRQ^Sk]j5ae31<FMN5c640
+!s100 gWc=93hk;NBc[U6b?JGFa0
+ISk8F8;E88fN[AzbYzfk_F3
 R1
 R0
-R2
-8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v
-F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v
+R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v
+R7
 R3
-R4
 r1
 !s85 0
 31
-!s108 1733955783.000000
+!s108 1734333327.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v|
+!i113 0
+R4
+R5
+n@f@i@f@o_@tree
+vHeuristic_Selector
+!s110 1734333414
+!i10b 1
+!s100 GmoA[A5SSEh_`j70@J2]?0
+I<C]lY]HN92EWSnKU4><@_3
+R1
+R0
+R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v
+Z8 L0 22
+R3
+r1
+!s85 0
+31
+!s108 1734333414.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v|
+!i113 0
+R4
+R5
+n@heuristic_@selector
+vM_Table
+!s110 1734333476
+!i10b 1
+!s100 n;>[8=^jj2[]LKPKA;YUH3
+IbimWNnJ2jfAACd6ULgLOM3
+R1
+R0
+w1734324090
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v
+R8
+R3
+r1
+!s85 0
+31
+!s108 1734333476.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v|
+!i113 0
+R4
+R5
+n@m_@table
+vSAT_Solver_Top
+!s110 1734332930
+!i10b 1
+!s100 C@UT]zQiUMe10CVXjTK2z3
+IW<TR9DG^n@0^bM:^fmfTZ0
+R1
+R0
+R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v
+L0 9
+R3
+r1
+!s85 0
+31
+!s108 1734332930.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v|
+!i113 0
+R4
+R5
+n@s@a@t_@solver_@top
+vTemporal_Buffer
+!s110 1734333502
+!i10b 1
+!s100 jEjMX=;nBZj8R?O<NAK>91
+I]U`JQlhg6M5<@RAOF:jlW3
+R1
+R0
+w1733992619
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v
+R2
+R3
+r1
+!s85 0
+31
+!s108 1734333502.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v|
 !i113 0
+R4
 R5
-R6
 n@temporal_@buffer
 vTemporal_Buffer_Wrapper
-!s110 1733956976
+!s110 1734333185
 !i10b 1
 !s100 a[>PNjBizoWhDiFVHVEO93
 IomJ7W=;:bj]ROQmi7N;lo3
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v
 L0 19
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733956976.000000
+!s108 1734333185.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v|
 !i113 0
+R4
 R5
-R6
 n@temporal_@buffer_@wrapper
 vtop_file_controller
-!s110 1733992149
+!s110 1734338194
 !i10b 1
 !s100 XZ0<fV9XlMjhBbdO^VCzT1
 IcjnE=XlYJYBC^ClQlk_k00
@@ -260,16 +348,16 @@ w1733954946
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v
 L0 58
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733992149.000000
+!s108 1734338194.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v|
 !i113 0
+R4
 R5
-R6
 vtop_file_controller_tb
 !s110 1733555019
 !i10b 1
@@ -281,7 +369,7 @@ w1733356004
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller_tb.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller_tb.v
 L0 3
-R4
+R3
 r1
 !s85 0
 31
@@ -289,71 +377,137 @@ r1
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller_tb.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller_tb.v|
 !i113 0
+R4
 R5
+vUnsat_Clause_Buffer
+!s110 1734333457
+!i10b 1
+!s100 004??E6J57R]]5DGnAUX93
+IXX^6l00TNEJjVa4cD;ocD1
+R1
+R0
 R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v
+L0 23
+R3
+r1
+!s85 0
+31
+!s108 1734333457.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v|
+!i113 0
+R4
+R5
+n@unsat_@clause_@buffer
+vUnsat_Clause_Selector
+!s110 1734333352
+!i10b 1
+!s100 66_UTzJIX1NYohQz?PAh23
+I<d4CBEid>6<5PUlCR=Qag2
+R1
+R0
+w1734322972
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v
+L0 70
+R3
+r1
+!s85 0
+31
+!s108 1734333352.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v|
+!i113 0
+R4
+R5
+n@unsat_@clause_@selector
 vVariable_Flip_Selector
-!s110 1733958850
+!s110 1734333297
 !i10b 1
 !s100 AjRRN55oj@3?Dm3=[a]hT2
 I:IjzmE9W6I4LQS<D6U]Xb1
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v
 L0 25
-R4
+R3
 r1
 !s85 0
 31
-!s108 1733958850.000000
+!s108 1734333297.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v|
 !i113 0
+R4
 R5
-R6
 n@variable_@flip_@selector
 vVariable_Table
-!s110 1733958852
+Z9 !s110 1734333215
 !i10b 1
 !s100 JdO>haE71AiOahBF<4bUd2
 IA4LeBFb?Iz4HoKBbKYYEA0
 R1
 R0
-R2
+R6
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table.v
-Z12 L0 29
-R4
+L0 29
+R3
 r1
 !s85 0
 31
-!s108 1733958852.000000
+!s108 1734333214.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table.v|
 !i113 0
+R4
 R5
-R6
 n@variable_@table
 vVariable_Table_Cluster
-!s110 1733992123
+!s110 1734333143
 !i10b 1
-!s100 GKCQlh65GJ:V`db_AOb7?2
-I]gKdo:^O:B_hm<^@PNmXA2
+!s100 4>99_EbLG9jBU4ia21>B60
+IQ]Q1RUOfJi=1gMCL9L?z[2
 R1
 R0
-R2
+w1734322512
 8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table_Cluster.v
 F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table_Cluster.v
-R12
-R4
+L0 33
+R3
 r1
 !s85 0
 31
-!s108 1733992123.000000
+!s108 1734333143.000000
 !s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table_Cluster.v|
 !s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Table_Cluster.v|
 !i113 0
+R4
 R5
-R6
 n@variable_@table_@cluster
+vXOR_PRNG
+R9
+!i10b 1
+!s100 7kEh011DWbSJXEWW3f65_3
+IW3`n>zZ?V<L[z3X4P8HmK2
+R1
+R0
+R6
+8/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v
+F/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1734333215.000000
+!s107 /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v|
+!s90 -nologo|-work|src|/fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v|
+!i113 0
+R4
+R5
+n@x@o@r_@p@r@n@g

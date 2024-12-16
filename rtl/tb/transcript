@@ -1,6 +1,6 @@
-# vsim -c december_top_file_tb -do "run -al; quit" 
-# Start time: 20:50:07 on Dec 15,2024
-# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# vsim -c december_top_file_tb -do "run -all; quit" 
+# Start time: 01:48:25 on Dec 16,2024
+# ** Note: (vsim-8009) Loading existing optimized design _opt
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.30.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -15,72 +15,126 @@
 # //  18 U.S.C. Section 1905.
 # //
 # Loading work.december_top_file_tb(fast)
-# Loading work.Address_Translation_Table(fast)
-# ** Warning: (vsim-3015) [PCDPC] - Port size (13) does not match connection size (12) for port 'rd_addr_i'. The port definition is at: ../src/Address_Translation_Table.v(45).
-#    Time: 0 ps  Iteration: 0  Instance: /december_top_file_tb/dut/address_translation_table File: ../src/december_top_file.v Line: 185
-# run -al
-# Starting reset test
-# Reset test passed: Controller in IDLE state and control signals cleared
-# Testing IDLE to LOAD transition
-# IDLE to LOAD transition test failed
-# Testing LOAD to SELECT_UNSAT_CLAUSES transition
-# LOAD to SELECT_UNSAT_CLAUSES transition test failed
-# Testing SELECT_UNSAT_CLAUSES state
-# SELECT_UNSAT_CLAUSES state test failed
-# Testing READ_CLAUSE_TABLE state
-# READ_CLAUSE_TABLE state test failed
-# Testing READ_VARIABLE_TABLE state
-# READ_VARIABLE_TABLE state test failed
-# Testing EVALUATE_CLAUSE state
-# EVALUATE_CLAUSE state test failed
-# Testing COUNT_UNSAT_CLAUSES state
-# COUNT_UNSAT_CLAUSES state test failed
-# Testing GATHER_UNSAT_CLAUSES state
-# GATHER_UNSAT_CLAUSES state test failed
-# Testing SELECT_UNSAT_CLAUSES_AGAIN state
-# SELECT_UNSAT_CLAUSES_AGAIN state test failed
-# Testing DONE state
-# DONE state test passed
-# Testing full cycle
-# Full cycle test passed
-# Testing multiple cycles
-# Multiple cycles test passed
-# Testing reset during operation
-# Reset during operation test passed
-# Testing start signal timing
-# Start signal timing test failed
-# Testing Clause Register operation
-# Clause Register operation test failed
-# Testing Address Translation Table
-# Address Translation Table test passed
-# Testing Clause Table operation
-# Clause Table operation test passed
-# Testing Variable Table Cluster operation
-# Variable Table Cluster operation test failed
-# Testing Temporal Buffer Wrapper operation
-# Temporal Buffer Wrapper operation test passed
-# Testing XOR PRNG operation
-# XOR PRNG operation test passed
-# Testing Clause Evaluator Cluster operation
-# Clause Evaluator Cluster operation test passed
-# Testing Variable Flip Selector operation
-# Variable Flip Selector operation test passed
-# Testing FIFO Tree operation
-# FIFO Tree operation test passed
-# Testing Unsat Clause Selector operation
-# Unsat Clause Selector operation test passed
-# Testing Controller state transitions
-# Controller state transitions test failed
-# Testing Control signal propagation
-# Control signal propagation test passed
-# Testing Done signal assertion
-# Done signal assertion test failed
-# Testing Start signal debounce
-# Start signal debounce test failed
-# Testing Reset signal priority
-# Reset signal priority test passed
-# Passed tests: 15, Failed tests: 15
-# ** Note: $finish    : december_top_file_tb.v(133)
-#    Time: 1953 ns  Iteration: 0  Instance: /december_top_file_tb
-# End time: 20:50:09 on Dec 15,2024, Elapsed time: 0:00:02
-# Errors: 0, Warnings: 1
+# run -all
+# Hardcoded clauses:
+# Clause 1: (x1 OR x2 OR NOT x3)
+# Clause 2: (NOT x2 OR x3 OR x4)
+# Clause 3: (x1 OR NOT x3 OR NOT x4)
+# Reset complete
+# Variable table initialized
+# Clauses loaded
+# Solver started
+# Time             20560000: control_signal_i = 11010100100100
+# Time             20570000: control_signal_i = 01111010000001
+# Time             20580000: control_signal_i = 01011000001001
+# Time             20590000: control_signal_i = 01011001100011
+# Time             20600000: control_signal_i = 11101100001101
+# Time             20610000: control_signal_i = 01100110001101
+# Time             20620000: control_signal_i = 00010001100101
+# Time             20630000: control_signal_i = 01001000010010
+# Time             20640000: control_signal_i = 10001100000001
+# Time             20650000: control_signal_i = 00110100001101
+# Time             20660000: control_signal_i = 11000101110110
+# Time             20670000: control_signal_i = 00110100111101
+# Time             20680000: control_signal_i = 01011111101101
+# Time             20690000: control_signal_i = 11011110001100
+# Time             20700000: control_signal_i = 10100111111001
+# Time             20710000: control_signal_i = 10010011000110
+# Time             20720000: control_signal_i = 00010011000101
+# Time             20730000: control_signal_i = 01001010101010
+# Time             20740000: control_signal_i = 11011111100101
+# Time             20750000: control_signal_i = 11001001110111
+# Time             20760000: control_signal_i = 01011000010010
+# Time             20770000: control_signal_i = 01101110001111
+# Time             20780000: control_signal_i = 10100111110010
+# Time             20790000: control_signal_i = 01011011001110
+# Time             20800000: control_signal_i = 11101011101000
+# Time             20810000: control_signal_i = 00111011000101
+# Time             20820000: control_signal_i = 00100101011100
+# Time             20830000: control_signal_i = 10100010111101
+# Time             20840000: control_signal_i = 01100000101101
+# Time             20850000: control_signal_i = 10011001100101
+# Time             20860000: control_signal_i = 10001001100011
+# Time             20870000: control_signal_i = 00011100001010
+# Time             20880000: control_signal_i = 10001010000000
+# Time             20890000: control_signal_i = 10000100100000
+# Time             20900000: control_signal_i = 00010110101010
+# Time             20910000: control_signal_i = 00110010011101
+# Time             20920000: control_signal_i = 11111010010110
+# Time             20930000: control_signal_i = 11100000010011
+# Time             20940000: control_signal_i = 11100000001101
+# Time             20950000: control_signal_i = 01011001010011
+# Time             20960000: control_signal_i = 01110101101011
+# Time             20970000: control_signal_i = 10101011010101
+# Time             20980000: control_signal_i = 00101000000010
+# Time             20990000: control_signal_i = 11111010101110
+# Time             21000000: control_signal_i = 10100100011101
+# Time             21010000: control_signal_i = 11001011001111
+# Time             21020000: control_signal_i = 00100100100011
+# Time             21030000: control_signal_i = 10010100001010
+# Time             21040000: control_signal_i = 00101011001010
+# Time             21050000: control_signal_i = 00110000111100
+# Time             21060000: control_signal_i = 11110111110010
+# Time             21070000: control_signal_i = 10000110001010
+# Time             21080000: control_signal_i = 11001101000001
+# Time             21090000: control_signal_i = 11010011011000
+# Time             21100000: control_signal_i = 11001101111000
+# Time             21110000: control_signal_i = 01001010001001
+# Time             21120000: control_signal_i = 00110111101011
+# Time             21130000: control_signal_i = 10010110110110
+# Time             21140000: control_signal_i = 11100111000110
+# Time             21150000: control_signal_i = 01001110101110
+# Time             21160000: control_signal_i = 00001010111100
+# Time             21170000: control_signal_i = 01110100101010
+# Time             21180000: control_signal_i = 01101000001011
+# Time             21190000: control_signal_i = 11111001110001
+# Time             21200000: control_signal_i = 00000110000101
+# Time             21210000: control_signal_i = 01010101001111
+# Time             21220000: control_signal_i = 10000000111011
+# Time             21230000: control_signal_i = 11001100111010
+# Time             21240000: control_signal_i = 11001001111110
+# Time             21250000: control_signal_i = 00101100010101
+# Time             21260000: control_signal_i = 01101111110001
+# Time             21270000: control_signal_i = 00101111011001
+# Time             21280000: control_signal_i = 00011101100010
+# Time             21290000: control_signal_i = 11101101001100
+# Time             21300000: control_signal_i = 01010110011111
+# Time             21310000: control_signal_i = 10000110001111
+# Time             21320000: control_signal_i = 10100111111000
+# Time             21330000: control_signal_i = 10000010110111
+# Time             21340000: control_signal_i = 01011010011111
+# Time             21350000: control_signal_i = 01010001011100
+# Time             21360000: control_signal_i = 00000001011011
+# Time             21370000: control_signal_i = 11011110001001
+# Time             21380000: control_signal_i = 11001001001001
+# Time             21390000: control_signal_i = 11111011010000
+# Time             21400000: control_signal_i = 00000011010111
+# Time             21410000: control_signal_i = 11110001010001
+# Time             21420000: control_signal_i = 10111110010110
+# Time             21430000: control_signal_i = 11111100001100
+# Time             21440000: control_signal_i = 00111011000010
+# Time             21450000: control_signal_i = 10110111001000
+# Time             21460000: control_signal_i = 01101001110111
+# Time             21470000: control_signal_i = 10110100111101
+# Time             21480000: control_signal_i = 01101100010010
+# Time             21490000: control_signal_i = 00000001111110
+# Time             21500000: control_signal_i = 00000101101101
+# Time             21510000: control_signal_i = 10011100111001
+# Time             21520000: control_signal_i = 00111100011111
+# Time             21530000: control_signal_i = 11011011010011
+# Time             21540000: control_signal_i = 10111110000101
+# Time             21550000: control_signal_i = 00100001111000
+# Solver finished
+# Checking all clauses satisfaction...
+# Variable Table Cluster data: 000000000000000000000000000000000000000x
+# Checking clause 0: (0000001 OR 0000010 OR 1000011)
+# Clause 0 is SATISFIED
+# Checking clause 1: (0000100 OR 0000011 OR 1000010)
+# Clause 1 is SATISFIED
+# Checking clause 2: (1000100 OR 1000011 OR 0000001)
+# Clause 2 is SATISFIED
+# Variable assignments: x1=x, x2=0, x3=0, x4=0
+# ** Note: $finish    : december_top_file_tb.v(175)
+#    Time: 21660 ns  Iteration: 0  Instance: /december_top_file_tb
+# End time: 01:48:25 on Dec 16,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0

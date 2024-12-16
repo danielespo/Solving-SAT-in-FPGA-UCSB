@@ -187,7 +187,7 @@ genvar n, m;
         .axi_wr_en_i(),
         .axi_wr_addr_i(),
         .axi_wr_data_i(),
-        .rd_addr_i(_cr_negated_literal),
+        .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]), // Modified this line
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
     );
