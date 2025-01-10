@@ -1,26 +1,26 @@
 # do simulate.tcl
 # ** Warning: (vlib-34) Library already exists at "work".
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 20:12:08 on Jan 08,2025
-# vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/AXI4_Memory_Controller.v 
+# Start time: 15:40:12 on Jan 10,2025
+# vlog -sv ../src/AXI4_Memory_Controller.v 
 # -- Compiling module AXI4_Memory_Controller
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller
-# End time: 20:12:11 on Jan 08,2025, Elapsed time: 0:00:03
+# End time: 15:40:12 on Jan 10,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 20:12:11 on Jan 08,2025
+# Start time: 15:40:12 on Jan 10,2025
 # vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v 
 # -- Compiling module AXI4_Memory_Controller_tb
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller_tb
-# End time: 20:12:11 on Jan 08,2025, Elapsed time: 0:00:00
+# End time: 15:40:12 on Jan 10,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vsim -c AXI4_Memory_Controller_tb -do "run -all; quit" 
-# Start time: 20:12:11 on Jan 08,2025
-# ** Note: (vsim-8009) Loading existing optimized design _opt
+# Start time: 15:40:12 on Jan 10,2025
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.33.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -41,46 +41,96 @@
 # TESTCASE: SINGLE BEAT WRITE (BURST HANDLING)
 # [100000] TB: SINGLE BEAT WRITE => addr=0x00000004, data=0xdeadbeef
 # ** single-beat handshake done
-#   => PASS: BRESP=OKAY
+# [115000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000004, wlast=1
+# [125000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000004
+#   => ATT write: addr=0x0000, data=0x00000000
+# [125000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: Expected=OKAY(00), Actual=00
 # ========================================
 # TESTCASE: MULTI-BEAT WRITE (4 beats) => Clause Table
-# [155000] TB: MULTI-BEAT WRITE => base=0x00010000, beats=4
-# [165000] TB: AW handshake => base=0x00010000, len=3
+# [155000] TB: MULTI-BEAT WRITE => base=0x00004000, beats=4
+# [165000] TB: AW handshake => base=0x00004000, len=3
 # [165000] TB:  Writing beat 0 => wdata=0xc0000000, wlast=0
 # [175000] TB:   => W handshake done for beat 0
+# [175000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
+# [185000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
+#   => CLAUSE write: sub-addr=0x000
 # [185000] TB:  Writing beat 1 => wdata=0xc0000001, wlast=0
+# [185000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
+# [185000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00004004, wlast=0
+# [195000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004004
+#   => CLAUSE write: sub-addr=0x000
 # [195000] TB:   => W handshake done for beat 1
+# [195000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
+# [205000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004008
+#   => CLAUSE write: sub-addr=0x004
 # [205000] TB:  Writing beat 2 => wdata=0xc0000002, wlast=0
+# [205000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
+# [205000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0000400c, wlast=0
+# [215000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000400c
+#   => CLAUSE write: sub-addr=0x008
 # [215000] TB:   => W handshake done for beat 2
+# [215000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=0
+# [225000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004010
+#   => CLAUSE write: sub-addr=0x00c
 # [225000] TB:  Writing beat 3 => wdata=0xc0000003, wlast=1
+# [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=1
+# [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=5, waddr_beat=0x00004014, wlast=1
+# [235000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004014
+#   => CLAUSE write: sub-addr=0x010
 # [235000] TB:   => W handshake done for beat 3
+# [245000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
 # [255000] TB:  => BVALID handshake => bresp=0x00
-#   => PASS: multi-beat write => OKAY
+#   => PASS: Expected=OKAY(00), Actual=00
 # ========================================
 # TESTCASE: WAIT-STATE HANDLING => single write with manual stall
-#   => PASS: Wait-state single write => OKAY
+# [295000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022100, wlast=1
+# [305000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022100
+#   => VARCL1 write: addr=0x000, data_bit=0
+# [305000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: Expected=OKAY(00), Actual=00
 # ========================================
 # TESTCASE: OUT-OF-RANGE ADDRESS => Expect SLVERR
 # [335000] TB: SINGLE BEAT WRITE => addr=0xfffff000, data=0xbad0beef
 # ** single-beat handshake done
-#   => PASS: SLVERR as expected
+# [355000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0xfffff000, wlast=1
+# [365000] AXI4_Memory_Controller: submodule decode => waddr_beat=0xfffff000
+#   => Out-of-range => SLVERR
+# [365000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: SLVERR as expected => Actual=10
 # ========================================
 # TESTCASE: INVALID BURST (FIXED=00) => Expect SLVERR
-#   => PASS: invalid burst => SLVERR
+# [415000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=1
+# [425000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000000
+#   => ATT write: addr=0x0004, data=0x5eadbeef
+# [425000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: invalid burst => SLVERR => Actual=10
 # ========================================
 # TESTCASE: MULTI-BEAT READ => pipelined => varcl2 region
-# [455000] TB: MULTI-BEAT READ => base=0x00030200, beats=3
+# [455000] TB: MULTI-BEAT READ => base=0x00024200, beats=3
+# [485000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00024200, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024200
+#     => VARCL2 read: addr=0x200 => data_bit=1
+# [495000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00024200, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024200
+#     => VARCL2 read: addr=0x200 => data_bit=1
 # [495000] TB: READ beat 0 => rdata=0x00000001, rresp=00, rlast=0
+# [505000] AXI4_Memory_Controller: RDATA => beat_count=1, raddr_beat=0x00024204, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024204
+#     => VARCL2 read: addr=0x204 => data_bit=1
 # [505000] TB: READ beat 1 => rdata=0x00000001, rresp=00, rlast=0
+# [515000] AXI4_Memory_Controller: RDATA => beat_count=2, raddr_beat=0x00024208, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024208
+#     => VARCL2 read: addr=0x208 => data_bit=1
 # [515000] TB: READ beat 2 => rdata=0x00000001, rresp=00, rlast=0
-#   => PASS: multi-beat read => OKAY
+#   => PASS: multi-beat read => OKAY => Actual=00
 # ====================================================
 # TEST SUMMARY => test_passed=6, test_failed=0
 # ALL PASSED!
-# ** Note: $stop    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v(209)
+# ** Note: $stop    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v(210)
 #    Time: 725 ns  Iteration: 0  Instance: /AXI4_Memory_Controller_tb
-# Break at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 209
-# Stopped at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 209
+# Break at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 210
+# Stopped at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 210
 #  quit
-# End time: 20:12:12 on Jan 08,2025, Elapsed time: 0:00:01
+# End time: 15:40:13 on Jan 10,2025, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0

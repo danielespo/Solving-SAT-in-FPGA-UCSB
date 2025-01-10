@@ -8,6 +8,7 @@ localparam AXI_DATA_WIDTH  = 32;
 localparam AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8;
 localparam MAX_BURST_LEN   = 8;
 
+// Regions
 localparam ATT_BASE_ADDR     = 32'h0000_0000;
 localparam ATT_SIZE_BYTES    = 32'h0000_4000;  // 16 KB
 localparam CLAUSE_BASE_ADDR  = 32'h0000_4000;
@@ -27,7 +28,7 @@ initial begin
   #50 rst = 0;
 end
 
-// Write address
+// AXI signals
 reg [AXI_ID_WIDTH-1:0]   s_axi_awid;
 reg [AXI_ADDR_WIDTH-1:0] s_axi_awaddr;
 reg [7:0]                s_axi_awlen;
@@ -36,20 +37,17 @@ reg [1:0]                s_axi_awburst;
 reg                      s_axi_awvalid;
 wire                     s_axi_awready;
 
-// Write data
 reg  [AXI_DATA_WIDTH-1:0] s_axi_wdata;
 reg  [AXI_STRB_WIDTH-1:0] s_axi_wstrb;
 reg                       s_axi_wlast;
 reg                       s_axi_wvalid;
 wire                      s_axi_wready;
 
-// Write response
 wire [AXI_ID_WIDTH-1:0]   s_axi_bid;
 wire [1:0]                s_axi_bresp;
 wire                      s_axi_bvalid;
 reg                       s_axi_bready;
 
-// Read address
 reg [AXI_ID_WIDTH-1:0]    s_axi_arid;
 reg [AXI_ADDR_WIDTH-1:0]  s_axi_araddr;
 reg [7:0]                 s_axi_arlen;
@@ -58,7 +56,6 @@ reg [1:0]                 s_axi_arburst;
 reg                       s_axi_arvalid;
 wire                      s_axi_arready;
 
-// Read data
 wire [AXI_ID_WIDTH-1:0]   s_axi_rid;
 wire [AXI_DATA_WIDTH-1:0] s_axi_rdata;
 wire [1:0]                s_axi_rresp;
@@ -68,31 +65,32 @@ reg                       s_axi_rready;
 
 // Submodule I/O
 wire                       att_axi_wr_en_o;
-wire [12:0]                att_axi_wr_addr_o;
-wire [30:0]                att_axi_wr_data_o;
+wire [12:0]               att_axi_wr_addr_o;
+wire [30:0]               att_axi_wr_data_o;
 wire                       att_axi_rd_en_o;
-wire [12:0]                att_axi_rd_addr_o;
-reg  [30:0]                att_axi_rd_data_i;
+wire [12:0]               att_axi_rd_addr_o;
+reg  [30:0]               att_axi_rd_data_i;
 
 wire                       clause_axi_wr_en_o;
-wire [10:0]                clause_axi_wr_addr_o;
+wire [10:0]               clause_axi_wr_addr_o;
 wire [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o;
 wire                       clause_axi_rd_en_o;
-wire [10:0]                clause_axi_rd_addr_o;
+wire [10:0]               clause_axi_rd_addr_o;
 reg  [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i;
 
 wire                       varcl1_axi_en_o;
 wire                       varcl1_axi_wr_en_o;
-wire [10:0]                varcl1_axi_addr_o;
+wire [10:0]               varcl1_axi_addr_o;
 wire                       varcl1_axi_data_o;
 reg                        varcl1_axi_data_read_i;
 
 wire                       varcl2_axi_en_o;
 wire                       varcl2_axi_wr_en_o;
-wire [10:0]                varcl2_axi_addr_o;
+wire [10:0]               varcl2_axi_addr_o;
 wire                       varcl2_axi_data_o;
 reg                        varcl2_axi_data_read_i;
 
+// DUT instantiation
 AXI4_Memory_Controller #(
   .AXI_ID_WIDTH   (AXI_ID_WIDTH),
   .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
@@ -115,7 +113,7 @@ AXI4_Memory_Controller #(
   .clk_i      (clk),
   .rst_i      (rst),
 
-  // AXI write address
+  // AXI Write Address
   .s_axi_awid     (s_axi_awid),
   .s_axi_awaddr   (s_axi_awaddr),
   .s_axi_awlen    (s_axi_awlen),
@@ -124,20 +122,20 @@ AXI4_Memory_Controller #(
   .s_axi_awvalid  (s_axi_awvalid),
   .s_axi_awready  (s_axi_awready),
 
-  // AXI write data
+  // AXI Write Data
   .s_axi_wdata    (s_axi_wdata),
   .s_axi_wstrb    (s_axi_wstrb),
   .s_axi_wlast    (s_axi_wlast),
   .s_axi_wvalid   (s_axi_wvalid),
   .s_axi_wready   (s_axi_wready),
 
-  // AXI write response
+  // AXI Write Response
   .s_axi_bid      (s_axi_bid),
   .s_axi_bresp    (s_axi_bresp),
   .s_axi_bvalid   (s_axi_bvalid),
   .s_axi_bready   (s_axi_bready),
 
-  // AXI read address
+  // AXI Read Address
   .s_axi_arid     (s_axi_arid),
   .s_axi_araddr   (s_axi_araddr),
   .s_axi_arlen    (s_axi_arlen),
@@ -146,7 +144,7 @@ AXI4_Memory_Controller #(
   .s_axi_arvalid  (s_axi_arvalid),
   .s_axi_arready  (s_axi_arready),
 
-  // AXI read data
+  // AXI Read Data
   .s_axi_rid      (s_axi_rid),
   .s_axi_rdata    (s_axi_rdata),
   .s_axi_rresp    (s_axi_rresp),
@@ -182,7 +180,9 @@ AXI4_Memory_Controller #(
   .varcl2_axi_data_read_i (varcl2_axi_data_read_i)
 );
 
+// Counters for pass/fail
 integer test_passed, test_failed;
+
 initial begin
   test_passed = 0;
   test_failed = 0;
@@ -190,12 +190,24 @@ initial begin
   @(negedge rst);
   #50;
 
+  //---------------------------------------------
+  // Existing testcases
+  //---------------------------------------------
   testcase_single_beat_write();
   testcase_multi_beat_write();
   testcase_wait_state();
   testcase_out_of_range();
   testcase_invalid_burst();
   testcase_multi_beat_read_pipelined();
+  
+  //---------------------------------------------
+  // Additional testcases with more detail
+  //---------------------------------------------
+  testcase_multi_beat_write_varcl1();
+  testcase_multi_beat_read_att();
+  testcase_single_beat_read_clause();
+  testcase_multi_beat_write_read_varcl2();
+  
   // testcase_submodule_checks();
 
   #200;
@@ -209,6 +221,12 @@ initial begin
   
   $stop; // stop the simulation
 end
+
+//----------------------------------------------------//
+//                     TASKS                          //
+//----------------------------------------------------//
+
+//--------------------- WRITE TASKS ------------------//
 
 // Single-beat write
 task do_single_beat_write(
@@ -236,7 +254,7 @@ begin
 
   // Write data
   s_axi_wdata  = wdata;
-  s_axi_wstrb  = 4'hF;      // write all 4 bytes
+  s_axi_wstrb  = 4'hF;      
   s_axi_wlast  = 1'b1;
   s_axi_wvalid = 1'b1;
 
@@ -244,7 +262,7 @@ begin
   while(!s_axi_wready)
     @(posedge clk);
 
-  $display("** single-beat handshake done");
+  $display("  => Single-beat W handshake done");
 
   // handshake done
   @(posedge clk);
@@ -264,12 +282,14 @@ end
 endtask
 
 // Multi-beat write
+// This version prints each beat's address and data
 task do_multi_beat_write(
   input [AXI_ADDR_WIDTH-1:0] base_addr,
   input integer beats,
   output [1:0] final_resp
 );
 integer i;
+reg [AXI_ADDR_WIDTH-1:0] curr_addr;
 begin
   $display("[%0t] TB: MULTI-BEAT WRITE => base=0x%08h, beats=%0d",
            $time, base_addr, beats);
@@ -277,8 +297,8 @@ begin
   // AW
   s_axi_awid    = 4'h2;
   s_axi_awaddr  = base_addr;
-  s_axi_awlen   = beats-1;  // AWLEN = #beats-1
-  s_axi_awsize  = 3'd2;     // 4 bytes each
+  s_axi_awlen   = beats-1;  
+  s_axi_awsize  = 3'd2;     
   s_axi_awburst = 2'b01;    // INCR
   s_axi_awvalid = 1'b1;
 
@@ -291,14 +311,17 @@ begin
   s_axi_awvalid=0;
 
   // W for each beat
-  for (i=0;i<beats;i=i+1) begin
+  for (i=0; i<beats; i=i+1) begin
+    // Typically, the address auto-increments in hardware with an INCR burst,
+    // but here we can *simulate* what the next address would be if needed:
+    curr_addr = base_addr + (i * 4);
     s_axi_wdata  = 32'hC000_0000 + i;
     s_axi_wstrb  = 4'hF;
     s_axi_wlast  = (i==(beats-1));
     s_axi_wvalid = 1'b1;
 
-    $display("[%0t] TB:  Writing beat %0d => wdata=0x%08h, wlast=%b",
-             $time, i, s_axi_wdata, s_axi_wlast);
+    $display("[%0t] TB:  Writing beat %0d => addr=0x%08h, wdata=0x%08h, wlast=%b",
+             $time, i, curr_addr, s_axi_wdata, s_axi_wlast);
     @(posedge clk);
 
     while(!s_axi_wready)
@@ -325,6 +348,8 @@ begin
 end
 endtask
 
+//--------------------- READ TASKS -------------------//
+
 // Single-beat read
 task do_single_beat_read(
   input [AXI_ADDR_WIDTH-1:0] addr,
@@ -337,9 +362,9 @@ begin
   // AR
   s_axi_arid    = 4'h3;
   s_axi_araddr  = addr;
-  s_axi_arlen   = 0;        // single beat
-  s_axi_arsize  = 3'd2;     // 4 bytes
-  s_axi_arburst = 2'b01;    // INCR
+  s_axi_arlen   = 0;        
+  s_axi_arsize  = 3'd2;     
+  s_axi_arburst = 2'b01;    
   s_axi_arvalid = 1'b1;
   @(posedge clk);
 
@@ -355,6 +380,9 @@ begin
   while(!s_axi_rvalid)
     @(posedge clk);
 
+  $display("  => Single-beat R handshake done");
+  $display("  => RDATA=0x%08h", s_axi_rdata);
+
   rdata = s_axi_rdata;
   rresp = s_axi_rresp;
 
@@ -364,12 +392,14 @@ end
 endtask
 
 // Multi-beat read
+// Prints the beat index, address (simulated), and read data
 task do_multi_beat_read(
   input [AXI_ADDR_WIDTH-1:0] base_addr,
   input integer beats,
   output reg [1:0] final_rresp
 );
 integer i;
+reg [AXI_ADDR_WIDTH-1:0] curr_addr;
 begin
   $display("[%0t] TB: MULTI-BEAT READ => base=0x%08h, beats=%0d",
            $time, base_addr, beats);
@@ -391,17 +421,22 @@ begin
   for(i=0; i<beats; i=i+1) begin
     while(!s_axi_rvalid)
       @(posedge clk);
-    
-    $display("[%0t] TB: READ beat %0d => rdata=0x%08h, rresp=%b, rlast=%b",
-             $time, i, s_axi_rdata, s_axi_rresp, s_axi_rlast);
-    final_rresp = s_axi_rresp;
 
+    curr_addr = base_addr + (i * 4);
+    $display("[%0t] TB: READ beat %0d => addr=0x%08h, rdata=0x%08h, rresp=%b, rlast=%b",
+             $time, i, curr_addr, s_axi_rdata, s_axi_rresp, s_axi_rlast);
+
+    final_rresp = s_axi_rresp;
     @(posedge clk);
   end
 
   s_axi_rready=0;
 end
 endtask
+
+//----------------------------------------------------//
+//                 TESTCASES (ORIGINAL)               //
+//----------------------------------------------------//
 
 // Single-beat write -> to ATT region
 task testcase_single_beat_write;
@@ -413,10 +448,10 @@ begin
   do_single_beat_write(ATT_BASE_ADDR + 32'h4, 32'hDEAD_BEEF, resp);
 
   if(resp==2'b00) begin
-    $display("  => PASS: BRESP=OKAY");
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", resp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: BRESP=%b expected 00(OKAY)", resp);
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", resp);
     test_failed = test_failed + 1;
   end
 end
@@ -432,10 +467,10 @@ begin
   do_multi_beat_write(CLAUSE_BASE_ADDR + 32'h0, 4, final_resp);
 
   if(final_resp==2'b00) begin
-    $display("  => PASS: multi-beat write => OKAY");
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", final_resp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: multi-beat => resp=%b", final_resp);
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", final_resp);
     test_failed = test_failed + 1;
   end
 end
@@ -478,10 +513,10 @@ begin
   s_axi_bready=0;
 
   if(resp==2'b00) begin
-    $display("  => PASS: Wait-state single write => OKAY");
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", resp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: Wait-state => resp=%b", resp);
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", resp);
     test_failed = test_failed + 1;
   end
 end
@@ -494,13 +529,13 @@ begin
   $display("========================================");
   $display("TESTCASE: OUT-OF-RANGE ADDRESS => Expect SLVERR");
 
-  // near 0xFFFF_F000
   do_single_beat_write(32'hFFFF_F000, 32'hBAD0_BEEF, resp);
+
   if(resp==2'b10) begin
-    $display("  => PASS: SLVERR as expected");
+    $display("  => PASS: Expected=SLVERR(10), Actual=%b", resp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: resp=%b, expected SLVERR(10)", resp);
+    $display("  => FAIL: Expected=SLVERR(10), Actual=%b", resp);
     test_failed = test_failed + 1;
   end
 end
@@ -513,9 +548,8 @@ begin
   $display("========================================");
   $display("TESTCASE: INVALID BURST (FIXED=00) => Expect SLVERR");
   
-  // Write to the ATT base with a FIXED burst
   s_axi_awid    = 4'h6;
-  s_axi_awaddr  = ATT_BASE_ADDR;  // 0x0000_0000 is definitely valid range
+  s_axi_awaddr  = ATT_BASE_ADDR;  // valid range
   s_axi_awlen   = 0;
   s_axi_awsize  = 3'd2;
   s_axi_awburst = 2'b00; // invalid
@@ -545,10 +579,10 @@ begin
   s_axi_bready=0;
 
   if(resp==2'b10) begin
-    $display("  => PASS: invalid burst => SLVERR");
+    $display("  => PASS: Expected=SLVERR(10), Actual=%b", resp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: resp=%b, expected SLVERR(10)", resp);
+    $display("  => FAIL: Expected=SLVERR(10), Actual=%b", resp);
     test_failed = test_failed + 1;
   end
 end
@@ -566,33 +600,129 @@ begin
   do_multi_beat_read(VARCL2_BASE_ADDR + 32'h200, 3, rresp);
 
   if (rresp==2'b00) begin
-    $display("  => PASS: multi-beat read => OKAY");
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", rresp);
     test_passed = test_passed + 1;
   end else begin
-    $display("  => FAIL: multi-beat read => rresp=%b", rresp);
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", rresp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+//----------------------------------------------------//
+//          ADDITIONAL/NEW TESTCASES (EXAMPLES)       //
+//----------------------------------------------------//
+
+// 1) Multi-beat write to varcl1 region
+task testcase_multi_beat_write_varcl1;
+  reg [1:0] final_resp;
+begin
+  $display("========================================");
+  $display("TESTCASE: MULTI-BEAT WRITE => varcl1 region (5 beats)");
+
+  do_multi_beat_write(VARCL1_BASE_ADDR + 32'h10, 5, final_resp);
+
+  if(final_resp==2'b00) begin
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", final_resp);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", final_resp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+// 2) Multi-beat read from ATT region
+task testcase_multi_beat_read_att;
+  reg [1:0] rresp;
+begin
+  $display("========================================");
+  $display("TESTCASE: MULTI-BEAT READ => ATT region (4 beats)");
+
+  do_multi_beat_read(ATT_BASE_ADDR + 32'h8, 4, rresp);
+
+  if(rresp==2'b00) begin
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", rresp);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b", rresp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+// 3) Single-beat read from Clause region
+task testcase_single_beat_read_clause;
+  reg [1:0] rresp;
+  reg [AXI_DATA_WIDTH-1:0] rdata;
+begin
+  $display("========================================");
+  $display("TESTCASE: SINGLE BEAT READ => Clause region");
+
+  do_single_beat_read(CLAUSE_BASE_ADDR + 32'h4, rdata, rresp);
+
+  if(rresp==2'b00) begin
+    $display("  => PASS: Expected=OKAY(00), Actual=%b, RDATA=0x%08h", rresp, rdata);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Expected=OKAY(00), Actual=%b, RDATA=0x%08h", rresp, rdata);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+// 4) Combined multi-beat write and read in varcl2
+task testcase_multi_beat_write_read_varcl2;
+  reg [1:0] wresp, rresp;
+begin
+  $display("========================================");
+  $display("TESTCASE: MULTI-BEAT WRITE & READ => varcl2 region");
+  
+  // Write 3 beats to varcl2
+  do_multi_beat_write(VARCL2_BASE_ADDR + 32'h300, 3, wresp);
+  if(wresp==2'b00) begin
+    $display("  => PASS: Multi-beat write => Expected=OKAY(00), Actual=%b", wresp);
+  end else begin
+    $display("  => FAIL: Multi-beat write => Expected=OKAY(00), Actual=%b", wresp);
+    test_failed = test_failed + 1;
+  end
+
+  // Then read 3 beats from varcl2
+  do_multi_beat_read(VARCL2_BASE_ADDR + 32'h300, 3, rresp);
+  if(rresp==2'b00) begin
+    $display("  => PASS: Multi-beat read => Expected=OKAY(00), Actual=%b", rresp);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Multi-beat read => Expected=OKAY(00), Actual=%b", rresp);
     test_failed = test_failed + 1;
   end
 end
 endtask
 
 task testcase_submodule_checks;
-    reg [1:0] resp;
-    begin
-    $display("========================================");
-    $display("TESTCASE: SUBMODULE OUTPUT CHECK");
-    
-    do_single_beat_write(CLAUSE_BASE_ADDR + 32'h8, 32'hAABBCCDD, resp);
-    #10;
-    if (clause_axi_wr_en_o == 1'b1 && clause_axi_wr_addr_o == 11'h008) begin
-        $display("  => PASS: Clause table signals toggled => wr_addr=0x%03h", clause_axi_wr_addr_o);
-        test_passed = test_passed + 1;
-    end 
-    else begin
-        $display("  => FAIL: Clause table signals mismatch => en=%b, addr=0x%03h",
-                clause_axi_wr_en_o, clause_axi_wr_addr_o);
-        test_failed = test_failed + 1;
-    end
-    end
+  reg [1:0] resp;
+begin
+  $display("========================================");
+  $display("TESTCASE: SUBMODULE OUTPUT CHECK");
+  
+  // Example: single-beat write to Clause region
+  do_single_beat_write(CLAUSE_BASE_ADDR + 32'h8, 32'hAABBCCDD, resp);
+
+  #10;
+  // Suppose you wanted to check submodule signals
+  if (clause_axi_wr_en_o == 1'b1 && clause_axi_wr_addr_o == 11'h008) begin
+      $display("  => PASS: Clause table signals toggled correctly ");
+      $display("     Expected=en_o=1'b1 & addr_o=0x008");
+      $display("     Actual=en_o=%b & addr_o=0x%03h", clause_axi_wr_en_o, clause_axi_wr_addr_o);
+      test_passed = test_passed + 1;
+  end 
+  else begin
+      $display("  => FAIL: Clause table signals mismatch ");
+      $display("     Expected=en_o=1'b1 & addr_o=0x008");
+      $display("     Actual=en_o=%b & addr_o=0x%03h", clause_axi_wr_en_o, clause_axi_wr_addr_o);
+      test_failed = test_failed + 1;
+  end
+end
 endtask
 
 endmodule
