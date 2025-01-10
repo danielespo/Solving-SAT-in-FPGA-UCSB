@@ -40,22 +40,26 @@ Change Log:
 
 01/08/2024:
     Finished testing out the controller
+
+01/10/2024:
+    Fixed parameter lengths to match datapath
 */
 
 module AXI4_Memory_Controller #(
-    parameter AXI_ID_WIDTH    = 4,
-    parameter AXI_ADDR_WIDTH  = 32,
-    parameter AXI_DATA_WIDTH  = 32,
-    parameter AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8,
-    parameter MAX_BURST_LEN   = 16, // Placeholder, can change
-    parameter ATT_BASE_ADDR     = 32'h0000_0000, // Address Translation Table
-    parameter ATT_SIZE_BYTES    = 32'h0000_1000, // 4 KB
-    parameter CLAUSE_BASE_ADDR  = 32'h0001_0000, // Clause Table
-    parameter CLAUSE_SIZE_BYTES = 32'h0000_4000, // 16 KB
-    parameter VARCL1_BASE_ADDR  = 32'h0002_0000, // 1st Variable Table Cluster
-    parameter VARCL1_SIZE_BYTES = 32'h0000_2000, // 8 KB
-    parameter VARCL2_BASE_ADDR  = 32'h0003_0000, // 2nd Variable Table Cluster
-    parameter VARCL2_SIZE_BYTES = 32'h0000_2000  // 8 KB
+
+parameter AXI_ID_WIDTH    = 4,
+          AXI_ADDR_WIDTH  = 32,
+          AXI_DATA_WIDTH  = 32,
+          AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8,
+          MAX_BURST_LEN   = 16,
+          ATT_BASE_ADDR     = 32'h0000_0000,
+          ATT_SIZE_BYTES    = 32'h0000_4000,
+          CLAUSE_BASE_ADDR  = 32'h0000_4000,
+          CLAUSE_SIZE_BYTES = 32'h0001_e000,
+          VARCL1_BASE_ADDR  = 32'h0002_2000,
+          VARCL1_SIZE_BYTES = 32'h0000_2000,
+          VARCL2_BASE_ADDR  = 32'h0002_4000,
+          VARCL2_SIZE_BYTES = 32'h0000_2000
 )(   
     // Clock and reset
     input wire                       clk_i,
@@ -217,19 +221,10 @@ always @(posedge clk_i or posedge rst_i) begin
                 end
             end
             WADDR: begin
-                // do NOT increment yet. We'll decode the first beat at beat_count=0
-                // in the WDATA state.
-                // so no change to awbeat_count
-                if(s_axi_wvalid && s_axi_wready) begin
-                    // After we decode submodules for beat_count=0 below,
-                    // we can increment at the end. We'll do that in the same always block as submodule decode
-                end
+                // No change
             end
             WDATA: begin
-                if(s_axi_wvalid && s_axi_wready) begin
-                    // We'll decode at the current beat_count, then increment it afterwards
-                    // Done below in the same always block
-                end
+                // No change
             end
         endcase
     end
