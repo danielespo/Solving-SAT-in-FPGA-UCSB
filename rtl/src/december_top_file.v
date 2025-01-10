@@ -78,6 +78,20 @@ localparam MC = MAX_CLAUSE_MEMBERSHIP;
 localparam MC_BITS = $clog2(MC);
 localparam NSAT_BITS = $clog2(NSAT);
 
+localparam AXI_ID_WIDTH    = 4;
+localparam AXI_ADDR_WIDTH  = 32;
+localparam AXI_DATA_WIDTH  = 32;
+localparam AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8;
+localparam MAX_BURST_LEN   = 16; // Placeholder, can change
+localparam ATT_BASE_ADDR     = 32'h0000_0000; // Address Translation Table
+localparam ATT_SIZE_BYTES    = 32'h0000_1000; // 4 KB
+localparam CLAUSE_BASE_ADDR  = 32'h0001_0000; // Clause Table
+localparam CLAUSE_SIZE_BYTES = 32'h0000_4000; // 16 KB
+localparam VARCL1_BASE_ADDR  = 32'h0002_0000; // 1st Variable Table Cluster
+localparam VARCL1_SIZE_BYTES = 32'h0000_2000; // 8 KB
+localparam VARCL2_BASE_ADDR  = 32'h0003_0000; // 2nd Variable Table Cluster
+localparam VARCL2_SIZE_BYTES = 32'h0000_2000;  // 8 KB
+
 // integer vars
 integer i, j;
 genvar n, m;
@@ -235,9 +249,9 @@ genvar n, m;
         .NSAT(NSAT)
     ) clause_table (
         .clk_i(clk_i),
-        .axi_wr_en_i(),
-        .axi_wr_addr_i(),
-        .axi_wr_clauses_i(),
+        .axi_wr_en_i(clause_axi_wr_en_o),
+        .axi_wr_addr_i(clause_axi_wr_addr_o),
+        .axi_wr_clauses_i(clause_axi_wr_clauses_o),
         .rd_addr_i(att_addr_out),
         .clauses_o(ct_clauses)
     );
@@ -290,10 +304,10 @@ genvar n, m;
         .CLUSTER_SIZE((NSAT - 1) * MC)
     ) variable_table_cluster (
         .clk_i(clk_i),
-        .axi_en_i(),
-        .axi_wr_en_i(),
-        .axi_addr_i(),
-        .axi_data_i(),
+        .axi_en_i(varcl1_axi_en_o),
+        .axi_wr_en_i(varcl1_axi_wr_en_o),
+        .axi_addr_i(varcl1_axi_addr_o),
+        .axi_data_i(varcl1_axi_data_o),
         .en_i(vt_en),
         .wr_en_i(vt_wr_en),
         .addr_mi(_vtc_address_m),
@@ -354,10 +368,10 @@ genvar n, m;
         .addr_mi(_vtc2_address_m),
         .data_i(_vtc2_data),
         .data_mo(vtc2_value_bits),
-        .axi_en_i(),
-        .axi_wr_en_i(),
-        .axi_addr_i(),
-        .axi_data_i()
+        .axi_en_i(varcl2_axi_en_o),
+        .axi_wr_en_i(varcl2_axi_wr_en_o),
+        .axi_addr_i(varcl2_axi_addr_o),
+        .axi_data_i(varcl2_axi_data_o)
     );
 
 /* --- clause evaluator cluster --- */
@@ -466,7 +480,94 @@ genvar n, m;
         .done(done_signal),
         .control_signal_o(control_signal_i)
     );
-    
+
+    /* --- AXI controller --- */
+    AXI4_Memory_Controller #(
+        .AXI_ID_WIDTH   (AXI_ID_WIDTH),
+        .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
+        .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
+        .AXI_STRB_WIDTH (AXI_STRB_WIDTH),
+        .MAX_BURST_LEN  (MAX_BURST_LEN),
+        .ATT_BASE_ADDR  (ATT_BASE_ADDR),
+        .ATT_SIZE_BYTES (ATT_SIZE_BYTES),
+        .CLAUSE_BASE_ADDR (CLAUSE_BASE_ADDR),
+        .CLAUSE_SIZE_BYTES(CLAUSE_SIZE_BYTES),
+        .VARCL1_BASE_ADDR(VARCL1_BASE_ADDR),
+        .VARCL1_SIZE_BYTES(VARCL1_SIZE_BYTES),
+        .VARCL2_BASE_ADDR(VARCL2_BASE_ADDR),
+        .VARCL2_SIZE_BYTES(VARCL2_SIZE_BYTES)
+    ) axi_inst (
+        
+        .clk_i      (clk_i),
+        .rst_i      (rst_i),
+        // Write address
+        .s_axi_awid     (s_axi_awid),
+        .s_axi_awaddr   (s_axi_awaddr),
+        .s_axi_awlen    (s_axi_awlen),
+        .s_axi_awsize   (s_axi_awsize),
+        .s_axi_awburst  (s_axi_awburst),
+        .s_axi_awvalid  (s_axi_awvalid),
+        .s_axi_awready  (s_axi_awready),
+
+        // Write data
+        .s_axi_wdata    (s_axi_wdata),
+        .s_axi_wstrb    (s_axi_wstrb),
+        .s_axi_wlast    (s_axi_wlast),
+        .s_axi_wvalid   (s_axi_wvalid),
+        .s_axi_wready   (s_axi_wready),
+
+        // Write response
+        .s_axi_bid      (s_axi_bid),
+        .s_axi_bresp    (s_axi_bresp),
+        .s_axi_bvalid   (s_axi_bvalid),
+        .s_axi_bready   (s_axi_bready),
+
+        // Read address
+        .s_axi_arid     (s_axi_arid),
+        .s_axi_araddr   (s_axi_araddr),
+        .s_axi_arlen    (s_axi_arlen),
+        .s_axi_arsize   (s_axi_arsize),
+        .s_axi_arburst  (s_axi_arburst),
+        .s_axi_arvalid  (s_axi_arvalid),
+        .s_axi_arready  (s_axi_arready),
+
+        // Read data
+        .s_axi_rid      (s_axi_rid),
+        .s_axi_rdata    (s_axi_rdata),
+        .s_axi_rresp    (s_axi_rresp),
+        .s_axi_rlast    (s_axi_rlast),
+        .s_axi_rvalid   (s_axi_rvalid),
+        .s_axi_rready   (s_axi_rready),
+
+        // Submodules
+        .att_axi_wr_en_o    (att_axi_wr_en_o),
+        .att_axi_wr_addr_o  (att_axi_wr_addr_o),
+        .att_axi_wr_data_o  (att_axi_wr_data_o),
+
+        .att_axi_rd_en_o    (att_axi_rd_en_o),
+        .att_axi_rd_addr_o  (att_axi_rd_addr_o),
+        .att_axi_rd_data_i  (att_axi_rd_data_i),
+
+        .clause_axi_wr_en_o      (clause_axi_wr_en_o),
+        .clause_axi_wr_addr_o    (clause_axi_wr_addr_o),
+        .clause_axi_wr_clauses_o (clause_axi_wr_clauses_o),
+        .clause_axi_rd_en_o      (clause_axi_rd_en_o),
+        .clause_axi_rd_addr_o    (clause_axi_rd_addr_o),
+        .clause_axi_rd_clauses_i (clause_axi_rd_clauses_i),
+
+        .varcl1_axi_en_o    (varcl1_axi_en_o),
+        .varcl1_axi_wr_en_o (varcl1_axi_wr_en_o),
+        .varcl1_axi_addr_o  (varcl1_axi_addr_o),
+        .varcl1_axi_data_o  (varcl1_axi_data_o),
+        .varcl1_axi_data_read_i (varcl1_axi_data_read_i),
+
+        .varcl2_axi_en_o    (varcl2_axi_en_o),
+        .varcl2_axi_wr_en_o (varcl2_axi_wr_en_o),
+        .varcl2_axi_addr_o  (varcl2_axi_addr_o),
+        .varcl2_axi_data_o  (varcl2_axi_data_o),
+        .varcl2_axi_data_read_i (varcl2_axi_data_read_i)
+    );
+
     generate
         for(n = 0; n < NSAT; n = n + 1) begin
             assign ucs_selected_clause_negation_bits[n] = ucs_selected_clause[LITERAL_ADDRESS_WIDTH * (n + 1) - 1];
