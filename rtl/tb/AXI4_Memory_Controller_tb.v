@@ -75,21 +75,21 @@ wire [12:0]                att_axi_rd_addr_o;
 reg  [30:0]                att_axi_rd_data_i;
 
 wire                       clause_axi_wr_en_o;
-wire [11:0]                clause_axi_wr_addr_o;
+wire [10:0]                clause_axi_wr_addr_o;
 wire [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o;
 wire                       clause_axi_rd_en_o;
-wire [11:0]                clause_axi_rd_addr_o;
+wire [10:0]                clause_axi_rd_addr_o;
 reg  [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i;
 
 wire                       varcl1_axi_en_o;
 wire                       varcl1_axi_wr_en_o;
-wire [11:0]                varcl1_axi_addr_o;
+wire [10:0]                varcl1_axi_addr_o;
 wire                       varcl1_axi_data_o;
 reg                        varcl1_axi_data_read_i;
 
 wire                       varcl2_axi_en_o;
 wire                       varcl2_axi_wr_en_o;
-wire [11:0]                varcl2_axi_addr_o;
+wire [10:0]                varcl2_axi_addr_o;
 wire                       varcl2_axi_data_o;
 reg                        varcl2_axi_data_read_i;
 
@@ -575,24 +575,24 @@ begin
 end
 endtask
 
-// task testcase_submodule_checks; (fails despite being correct in waveforms, investigate again)
-//     reg [1:0] resp;
-//     begin
-//     $display("========================================");
-//     $display("TESTCASE: SUBMODULE OUTPUT CHECK");
+task testcase_submodule_checks;
+    reg [1:0] resp;
+    begin
+    $display("========================================");
+    $display("TESTCASE: SUBMODULE OUTPUT CHECK");
     
-//     do_single_beat_write(CLAUSE_BASE_ADDR + 32'h8, 32'hAABBCCDD, resp);
-//     #10;
-//     if (clause_axi_wr_en_o == 1'b1 && clause_axi_wr_addr_o == 12'h008) begin
-//         $display("  => PASS: Clause table signals toggled => wr_addr=0x%03h", clause_axi_wr_addr_o);
-//         test_passed = test_passed + 1;
-//     end 
-//     else begin
-//         $display("  => FAIL: Clause table signals mismatch => en=%b, addr=0x%03h",
-//                 clause_axi_wr_en_o, clause_axi_wr_addr_o);
-//         test_failed = test_failed + 1;
-//     end
-//     end
-// endtask
+    do_single_beat_write(CLAUSE_BASE_ADDR + 32'h8, 32'hAABBCCDD, resp);
+    #10;
+    if (clause_axi_wr_en_o == 1'b1 && clause_axi_wr_addr_o == 11'h008) begin
+        $display("  => PASS: Clause table signals toggled => wr_addr=0x%03h", clause_axi_wr_addr_o);
+        test_passed = test_passed + 1;
+    end 
+    else begin
+        $display("  => FAIL: Clause table signals mismatch => en=%b, addr=0x%03h",
+                clause_axi_wr_en_o, clause_axi_wr_addr_o);
+        test_failed = test_failed + 1;
+    end
+    end
+endtask
 
 endmodule

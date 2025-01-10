@@ -115,21 +115,21 @@ parameter AXI_ID_WIDTH    = 4,
     // Clause table outputs
     input  wire [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i,
     output reg                       clause_axi_wr_en_o,
-    output reg [11:0]               clause_axi_wr_addr_o,
+    output reg [10:0]               clause_axi_wr_addr_o,
     output reg [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o,
     output reg                       clause_axi_rd_en_o,
-    output reg [11:0]               clause_axi_rd_addr_o,
+    output reg [10:0]               clause_axi_rd_addr_o,
 
     // Variable table cluster outputs
     input  wire                      varcl1_axi_data_read_i,
     output reg                       varcl1_axi_en_o,
     output reg                       varcl1_axi_wr_en_o,
-    output reg [11:0]               varcl1_axi_addr_o,
+    output reg [10:0]               varcl1_axi_addr_o,
     output reg                       varcl1_axi_data_o,
     input  wire                      varcl2_axi_data_read_i,
     output reg                       varcl2_axi_en_o,
     output reg                       varcl2_axi_wr_en_o,
-    output reg [11:0]               varcl2_axi_addr_o,
+    output reg [10:0]               varcl2_axi_addr_o,
     output reg                       varcl2_axi_data_o
 );
 
@@ -180,8 +180,8 @@ always @(*) begin
         WDATA: begin
             s_axi_wready = 1'b1;
             if (s_axi_wvalid && s_axi_wready) begin
-                // $display("[%0t] AXI4_Memory_Controller: WDATA handshake => beat_count=%0d, waddr_beat=0x%08h, wlast=%b",
-                //          $time, awbeat_count, waddr_beat, s_axi_wlast);
+                $display("[%0t] AXI4_Memory_Controller: WDATA handshake => beat_count=%0d, waddr_beat=0x%08h, wlast=%b",
+                         $time, awbeat_count, waddr_beat, s_axi_wlast);
                 if(s_axi_wlast) begin
                     wnext = WRESP;
                 end
@@ -190,7 +190,7 @@ always @(*) begin
         WRESP: begin
             // Provide BVALID. Wait for BREADY.
             if (s_axi_bready) begin
-                // $display("[%0t] AXI4_Memory_Controller: WRESP done => returning to WIDLE", $time);
+                $display("[%0t] AXI4_Memory_Controller: WRESP done => returning to WIDLE", $time);
                 wnext = WIDLE;
             end
         end
@@ -272,15 +272,15 @@ always @(posedge clk_i or posedge rst_i) begin
         att_axi_wr_addr_o  <= 13'b0;
         att_axi_wr_data_o  <= {(31){1'b0}};
         clause_axi_wr_en_o <= 1'b0;
-        clause_axi_wr_addr_o <= 12'b0;
+        clause_axi_wr_addr_o <= 1'b0;
         clause_axi_wr_clauses_o <= {( (11+1)*(3-1)*20 ){1'b0}};
         varcl1_axi_en_o    <= 1'b0;
         varcl1_axi_wr_en_o <= 1'b0;
-        varcl1_axi_addr_o  <= 12'b0;
+        varcl1_axi_addr_o  <= 11'b0;
         varcl1_axi_data_o  <= 1'b0;
         varcl2_axi_en_o    <= 1'b0;
         varcl2_axi_wr_en_o <= 1'b0;
-        varcl2_axi_addr_o  <= 12'b0;
+        varcl2_axi_addr_o  <= 11'b0;
         varcl2_axi_data_o  <= 1'b0;
     end else begin
         att_axi_wr_en_o    <= 1'b0;
@@ -291,41 +291,41 @@ always @(posedge clk_i or posedge rst_i) begin
         varcl2_axi_wr_en_o <= 1'b0;
 
         if(wstate==WDATA && s_axi_wvalid && s_axi_wready) begin
-            // $display("[%0t] AXI4_Memory_Controller: submodule decode => waddr_beat=0x%08h",
-            //          $time, waddr_beat);
+            $display("[%0t] AXI4_Memory_Controller: submodule decode => waddr_beat=0x%08h",
+                     $time, waddr_beat);
             
             if(waddr_beat >= ATT_BASE_ADDR && waddr_beat < (ATT_BASE_ADDR + ATT_SIZE_BYTES)) begin
                 att_axi_wr_en_o   <= 1'b1;
                 att_axi_wr_addr_o <= waddr_beat[12:0];
                 att_axi_wr_data_o <= s_axi_wdata[(11+20)-1:0];
-                // $display("  => ATT write: addr=0x%04h, data=0x%08h",
-                //          att_axi_wr_addr_o, att_axi_wr_data_o);
+                $display("  => ATT write: addr=0x%04h, data=0x%08h",
+                         att_axi_wr_addr_o, att_axi_wr_data_o);
             end
             else if(waddr_beat >= CLAUSE_BASE_ADDR && waddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                 clause_axi_wr_en_o      <= 1'b1;
-                clause_axi_wr_addr_o    <= waddr_beat[11:0];
+                clause_axi_wr_addr_o    <= waddr_beat[10:0];
                 clause_axi_wr_clauses_o <= {( (11+1)*(3-1)*20 ){1'b0}};
-                // $display("  => CLAUSE write: sub-addr=0x%03h", clause_axi_wr_addr_o);
+                $display("  => CLAUSE write: sub-addr=0x%03h", clause_axi_wr_addr_o);
             end
             else if(waddr_beat >= VARCL1_BASE_ADDR && waddr_beat < (VARCL1_BASE_ADDR+VARCL1_SIZE_BYTES)) begin
                 varcl1_axi_en_o    <= 1'b1;
                 varcl1_axi_wr_en_o <= 1'b1;
-                varcl1_axi_addr_o  <= waddr_beat[11:0];
+                varcl1_axi_addr_o  <= waddr_beat[10:0];
                 varcl1_axi_data_o  <= s_axi_wdata[0];
-                // $display("  => VARCL1 write: addr=0x%03h, data_bit=%b",
-                //          varcl1_axi_addr_o, varcl1_axi_data_o);
+                $display("  => VARCL1 write: addr=0x%03h, data_bit=%b",
+                         varcl1_axi_addr_o, varcl1_axi_data_o);
             end
             else if(waddr_beat >= VARCL2_BASE_ADDR && waddr_beat < (VARCL2_BASE_ADDR+VARCL2_SIZE_BYTES)) begin
                 varcl2_axi_en_o    <= 1'b1;
                 varcl2_axi_wr_en_o <= 1'b1;
-                varcl2_axi_addr_o  <= waddr_beat[11:0];
+                varcl2_axi_addr_o  <= waddr_beat[10:0];
                 varcl2_axi_data_o  <= s_axi_wdata[0];
-                // $display("  => VARCL2 write: addr=0x%03h, data_bit=%b",
-                //          varcl2_axi_addr_o, varcl2_axi_data_o);
+                $display("  => VARCL2 write: addr=0x%03h, data_bit=%b",
+                         varcl2_axi_addr_o, varcl2_axi_data_o);
             end
             else begin
                 wburst_resp <= RESP_SLVERR;
-                // $display("  => Out-of-range => SLVERR");
+                $display("  => Out-of-range => SLVERR");
             end
 
             awbeat_count <= awbeat_count + 1'b1;
@@ -441,52 +441,52 @@ always @(posedge clk_i or posedge rst_i) begin
                     s_axi_rlast <= 1'b0;
 
                 raddr_beat = araddr_reg + (arbeat_count << arsize_reg);
-                // $display("[%0t] AXI4_Memory_Controller: RDATA => beat_count=%0d, raddr_beat=0x%08h, rlast=%b, rresp=%b",
-                //          $time, arbeat_count, raddr_beat, s_axi_rlast, rburst_resp);
+                $display("[%0t] AXI4_Memory_Controller: RDATA => beat_count=%0d, raddr_beat=0x%08h, rlast=%b, rresp=%b",
+                         $time, arbeat_count, raddr_beat, s_axi_rlast, rburst_resp);
 
                 att_axi_rd_en_o       <= 1'b0;
                 att_axi_rd_addr_o     <= 13'b0;
                 clause_axi_rd_en_o    <= 1'b0;
-                clause_axi_rd_addr_o  <= 12'b0;
+                clause_axi_rd_addr_o  <= 11'b0;
                 varcl1_axi_en_o       <= 1'b0;
                 varcl1_axi_wr_en_o    <= 1'b0;
-                varcl1_axi_addr_o     <= 12'b0;
+                varcl1_axi_addr_o     <= 11'b0;
                 varcl1_axi_data_o     <= 1'b0;
                 varcl2_axi_en_o       <= 1'b0;
                 varcl2_axi_wr_en_o    <= 1'b0;
-                varcl2_axi_addr_o     <= 12'b0;
+                varcl2_axi_addr_o     <= 11'b0;
                 varcl2_axi_data_o     <= 1'b0;
 
                 s_axi_rdata <= {AXI_DATA_WIDTH{1'b0}}; // default
-                // $display("  read_from_submodules: raddr=0x%08h", raddr_beat);
+                $display("  read_from_submodules: raddr=0x%08h", raddr_beat);
 
                 if(raddr_beat >= ATT_BASE_ADDR && raddr_beat < (ATT_BASE_ADDR + ATT_SIZE_BYTES)) begin
                     att_axi_rd_en_o   <= 1'b1;
                     att_axi_rd_addr_o <= raddr_beat[12:0];
                     s_axi_rdata       <= {{(AXI_DATA_WIDTH-(11+20)){1'b0}}, att_axi_rd_data_i};
-                    // $display("    => ATT read: addr=0x%04h => data=0x%08h", att_axi_rd_addr_o, s_axi_rdata);
+                    $display("    => ATT read: addr=0x%04h => data=0x%08h", att_axi_rd_addr_o, s_axi_rdata);
                 end
                 else if(raddr_beat >= CLAUSE_BASE_ADDR && raddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                     clause_axi_rd_en_o   <= 1'b1;
-                    clause_axi_rd_addr_o = raddr_beat[11:0];
+                    clause_axi_rd_addr_o = raddr_beat[10:0];
                     s_axi_rdata = {AXI_DATA_WIDTH{1'b0}}; 
-                    // $display("    => CLAUSE read: addr=0x%03h => returning 0", clause_axi_rd_addr_o);
+                    $display("    => CLAUSE read: addr=0x%03h => returning 0", clause_axi_rd_addr_o);
                 end
                 else if(raddr_beat >= VARCL1_BASE_ADDR && raddr_beat < (VARCL1_BASE_ADDR + VARCL1_SIZE_BYTES)) begin
                     varcl1_axi_en_o   <= 1'b1;
-                    varcl1_axi_addr_o = raddr_beat[11:0];
+                    varcl1_axi_addr_o = raddr_beat[10:0];
                     s_axi_rdata = {{(AXI_DATA_WIDTH-1){1'b0}}, varcl1_axi_data_read_i};
-                    // $display("    => VARCL1 read: addr=0x%03h => data_bit=%b", varcl1_axi_addr_o, varcl1_axi_data_read_i);
+                    $display("    => VARCL1 read: addr=0x%03h => data_bit=%b", varcl1_axi_addr_o, varcl1_axi_data_read_i);
                 end
                 else if(raddr_beat >= VARCL2_BASE_ADDR && raddr_beat < (VARCL2_BASE_ADDR + VARCL2_SIZE_BYTES)) begin
                     varcl2_axi_en_o   <= 1'b1;
-                    varcl2_axi_addr_o = raddr_beat[11:0];
+                    varcl2_axi_addr_o = raddr_beat[10:0];
                     s_axi_rdata = {{(AXI_DATA_WIDTH-1){1'b0}}, varcl2_axi_data_read_i};
-                    // $display("    => VARCL2 read: addr=0x%03h => data_bit=%b", varcl2_axi_addr_o, varcl2_axi_data_read_i);
+                    $display("    => VARCL2 read: addr=0x%03h => data_bit=%b", varcl2_axi_addr_o, varcl2_axi_data_read_i);
                 end
                 else begin
                     rburst_resp = RESP_SLVERR;
-                    // $display("    => Out-of-range read => SLVERR");
+                    $display("    => Out-of-range read => SLVERR");
                 end
             end
         end else if (rstate==RLAST) begin
