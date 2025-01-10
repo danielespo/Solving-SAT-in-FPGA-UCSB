@@ -198,9 +198,9 @@ genvar n, m;
         .CLAUSE_TABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH)
     ) address_translation_table (
         .clk_i(clk_i),
-        .axi_wr_en_i(),
-        .axi_wr_addr_i(),
-        .axi_wr_data_i(),
+        .axi_wr_en_i   (att_axi_wr_en_o),
+        .axi_wr_addr_i (att_axi_wr_addr_o),
+        .axi_wr_data_i (att_axi_wr_data_o),
         .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]), // Modified this line
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
@@ -497,7 +497,6 @@ genvar n, m;
         .VARCL2_BASE_ADDR(VARCL2_BASE_ADDR),
         .VARCL2_SIZE_BYTES(VARCL2_SIZE_BYTES)
     ) axi_inst (
-        
         .clk_i      (clk_i),
         .rst_i      (rst_i),
         // Write address
@@ -543,7 +542,6 @@ genvar n, m;
         .att_axi_wr_en_o    (att_axi_wr_en_o),
         .att_axi_wr_addr_o  (att_axi_wr_addr_o),
         .att_axi_wr_data_o  (att_axi_wr_data_o),
-
         .att_axi_rd_en_o    (att_axi_rd_en_o),
         .att_axi_rd_addr_o  (att_axi_rd_addr_o),
         .att_axi_rd_data_i  (att_axi_rd_data_i),
