@@ -6,7 +6,7 @@ localparam AXI_ID_WIDTH    = 4;
 localparam AXI_ADDR_WIDTH  = 32;
 localparam AXI_DATA_WIDTH  = 32;
 localparam AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8;
-localparam MAX_BURST_LEN   = 8;
+localparam MAX_BURST_LEN   = 16;
 
 // Regions
 localparam ATT_BASE_ADDR     = 32'h0000_0000;
@@ -190,9 +190,7 @@ initial begin
   @(negedge rst);
   #50;
 
-  //---------------------------------------------
-  // Existing testcases
-  //---------------------------------------------
+  // Testcases
   testcase_single_beat_write();
   testcase_multi_beat_write();
   testcase_wait_state();
@@ -200,14 +198,17 @@ initial begin
   testcase_invalid_burst();
   testcase_multi_beat_read_pipelined();
   
-  //---------------------------------------------
-  // Additional testcases with more detail
-  //---------------------------------------------
   testcase_multi_beat_write_varcl1();
   testcase_multi_beat_read_att();
   testcase_single_beat_read_clause();
   testcase_multi_beat_write_read_varcl2();
-  
+
+  testcase_burst_across_boundary();
+  testcase_max_burst_write();
+  testcase_unaligned_write();
+  testcase_back_to_back_read_write();
+  testcase_incomplete_burst();
+
   // testcase_submodule_checks();
 
   #200;
@@ -219,14 +220,8 @@ initial begin
   else
     $display("SOME FAILED!");
   
-  $stop; // stop the simulation
+  $finish;
 end
-
-//----------------------------------------------------//
-//                     TASKS                          //
-//----------------------------------------------------//
-
-//--------------------- WRITE TASKS ------------------//
 
 // Single-beat write
 task do_single_beat_write(
@@ -282,7 +277,6 @@ end
 endtask
 
 // Multi-beat write
-// This version prints each beat's address and data
 task do_multi_beat_write(
   input [AXI_ADDR_WIDTH-1:0] base_addr,
   input integer beats,
@@ -312,8 +306,6 @@ begin
 
   // W for each beat
   for (i=0; i<beats; i=i+1) begin
-    // Typically, the address auto-increments in hardware with an INCR burst,
-    // but here we can *simulate* what the next address would be if needed:
     curr_addr = base_addr + (i * 4);
     s_axi_wdata  = 32'hC000_0000 + i;
     s_axi_wstrb  = 4'hF;
@@ -347,8 +339,6 @@ begin
   s_axi_bready=0;
 end
 endtask
-
-//--------------------- READ TASKS -------------------//
 
 // Single-beat read
 task do_single_beat_read(
@@ -392,7 +382,6 @@ end
 endtask
 
 // Multi-beat read
-// Prints the beat index, address (simulated), and read data
 task do_multi_beat_read(
   input [AXI_ADDR_WIDTH-1:0] base_addr,
   input integer beats,
@@ -433,10 +422,6 @@ begin
   s_axi_rready=0;
 end
 endtask
-
-//----------------------------------------------------//
-//                 TESTCASES (ORIGINAL)               //
-//----------------------------------------------------//
 
 // Single-beat write -> to ATT region
 task testcase_single_beat_write;
@@ -609,11 +594,7 @@ begin
 end
 endtask
 
-//----------------------------------------------------//
-//          ADDITIONAL/NEW TESTCASES (EXAMPLES)       //
-//----------------------------------------------------//
-
-// 1) Multi-beat write to varcl1 region
+// Multi-beat write to varcl1 region
 task testcase_multi_beat_write_varcl1;
   reg [1:0] final_resp;
 begin
@@ -632,7 +613,7 @@ begin
 end
 endtask
 
-// 2) Multi-beat read from ATT region
+// Multi-beat read from ATT region
 task testcase_multi_beat_read_att;
   reg [1:0] rresp;
 begin
@@ -651,7 +632,7 @@ begin
 end
 endtask
 
-// 3) Single-beat read from Clause region
+// Single-beat read from Clause region
 task testcase_single_beat_read_clause;
   reg [1:0] rresp;
   reg [AXI_DATA_WIDTH-1:0] rdata;
@@ -671,7 +652,7 @@ begin
 end
 endtask
 
-// 4) Combined multi-beat write and read in varcl2
+// Combined multi-beat write and read in varcl2
 task testcase_multi_beat_write_read_varcl2;
   reg [1:0] wresp, rresp;
 begin
@@ -705,11 +686,9 @@ begin
   $display("========================================");
   $display("TESTCASE: SUBMODULE OUTPUT CHECK");
   
-  // Example: single-beat write to Clause region
   do_single_beat_write(CLAUSE_BASE_ADDR + 32'h8, 32'hAABBCCDD, resp);
-
   #10;
-  // Suppose you wanted to check submodule signals
+
   if (clause_axi_wr_en_o == 1'b1 && clause_axi_wr_addr_o == 11'h008) begin
       $display("  => PASS: Clause table signals toggled correctly ");
       $display("     Expected=en_o=1'b1 & addr_o=0x008");
@@ -722,6 +701,356 @@ begin
       $display("     Actual=en_o=%b & addr_o=0x%03h", clause_axi_wr_en_o, clause_axi_wr_addr_o);
       test_failed = test_failed + 1;
   end
+end
+endtask
+
+task testcase_burst_across_boundary;
+  reg [1:0] resp;
+  integer nbeats;
+  integer i;
+begin
+  $display("========================================");
+  $display("TESTCASE: BURST ACROSS BOUNDARY => Expect SLVERR on crossing");
+
+  nbeats = 3;
+  s_axi_awid    = 4'h7;
+  // s_axi_awaddr  = CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES - 4;
+  // s_axi_awlen   = nbeats - 1; // 3 beats total
+  s_axi_awaddr = 32'h0002_5FFC; // last 4 bytes of varcl2
+  s_axi_awlen  = 2;             // 3 beats total
+  s_axi_awsize  = 3'd2;       // 4 bytes per beat
+  s_axi_awburst = 2'b01;      // INCR
+  s_axi_awvalid = 1'b1;
+
+  @(posedge clk);
+  while(!s_axi_awready) @(posedge clk);
+  s_axi_awvalid = 1'b0;
+
+  for (i = 0; i < nbeats; i = i + 1) begin
+    s_axi_wdata  = 32'hC0DE_0000 + i;
+    s_axi_wstrb  = 4'hF;
+    s_axi_wlast  = (i == (nbeats - 1));
+    s_axi_wvalid = 1'b1;
+    
+    @(posedge clk);
+    while(!s_axi_wready) @(posedge clk);
+    @(posedge clk);
+
+    s_axi_wvalid = 1'b0;
+    s_axi_wlast  = 1'b0;
+  end
+  
+  // B channel handshake
+  s_axi_bready = 1'b1;
+  while(!s_axi_bvalid) @(posedge clk);
+  resp = s_axi_bresp;
+  @(posedge clk);
+  s_axi_bready = 1'b0;
+
+  if(resp == 2'b10) begin
+    $display("  => PASS: Expected=SLVERR(10), Actual=%b", resp);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Expected=SLVERR(10), Actual=%b", resp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+task testcase_max_burst_write;
+  reg [1:0] wresp;
+  integer   nbeats;
+begin
+  $display("========================================");
+  $display("TESTCASE: MAX BURST WRITE => AWLEN=15 => 16 beats");
+
+  nbeats = 16; // AWLEN=15 means 16 beats
+  do_multi_beat_write(ATT_BASE_ADDR + 32'h0, nbeats, wresp);
+
+  if(wresp == 2'b00) begin
+    $display("  => PASS: Expected=OKAY(00), Actual=%b", wresp);
+    test_passed = test_passed + 1;
+  end else if(wresp == 2'b10) begin
+    $display("  => Possible SLVERR if design rejects 16 beats. Actual=%b", wresp);
+    test_failed = test_failed + 1;
+  end else begin
+    $display("  => FAIL: Unexpected bresp=%b", wresp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+task testcase_exceed_max_burst_write;
+  reg [1:0] wresp;
+  integer   nbeats;
+begin
+  $display("========================================");
+  $display("TESTCASE: EXCEED MAX BURST => AWLEN=16 => expect SLVERR");
+
+  nbeats = 17; // AWLEN=16 -> 17 beats
+  do_multi_beat_write(ATT_BASE_ADDR + 32'h0, nbeats, wresp);
+
+  if(wresp == 2'b10) begin
+    $display("  => PASS: Expected=SLVERR(10), Actual=%b", wresp);
+    test_passed = test_passed + 1;
+  end else begin
+    $display("  => FAIL: Expected=SLVERR(10), Actual=%b", wresp);
+    test_failed = test_failed + 1;
+  end
+end
+endtask
+
+task testcase_unaligned_write;
+  reg [1:0] wresp;
+begin
+  $display("========================================");
+  $display("TESTCASE: UNALIGNED WRITE => addr=0x0000_0002 (2 bytes offset)");
+  
+  s_axi_awid    = 4'h8;
+  s_axi_awaddr  = ATT_BASE_ADDR + 32'h2;
+  s_axi_awlen   = 1;  
+  s_axi_awsize  = 3'd2;  
+  s_axi_awburst = 2'b01;
+  s_axi_awvalid = 1'b1;
+  @(posedge clk);
+  while(!s_axi_awready) @(posedge clk);
+  s_axi_awvalid=1'b0;
+
+  // Write beat 0
+  s_axi_wdata  = 32'hFACE_0000;
+  s_axi_wstrb  = 4'hF;
+  s_axi_wlast  = 1'b0;
+  s_axi_wvalid = 1'b1;
+  @(posedge clk);
+  while(!s_axi_wready) @(posedge clk);
+  @(posedge clk);
+  s_axi_wvalid=0;
+
+  // Write beat 1
+  s_axi_wdata  = 32'hFACE_1111;
+  s_axi_wstrb  = 4'hF;
+  s_axi_wlast  = 1'b1;
+  s_axi_wvalid = 1'b1;
+  @(posedge clk);
+  while(!s_axi_wready) @(posedge clk);
+  @(posedge clk);
+  s_axi_wvalid=0;
+  s_axi_wlast=0;
+
+  // Get response
+  s_axi_bready=1;
+  while(!s_axi_bvalid) @(posedge clk);
+  wresp = s_axi_bresp;
+  @(posedge clk);
+  s_axi_bready=0;
+
+  if(wresp==2'b00) begin
+    $display("  => PASS: Unaligned writes accepted => bresp=OKAY(00)");
+    test_passed = test_passed + 1;
+  end
+  else if(wresp==2'b10)
+    $display("  => SLVERR indicates design may not support unaligned");
+  else
+    $display("  => Unexpected bresp=%b", wresp);
+end
+endtask
+
+task testcase_back_to_back_read_write;
+  reg [1:0] wresp, rresp;
+  reg [31:0] read_data;
+  integer j;
+  integer k;
+
+begin
+  $display("========================================");
+  $display("TESTCASE: BACK-TO-BACK READ & WRITE => pipeline AW/AR phases");
+
+  // wresp = 2'b00;  // Will be overwritten by actual
+  // rresp = 2'b00;  // Will be overwritten by actual
+
+  fork
+    begin
+      // Issue AW
+      s_axi_awid    = 4'h9;
+      s_axi_awaddr  = CLAUSE_BASE_ADDR;
+      s_axi_awlen   = 3;       // 4 beats
+      s_axi_awsize  = 3'd2;
+      s_axi_awburst = 2'b01;
+      s_axi_awvalid = 1'b1;
+      @(posedge clk);
+      while(!s_axi_awready) @(posedge clk);
+      s_axi_awvalid=0;
+
+      // Write 4 beats
+      for (j = 0; j < 4; j = j + 1) begin
+        s_axi_wdata  = 32'hF0F0_0000 + j;
+        s_axi_wstrb  = 4'hF;
+        s_axi_wlast  = (j == 3);
+        s_axi_wvalid = 1'b1;
+
+        @(posedge clk);
+        while(!s_axi_wready) @(posedge clk);
+        @(posedge clk);
+
+        s_axi_wvalid=0;
+        s_axi_wlast=0;
+      end
+
+      // B
+      s_axi_bready=1;
+      while(!s_axi_bvalid) @(posedge clk);
+      wresp = s_axi_bresp;
+      @(posedge clk);
+      s_axi_bready=0;
+      $display("  => WRITE completed, bresp=%b", wresp);
+
+      // Pass/fail check for write response
+      if (wresp == 2'b00) begin
+        $display("  => WRITE PASS: Expected=OKAY(00), Actual=%b", wresp);
+        test_passed = test_passed + 1;
+      end else begin
+        $display("  => WRITE FAIL: Expected=OKAY(00), Actual=%b", wresp);
+        test_failed = test_failed + 1;
+      end
+    end
+
+    begin
+      #15; // small delay to overlap the write
+      s_axi_arid    = 4'hA;
+      s_axi_araddr  = VARCL1_BASE_ADDR;
+      s_axi_arlen   = 1;  // 2-beat read
+      s_axi_arsize  = 3'd2;
+      s_axi_arburst = 2'b01;
+      s_axi_arvalid = 1'b1;
+
+      @(posedge clk);
+      while(!s_axi_arready) @(posedge clk);
+      s_axi_arvalid=0;
+
+      // R
+      s_axi_rready=1;
+      for (k = 0; k < 2; k = k + 1) begin
+        while(!s_axi_rvalid) @(posedge clk);
+        $display("  => READ beat %0d: rdata=0x%08h, rresp=%b, rlast=%b",
+                 k, s_axi_rdata, s_axi_rresp, s_axi_rlast);
+        rresp = s_axi_rresp;
+
+        @(posedge clk);
+      end
+      s_axi_rready=0;
+
+      // Pass/fail check for read response
+      if (rresp == 2'b00) begin
+        $display("  => READ PASS: Expected=OKAY(00), Actual=%b", rresp);
+        test_passed = test_passed + 1;
+      end else begin
+        $display("  => READ FAIL: Expected=OKAY(00), Actual=%b", rresp);
+        test_failed = test_failed + 1;
+      end
+    end
+  join
+end
+endtask
+
+// integer wait_count;
+task testcase_incomplete_burst;
+  reg [1:0] resp;
+begin
+  $display("========================================");
+  $display("TESTCASE: INCOMPLETE BURST => AW handshake, partial W beats, no WLAST");
+
+  s_axi_awid    = 4'hB;
+  s_axi_awaddr  = ATT_BASE_ADDR;
+  s_axi_awlen   = 3;       
+  s_axi_awsize  = 3'd2;    
+  s_axi_awburst = 2'b01;
+  s_axi_awvalid = 1'b1;
+
+  @(posedge clk);
+  while(!s_axi_awready) @(posedge clk);
+  s_axi_awvalid = 0;
+
+  // Beat 0
+  s_axi_wdata  = 32'hAAAA_0000;
+  s_axi_wstrb  = 4'hF;
+  s_axi_wlast  = 1'b0; // not last
+  s_axi_wvalid = 1'b1;
+  @(posedge clk);
+  while(!s_axi_wready) @(posedge clk);
+  @(posedge clk);
+  s_axi_wvalid = 0;
+
+  // Beat 1
+  s_axi_wdata  = 32'hAAAA_1111;
+  s_axi_wstrb  = 4'hF;
+  s_axi_wlast  = 1'b0; // still not last
+  s_axi_wvalid = 1'b1;
+  @(posedge clk);
+  while(!s_axi_wready) @(posedge clk);
+  @(posedge clk);
+  s_axi_wvalid = 0;
+  s_axi_wlast  = 0;
+
+  repeat(20) @(posedge clk);
+
+  // Check if the controller produced BVALID unexpectedly
+  if (s_axi_bvalid) begin
+    $display("  => FAIL: Unexpected BVALID => bresp=%b", s_axi_bresp);
+    test_failed = test_failed + 1;
+  end else begin
+    $display("  => NO BVALID seen yet. Possibly PASS if design is waiting for WLAST/remaining beats.");
+  end
+
+  // // Try a follow-up single-beat write to see if the slave recovers or stays stuck
+  // $display("  => Attempting follow-up single-beat write to test recovery...");
+  // s_axi_awid    = 4'hC;
+  // s_axi_awaddr  = ATT_BASE_ADDR + 32'h100; // some valid address
+  // s_axi_awlen   = 0;        // single beat
+  // s_axi_awsize  = 3'd2;     // 4 bytes/beat
+  // s_axi_awburst = 2'b01;    // INCR
+  // s_axi_awvalid = 1'b1;
+  // @(posedge clk);
+  // while(!s_axi_awready) @(posedge clk);
+  // s_axi_awvalid = 0;
+
+  // // W
+  // s_axi_wdata  = 32'hFACE_CAFE;
+  // s_axi_wstrb  = 4'hF;
+  // s_axi_wlast  = 1'b1;
+  // s_axi_wvalid = 1'b1;
+  // @(posedge clk);
+  // while(!s_axi_wready) @(posedge clk);
+  // @(posedge clk);
+  // s_axi_wvalid = 0;
+  // s_axi_wlast  = 0;
+
+  // // B
+  // s_axi_bready = 1;
+  // // Wait up to some cycles for BVALID
+  // wait_count = 0;
+  // while(!s_axi_bvalid && (wait_count < 20)) begin
+  //   wait_count = wait_count + 1;
+  //   @(posedge clk);
+  // end
+  // // We can turn off bready now or after handshake
+  // if(s_axi_bvalid) begin
+  //   resp = s_axi_bresp;
+  //   @(posedge clk);
+  //   s_axi_bready = 0;
+
+  //   if(resp==2'b00) begin
+  //     $display("  => Follow-up write PASS: bresp=OKAY(00). Slave recovered from incomplete burst.");
+  //     test_passed = test_passed + 1;
+  //   end else begin
+  //     $display("  => Follow-up write FAIL: bresp=%b (expected=OKAY(00)?)", resp);
+  //     test_failed = test_failed + 1;
+  //   end
+  // end else begin
+  //   s_axi_bready = 0;
+  //   $display("  => Follow-up write FAILED to get BVALID in time. Possibly stuck in incomplete burst!");
+  //   test_failed = test_failed + 1;
+  // end
+
 end
 endtask
 
