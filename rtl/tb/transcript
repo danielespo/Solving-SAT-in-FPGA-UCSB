@@ -1,25 +1,25 @@
 # do simulate.tcl
 # ** Warning: (vlib-34) Library already exists at "work".
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 15:40:12 on Jan 10,2025
+# Start time: 11:52:30 on Jan 11,2025
 # vlog -sv ../src/AXI4_Memory_Controller.v 
 # -- Compiling module AXI4_Memory_Controller
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller
-# End time: 15:40:12 on Jan 10,2025, Elapsed time: 0:00:00
+# End time: 11:52:30 on Jan 11,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 15:40:12 on Jan 10,2025
+# Start time: 11:52:30 on Jan 11,2025
 # vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v 
 # -- Compiling module AXI4_Memory_Controller_tb
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller_tb
-# End time: 15:40:12 on Jan 10,2025, Elapsed time: 0:00:00
+# End time: 11:52:30 on Jan 11,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vsim -c AXI4_Memory_Controller_tb -do "run -all; quit" 
-# Start time: 15:40:12 on Jan 10,2025
+# Start time: 11:52:30 on Jan 11,2025
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.33.1.el8_10.x86_64
 # //
@@ -40,7 +40,7 @@
 # ========================================
 # TESTCASE: SINGLE BEAT WRITE (BURST HANDLING)
 # [100000] TB: SINGLE BEAT WRITE => addr=0x00000004, data=0xdeadbeef
-# ** single-beat handshake done
+#   => Single-beat W handshake done
 # [115000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000004, wlast=1
 # [125000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000004
 #   => ATT write: addr=0x0000, data=0x00000000
@@ -50,12 +50,12 @@
 # TESTCASE: MULTI-BEAT WRITE (4 beats) => Clause Table
 # [155000] TB: MULTI-BEAT WRITE => base=0x00004000, beats=4
 # [165000] TB: AW handshake => base=0x00004000, len=3
-# [165000] TB:  Writing beat 0 => wdata=0xc0000000, wlast=0
+# [165000] TB:  Writing beat 0 => addr=0x00004000, wdata=0xc0000000, wlast=0
 # [175000] TB:   => W handshake done for beat 0
 # [175000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
 # [185000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
 #   => CLAUSE write: sub-addr=0x000
-# [185000] TB:  Writing beat 1 => wdata=0xc0000001, wlast=0
+# [185000] TB:  Writing beat 1 => addr=0x00004004, wdata=0xc0000001, wlast=0
 # [185000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
 # [185000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00004004, wlast=0
 # [195000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004004
@@ -64,7 +64,7 @@
 # [195000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
 # [205000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004008
 #   => CLAUSE write: sub-addr=0x004
-# [205000] TB:  Writing beat 2 => wdata=0xc0000002, wlast=0
+# [205000] TB:  Writing beat 2 => addr=0x00004008, wdata=0xc0000002, wlast=0
 # [205000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
 # [205000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0000400c, wlast=0
 # [215000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000400c
@@ -73,7 +73,7 @@
 # [215000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=0
 # [225000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004010
 #   => CLAUSE write: sub-addr=0x00c
-# [225000] TB:  Writing beat 3 => wdata=0xc0000003, wlast=1
+# [225000] TB:  Writing beat 3 => addr=0x0000400c, wdata=0xc0000003, wlast=1
 # [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=1
 # [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=5, waddr_beat=0x00004014, wlast=1
 # [235000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004014
@@ -92,19 +92,19 @@
 # ========================================
 # TESTCASE: OUT-OF-RANGE ADDRESS => Expect SLVERR
 # [335000] TB: SINGLE BEAT WRITE => addr=0xfffff000, data=0xbad0beef
-# ** single-beat handshake done
+#   => Single-beat W handshake done
 # [355000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0xfffff000, wlast=1
 # [365000] AXI4_Memory_Controller: submodule decode => waddr_beat=0xfffff000
 #   => Out-of-range => SLVERR
 # [365000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
-#   => PASS: SLVERR as expected => Actual=10
+#   => PASS: Expected=SLVERR(10), Actual=10
 # ========================================
 # TESTCASE: INVALID BURST (FIXED=00) => Expect SLVERR
 # [415000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=1
 # [425000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000000
 #   => ATT write: addr=0x0004, data=0x5eadbeef
 # [425000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
-#   => PASS: invalid burst => SLVERR => Actual=10
+#   => PASS: Expected=SLVERR(10), Actual=10
 # ========================================
 # TESTCASE: MULTI-BEAT READ => pipelined => varcl2 region
 # [455000] TB: MULTI-BEAT READ => base=0x00024200, beats=3
@@ -114,23 +114,365 @@
 # [495000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00024200, rlast=0, rresp=00
 #   read_from_submodules: raddr=0x00024200
 #     => VARCL2 read: addr=0x200 => data_bit=1
-# [495000] TB: READ beat 0 => rdata=0x00000001, rresp=00, rlast=0
+# [495000] TB: READ beat 0 => addr=0x00024200, rdata=0x00000001, rresp=00, rlast=0
 # [505000] AXI4_Memory_Controller: RDATA => beat_count=1, raddr_beat=0x00024204, rlast=0, rresp=00
 #   read_from_submodules: raddr=0x00024204
 #     => VARCL2 read: addr=0x204 => data_bit=1
-# [505000] TB: READ beat 1 => rdata=0x00000001, rresp=00, rlast=0
+# [505000] TB: READ beat 1 => addr=0x00024204, rdata=0x00000001, rresp=00, rlast=0
 # [515000] AXI4_Memory_Controller: RDATA => beat_count=2, raddr_beat=0x00024208, rlast=0, rresp=00
 #   read_from_submodules: raddr=0x00024208
 #     => VARCL2 read: addr=0x208 => data_bit=1
-# [515000] TB: READ beat 2 => rdata=0x00000001, rresp=00, rlast=0
-#   => PASS: multi-beat read => OKAY => Actual=00
+# [515000] TB: READ beat 2 => addr=0x00024208, rdata=0x00000001, rresp=00, rlast=0
+#   => PASS: Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: MULTI-BEAT WRITE => varcl1 region (5 beats)
+# [525000] TB: MULTI-BEAT WRITE => base=0x00022010, beats=5
+# [535000] TB: AW handshake => base=0x00022010, len=4
+# [535000] TB:  Writing beat 0 => addr=0x00022010, wdata=0xc0000000, wlast=0
+# [545000] TB:   => W handshake done for beat 0
+# [545000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022010, wlast=0
+# [555000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022010
+#   => VARCL1 write: addr=0x000, data_bit=0
+# [555000] TB:  Writing beat 1 => addr=0x00022014, wdata=0xc0000001, wlast=0
+# [555000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022010, wlast=0
+# [555000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00022014, wlast=0
+# [565000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022014
+#   => VARCL1 write: addr=0x010, data_bit=0
+# [565000] TB:   => W handshake done for beat 1
+# [565000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00022018, wlast=0
+# [575000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022018
+#   => VARCL1 write: addr=0x014, data_bit=1
+# [575000] TB:  Writing beat 2 => addr=0x00022018, wdata=0xc0000002, wlast=0
+# [575000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00022018, wlast=0
+# [575000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0002201c, wlast=0
+# [585000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0002201c
+#   => VARCL1 write: addr=0x018, data_bit=1
+# [585000] TB:   => W handshake done for beat 2
+# [585000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00022020, wlast=0
+# [595000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022020
+#   => VARCL1 write: addr=0x01c, data_bit=0
+# [595000] TB:  Writing beat 3 => addr=0x0002201c, wdata=0xc0000003, wlast=0
+# [595000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00022020, wlast=0
+# [595000] AXI4_Memory_Controller: WDATA handshake => beat_count=5, waddr_beat=0x00022024, wlast=0
+# [605000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022024
+#   => VARCL1 write: addr=0x020, data_bit=0
+# [605000] TB:   => W handshake done for beat 3
+# [605000] AXI4_Memory_Controller: WDATA handshake => beat_count=6, waddr_beat=0x00022028, wlast=0
+# [615000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022028
+#   => VARCL1 write: addr=0x024, data_bit=1
+# [615000] TB:  Writing beat 4 => addr=0x00022020, wdata=0xc0000004, wlast=1
+# [615000] AXI4_Memory_Controller: WDATA handshake => beat_count=6, waddr_beat=0x00022028, wlast=1
+# [615000] AXI4_Memory_Controller: WDATA handshake => beat_count=7, waddr_beat=0x0002202c, wlast=1
+# [625000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0002202c
+#   => VARCL1 write: addr=0x028, data_bit=1
+# [625000] TB:   => W handshake done for beat 4
+# [635000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+# [645000] TB:  => BVALID handshake => bresp=0x00
+#   => PASS: Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: MULTI-BEAT READ => ATT region (4 beats)
+# [655000] TB: MULTI-BEAT READ => base=0x00000008, beats=4
+# [685000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00000008, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00000008
+#     => ATT read: addr=0x0000 => data=0x00000000
+# [695000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00000008, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00000008
+#     => ATT read: addr=0x0008 => data=0xXxxxxxxx
+# [695000] TB: READ beat 0 => addr=0x00000008, rdata=0xXxxxxxxx, rresp=00, rlast=0
+# [705000] AXI4_Memory_Controller: RDATA => beat_count=1, raddr_beat=0x0000000c, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x0000000c
+#     => ATT read: addr=0x0008 => data=0xXxxxxxxx
+# [705000] TB: READ beat 1 => addr=0x0000000c, rdata=0xXxxxxxxx, rresp=00, rlast=0
+# [715000] AXI4_Memory_Controller: RDATA => beat_count=2, raddr_beat=0x00000010, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00000010
+#     => ATT read: addr=0x000c => data=0xXxxxxxxx
+# [715000] TB: READ beat 2 => addr=0x00000010, rdata=0xXxxxxxxx, rresp=00, rlast=0
+# [725000] AXI4_Memory_Controller: RDATA => beat_count=3, raddr_beat=0x00000014, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00000014
+#     => ATT read: addr=0x0010 => data=0xXxxxxxxx
+# [725000] TB: READ beat 3 => addr=0x00000014, rdata=0xXxxxxxxx, rresp=00, rlast=0
+#   => PASS: Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: SINGLE BEAT READ => Clause region
+# [735000] TB: SINGLE BEAT READ => addr=0x00004004
+# [765000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00004004, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00004004
+#     => CLAUSE read: addr=0x004 => returning 0
+#   => Single-beat R handshake done
+#   => RDATA=0x00000000
+#   => PASS: Expected=OKAY(00), Actual=00, RDATA=0x00000000
+# ========================================
+# TESTCASE: MULTI-BEAT WRITE & READ => varcl2 region
+# [785000] TB: MULTI-BEAT WRITE => base=0x00024300, beats=3
+# [795000] TB: AW handshake => base=0x00024300, len=2
+# [795000] TB:  Writing beat 0 => addr=0x00024300, wdata=0xc0000000, wlast=0
+# [805000] TB:   => W handshake done for beat 0
+# [805000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00024300, wlast=0
+# [815000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00024300
+#   => VARCL2 write: addr=0x000, data_bit=0
+# [815000] TB:  Writing beat 1 => addr=0x00024304, wdata=0xc0000001, wlast=0
+# [815000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00024300, wlast=0
+# [815000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00024304, wlast=0
+# [825000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00024304
+#   => VARCL2 write: addr=0x300, data_bit=0
+# [825000] TB:   => W handshake done for beat 1
+# [825000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00024308, wlast=0
+# [835000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00024308
+#   => VARCL2 write: addr=0x304, data_bit=1
+# [835000] TB:  Writing beat 2 => addr=0x00024308, wdata=0xc0000002, wlast=1
+# [835000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00024308, wlast=1
+# [835000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0002430c, wlast=1
+# [845000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0002430c
+#   => VARCL2 write: addr=0x308, data_bit=1
+# [845000] TB:   => W handshake done for beat 2
+# [855000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+# [865000] TB:  => BVALID handshake => bresp=0x00
+#   => PASS: Multi-beat write => Expected=OKAY(00), Actual=00
+# [875000] TB: MULTI-BEAT READ => base=0x00024300, beats=3
+# [905000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00024300, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024300
+#     => VARCL2 read: addr=0x300 => data_bit=1
+# [915000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00024300, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024300
+#     => VARCL2 read: addr=0x300 => data_bit=1
+# [915000] TB: READ beat 0 => addr=0x00024300, rdata=0x00000001, rresp=00, rlast=0
+# [925000] AXI4_Memory_Controller: RDATA => beat_count=1, raddr_beat=0x00024304, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024304
+#     => VARCL2 read: addr=0x304 => data_bit=1
+# [925000] TB: READ beat 1 => addr=0x00024304, rdata=0x00000001, rresp=00, rlast=0
+# [935000] AXI4_Memory_Controller: RDATA => beat_count=2, raddr_beat=0x00024308, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00024308
+#     => VARCL2 read: addr=0x308 => data_bit=1
+# [935000] TB: READ beat 2 => addr=0x00024308, rdata=0x00000001, rresp=00, rlast=0
+#   => PASS: Multi-beat read => Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: BURST ACROSS BOUNDARY => Expect SLVERR on crossing
+# [965000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00025ffc, wlast=0
+# [975000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00025ffc
+#   => VARCL2 write: addr=0x000, data_bit=0
+# [975000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00025ffc, wlast=0
+# [975000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00026000, wlast=0
+# [985000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00026000
+#   => Out-of-range => SLVERR
+# [985000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00026004, wlast=0
+# [995000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00026004
+#   => Out-of-range => SLVERR
+# [995000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00026004, wlast=1
+# [995000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x00026008, wlast=1
+# [1005000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00026008
+#   => Out-of-range => SLVERR
+# [1015000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: Expected=SLVERR(10), Actual=10
+# ========================================
+# TESTCASE: MAX BURST WRITE => AWLEN=15 => 16 beats
+# [1035000] TB: MULTI-BEAT WRITE => base=0x00000000, beats=16
+# [1045000] TB: AW handshake => base=0x00000000, len=15
+# [1045000] TB:  Writing beat 0 => addr=0x00000000, wdata=0xc0000000, wlast=0
+# [1055000] TB:   => W handshake done for beat 0
+# [1055000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=0
+# [1065000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000000
+#   => ATT write: addr=0x0000, data=0x700dd00d
+# [1065000] TB:  Writing beat 1 => addr=0x00000004, wdata=0xc0000001, wlast=0
+# [1065000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=0
+# [1065000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00000004, wlast=0
+# [1075000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000004
+#   => ATT write: addr=0x0000, data=0x40000000
+# [1075000] TB:   => W handshake done for beat 1
+# [1075000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00000008, wlast=0
+# [1085000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000008
+#   => ATT write: addr=0x0004, data=0x40000001
+# [1085000] TB:  Writing beat 2 => addr=0x00000008, wdata=0xc0000002, wlast=0
+# [1085000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00000008, wlast=0
+# [1085000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0000000c, wlast=0
+# [1095000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000000c
+#   => ATT write: addr=0x0008, data=0x40000001
+# [1095000] TB:   => W handshake done for beat 2
+# [1095000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00000010, wlast=0
+# [1105000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000010
+#   => ATT write: addr=0x000c, data=0x40000002
+# [1105000] TB:  Writing beat 3 => addr=0x0000000c, wdata=0xc0000003, wlast=0
+# [1105000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00000010, wlast=0
+# [1105000] AXI4_Memory_Controller: WDATA handshake => beat_count=5, waddr_beat=0x00000014, wlast=0
+# [1115000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000014
+#   => ATT write: addr=0x0010, data=0x40000002
+# [1115000] TB:   => W handshake done for beat 3
+# [1115000] AXI4_Memory_Controller: WDATA handshake => beat_count=6, waddr_beat=0x00000018, wlast=0
+# [1125000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000018
+#   => ATT write: addr=0x0014, data=0x40000003
+# [1125000] TB:  Writing beat 4 => addr=0x00000010, wdata=0xc0000004, wlast=0
+# [1125000] AXI4_Memory_Controller: WDATA handshake => beat_count=6, waddr_beat=0x00000018, wlast=0
+# [1125000] AXI4_Memory_Controller: WDATA handshake => beat_count=7, waddr_beat=0x0000001c, wlast=0
+# [1135000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000001c
+#   => ATT write: addr=0x0018, data=0x40000003
+# [1135000] TB:   => W handshake done for beat 4
+# [1135000] AXI4_Memory_Controller: WDATA handshake => beat_count=8, waddr_beat=0x00000020, wlast=0
+# [1145000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000020
+#   => ATT write: addr=0x001c, data=0x40000004
+# [1145000] TB:  Writing beat 5 => addr=0x00000014, wdata=0xc0000005, wlast=0
+# [1145000] AXI4_Memory_Controller: WDATA handshake => beat_count=8, waddr_beat=0x00000020, wlast=0
+# [1145000] AXI4_Memory_Controller: WDATA handshake => beat_count=9, waddr_beat=0x00000024, wlast=0
+# [1155000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000024
+#   => ATT write: addr=0x0020, data=0x40000004
+# [1155000] TB:   => W handshake done for beat 5
+# [1155000] AXI4_Memory_Controller: WDATA handshake => beat_count=10, waddr_beat=0x00000028, wlast=0
+# [1165000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000028
+#   => ATT write: addr=0x0024, data=0x40000005
+# [1165000] TB:  Writing beat 6 => addr=0x00000018, wdata=0xc0000006, wlast=0
+# [1165000] AXI4_Memory_Controller: WDATA handshake => beat_count=10, waddr_beat=0x00000028, wlast=0
+# [1165000] AXI4_Memory_Controller: WDATA handshake => beat_count=11, waddr_beat=0x0000002c, wlast=0
+# [1175000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000002c
+#   => ATT write: addr=0x0028, data=0x40000005
+# [1175000] TB:   => W handshake done for beat 6
+# [1175000] AXI4_Memory_Controller: WDATA handshake => beat_count=12, waddr_beat=0x00000030, wlast=0
+# [1185000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000030
+#   => ATT write: addr=0x002c, data=0x40000006
+# [1185000] TB:  Writing beat 7 => addr=0x0000001c, wdata=0xc0000007, wlast=0
+# [1185000] AXI4_Memory_Controller: WDATA handshake => beat_count=12, waddr_beat=0x00000030, wlast=0
+# [1185000] AXI4_Memory_Controller: WDATA handshake => beat_count=13, waddr_beat=0x00000034, wlast=0
+# [1195000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000034
+#   => ATT write: addr=0x0030, data=0x40000006
+# [1195000] TB:   => W handshake done for beat 7
+# [1195000] AXI4_Memory_Controller: WDATA handshake => beat_count=14, waddr_beat=0x00000038, wlast=0
+# [1205000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000038
+#   => ATT write: addr=0x0034, data=0x40000007
+# [1205000] TB:  Writing beat 8 => addr=0x00000020, wdata=0xc0000008, wlast=0
+# [1205000] AXI4_Memory_Controller: WDATA handshake => beat_count=14, waddr_beat=0x00000038, wlast=0
+# [1205000] AXI4_Memory_Controller: WDATA handshake => beat_count=15, waddr_beat=0x0000003c, wlast=0
+# [1215000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000003c
+#   => ATT write: addr=0x0038, data=0x40000007
+# [1215000] TB:   => W handshake done for beat 8
+# [1215000] AXI4_Memory_Controller: WDATA handshake => beat_count=16, waddr_beat=0x00000040, wlast=0
+# [1225000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000040
+#   => ATT write: addr=0x003c, data=0x40000008
+# [1225000] TB:  Writing beat 9 => addr=0x00000024, wdata=0xc0000009, wlast=0
+# [1225000] AXI4_Memory_Controller: WDATA handshake => beat_count=16, waddr_beat=0x00000040, wlast=0
+# [1225000] AXI4_Memory_Controller: WDATA handshake => beat_count=17, waddr_beat=0x00000044, wlast=0
+# [1235000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000044
+#   => ATT write: addr=0x0040, data=0x40000008
+# [1235000] TB:   => W handshake done for beat 9
+# [1235000] AXI4_Memory_Controller: WDATA handshake => beat_count=18, waddr_beat=0x00000048, wlast=0
+# [1245000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000048
+#   => ATT write: addr=0x0044, data=0x40000009
+# [1245000] TB:  Writing beat 10 => addr=0x00000028, wdata=0xc000000a, wlast=0
+# [1245000] AXI4_Memory_Controller: WDATA handshake => beat_count=18, waddr_beat=0x00000048, wlast=0
+# [1245000] AXI4_Memory_Controller: WDATA handshake => beat_count=19, waddr_beat=0x0000004c, wlast=0
+# [1255000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000004c
+#   => ATT write: addr=0x0048, data=0x40000009
+# [1255000] TB:   => W handshake done for beat 10
+# [1255000] AXI4_Memory_Controller: WDATA handshake => beat_count=20, waddr_beat=0x00000050, wlast=0
+# [1265000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000050
+#   => ATT write: addr=0x004c, data=0x4000000a
+# [1265000] TB:  Writing beat 11 => addr=0x0000002c, wdata=0xc000000b, wlast=0
+# [1265000] AXI4_Memory_Controller: WDATA handshake => beat_count=20, waddr_beat=0x00000050, wlast=0
+# [1265000] AXI4_Memory_Controller: WDATA handshake => beat_count=21, waddr_beat=0x00000054, wlast=0
+# [1275000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000054
+#   => ATT write: addr=0x0050, data=0x4000000a
+# [1275000] TB:   => W handshake done for beat 11
+# [1275000] AXI4_Memory_Controller: WDATA handshake => beat_count=22, waddr_beat=0x00000058, wlast=0
+# [1285000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000058
+#   => ATT write: addr=0x0054, data=0x4000000b
+# [1285000] TB:  Writing beat 12 => addr=0x00000030, wdata=0xc000000c, wlast=0
+# [1285000] AXI4_Memory_Controller: WDATA handshake => beat_count=22, waddr_beat=0x00000058, wlast=0
+# [1285000] AXI4_Memory_Controller: WDATA handshake => beat_count=23, waddr_beat=0x0000005c, wlast=0
+# [1295000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000005c
+#   => ATT write: addr=0x0058, data=0x4000000b
+# [1295000] TB:   => W handshake done for beat 12
+# [1295000] AXI4_Memory_Controller: WDATA handshake => beat_count=24, waddr_beat=0x00000060, wlast=0
+# [1305000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000060
+#   => ATT write: addr=0x005c, data=0x4000000c
+# [1305000] TB:  Writing beat 13 => addr=0x00000034, wdata=0xc000000d, wlast=0
+# [1305000] AXI4_Memory_Controller: WDATA handshake => beat_count=24, waddr_beat=0x00000060, wlast=0
+# [1305000] AXI4_Memory_Controller: WDATA handshake => beat_count=25, waddr_beat=0x00000064, wlast=0
+# [1315000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000064
+#   => ATT write: addr=0x0060, data=0x4000000c
+# [1315000] TB:   => W handshake done for beat 13
+# [1315000] AXI4_Memory_Controller: WDATA handshake => beat_count=26, waddr_beat=0x00000068, wlast=0
+# [1325000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000068
+#   => ATT write: addr=0x0064, data=0x4000000d
+# [1325000] TB:  Writing beat 14 => addr=0x00000038, wdata=0xc000000e, wlast=0
+# [1325000] AXI4_Memory_Controller: WDATA handshake => beat_count=26, waddr_beat=0x00000068, wlast=0
+# [1325000] AXI4_Memory_Controller: WDATA handshake => beat_count=27, waddr_beat=0x0000006c, wlast=0
+# [1335000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000006c
+#   => ATT write: addr=0x0068, data=0x4000000d
+# [1335000] TB:   => W handshake done for beat 14
+# [1335000] AXI4_Memory_Controller: WDATA handshake => beat_count=28, waddr_beat=0x00000070, wlast=0
+# [1345000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000070
+#   => ATT write: addr=0x006c, data=0x4000000e
+# [1345000] TB:  Writing beat 15 => addr=0x0000003c, wdata=0xc000000f, wlast=1
+# [1345000] AXI4_Memory_Controller: WDATA handshake => beat_count=28, waddr_beat=0x00000070, wlast=1
+# [1345000] AXI4_Memory_Controller: WDATA handshake => beat_count=29, waddr_beat=0x00000074, wlast=1
+# [1355000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000074
+#   => ATT write: addr=0x0070, data=0x4000000e
+# [1355000] TB:   => W handshake done for beat 15
+# [1365000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+# [1375000] TB:  => BVALID handshake => bresp=0x00
+#   => PASS: Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: UNALIGNED WRITE => addr=0x0000_0002 (2 bytes offset)
+# [1405000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000002, wlast=0
+# [1415000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000002
+#   => ATT write: addr=0x0074, data=0x4000000f
+# [1415000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000002, wlast=1
+# [1415000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00000006, wlast=1
+# [1425000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000006
+#   => ATT write: addr=0x0002, data=0x7ace0000
+# [1435000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => PASS: Unaligned writes accepted => bresp=OKAY(00)
+# ========================================
+# TESTCASE: BACK-TO-BACK READ & WRITE => pipeline AW/AR phases
+# [1475000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
+# [1485000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
+#   => CLAUSE write: sub-addr=0x014
+# [1485000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
+# [1485000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00004004, wlast=0
+# [1495000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022000, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022000
+#     => VARCL1 read: addr=0x000 => data_bit=x
+# [1495000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004004
+#   => CLAUSE write: sub-addr=0x000
+# [1495000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
+# [1505000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004008
+#   => CLAUSE write: sub-addr=0x004
+# [1505000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022000, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022000
+#     => VARCL1 read: addr=0x000 => data_bit=x
+#   => READ beat 0: rdata=0x0000000X, rresp=00, rlast=0
+# [1505000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00004008, wlast=0
+# [1505000] AXI4_Memory_Controller: WDATA handshake => beat_count=3, waddr_beat=0x0000400c, wlast=0
+# [1515000] AXI4_Memory_Controller: RDATA => beat_count=1, raddr_beat=0x00022004, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022004
+#     => VARCL1 read: addr=0x004 => data_bit=x
+# [1515000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0000400c
+#   => CLAUSE write: sub-addr=0x008
+#   => READ beat 1: rdata=0x0000000X, rresp=00, rlast=0
+# [1515000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=0
+# [1525000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004010
+#   => CLAUSE write: sub-addr=0x00c
+#   => READ PASS: Expected=OKAY(00), Actual=00
+# [1525000] AXI4_Memory_Controller: WDATA handshake => beat_count=4, waddr_beat=0x00004010, wlast=1
+# [1525000] AXI4_Memory_Controller: WDATA handshake => beat_count=5, waddr_beat=0x00004014, wlast=1
+# [1535000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004014
+#   => CLAUSE write: sub-addr=0x010
+# [1545000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+#   => WRITE completed, bresp=00
+#   => WRITE PASS: Expected=OKAY(00), Actual=00
+# ========================================
+# TESTCASE: INCOMPLETE BURST => AW handshake, partial W beats, no WLAST
+# [1585000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=0
+# [1595000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000000
+#   => ATT write: addr=0x0006, data=0x7ace1111
+# [1595000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=0
+# [1595000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00000004, wlast=0
+# [1605000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000004
+#   => ATT write: addr=0x0000, data=0x2aaa0000
+# [1605000] AXI4_Memory_Controller: WDATA handshake => beat_count=2, waddr_beat=0x00000008, wlast=0
+# [1615000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000008
+#   => ATT write: addr=0x0004, data=0x2aaa1111
+#   => NO BVALID seen yet. Possibly PASS if design is waiting for WLAST/remaining beats.
 # ====================================================
-# TEST SUMMARY => test_passed=6, test_failed=0
+# TEST SUMMARY => test_passed=15, test_failed=0
 # ALL PASSED!
-# ** Note: $stop    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v(210)
-#    Time: 725 ns  Iteration: 0  Instance: /AXI4_Memory_Controller_tb
-# Break at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 210
-# Stopped at /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v line 210
-#  quit
-# End time: 15:40:13 on Jan 10,2025, Elapsed time: 0:00:01
+# ** Note: $finish    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v(223)
+#    Time: 2015 ns  Iteration: 0  Instance: /AXI4_Memory_Controller_tb
+# End time: 11:52:31 on Jan 11,2025, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
