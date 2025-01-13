@@ -50,6 +50,9 @@ Change Log:
 
 12/04/2024 - Harim Choe
     Added controller
+
+01/10/2024 - Harim Choe
+    Added AXI slave
 */
 module december_top_file #(
     parameter NSAT = 3,
@@ -57,7 +60,12 @@ module december_top_file #(
     parameter MAX_CLAUSE_MEMBERSHIP = 20,
     parameter FIFO_DEPTH = 32,
     parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048,
-    parameter CONTROLLER_SIGNAL_WIDTH = 14 // will change
+    parameter CONTROLLER_SIGNAL_WIDTH = 14, // will change
+
+    parameter AXI_ID_WIDTH    = 4,
+    parameter AXI_ADDR_WIDTH  = 32,
+    parameter AXI_DATA_WIDTH  = 32,
+    parameter AXI_STRB_WIDTH  = AXI_DATA_WIDTH / 8
 ) (
     input clk_i, rst_i,
     // controller signal : [x_xx_x_x_x_xx_x_xx_x_x]
@@ -65,8 +73,44 @@ module december_top_file #(
     input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i,
     // in progress
 
+    // Top controller interface
     input start_i,
-    output done_signal
+    output done_signal,
+
+    // AXI slave interface
+    input  wire [AXI_ID_WIDTH-1:0]      s_axi_awid,
+    input  wire [AXI_ADDR_WIDTH-1:0]    s_axi_awaddr,
+    input  wire [7:0]                   s_axi_awlen,
+    input  wire [2:0]                   s_axi_awsize,
+    input  wire [1:0]                   s_axi_awburst,
+    input  wire                         s_axi_awvalid,
+    output wire                         s_axi_awready,
+
+    input  wire [AXI_DATA_WIDTH-1:0]    s_axi_wdata,
+    input  wire [AXI_STRB_WIDTH-1:0]    s_axi_wstrb,
+    input  wire                         s_axi_wlast,
+    input  wire                         s_axi_wvalid,
+    output wire                         s_axi_wready,
+
+    output wire [AXI_ID_WIDTH-1:0]      s_axi_bid,
+    output wire [1:0]                   s_axi_bresp,
+    output wire                         s_axi_bvalid,
+    input  wire                         s_axi_bready,
+
+    input  wire [AXI_ID_WIDTH-1:0]      s_axi_arid,
+    input  wire [AXI_ADDR_WIDTH-1:0]    s_axi_araddr,
+    input  wire [7:0]                   s_axi_arlen,
+    input  wire [2:0]                   s_axi_arsize,
+    input  wire [1:0]                   s_axi_arburst,
+    input  wire                         s_axi_arvalid,
+    output wire                         s_axi_arready,
+
+    input  wire                         s_axi_rready,
+    output wire [AXI_ID_WIDTH-1:0]      s_axi_rid,
+    output wire [AXI_DATA_WIDTH-1:0]    s_axi_rdata,
+    output wire [1:0]                   s_axi_rresp,
+    output wire                         s_axi_rlast,
+    output wire                         s_axi_rvalid
 );
 
 // local parameters
@@ -78,10 +122,7 @@ localparam MC = MAX_CLAUSE_MEMBERSHIP;
 localparam MC_BITS = $clog2(MC);
 localparam NSAT_BITS = $clog2(NSAT);
 
-localparam AXI_ID_WIDTH    = 4;
-localparam AXI_ADDR_WIDTH  = 32;
-localparam AXI_DATA_WIDTH  = 32;
-localparam AXI_STRB_WIDTH  = AXI_DATA_WIDTH/8;
+// Local AXI slave parameters
 localparam MAX_BURST_LEN   = 16; // Placeholder, can change
 localparam ATT_BASE_ADDR     = 32'h0000_0000; // Address Translation Table
 localparam ATT_SIZE_BYTES    = 32'h0000_1000; // 4 KB
@@ -167,6 +208,35 @@ genvar n, m;
     wire [NSAT * VARIABLE_ADDRESS_WIDTH - 1 : 0] usc_selected_clause_addresses;
 
     wire [CLAUSE_WIDTH - 1 : 0] _selected_unsatisfied_clause;
+
+/* --- Internal wires for AXI <-> submodules  --- */
+// Address Translation Table side
+    wire [(11+20)-1 : 0] att_axi_rd_data_i;
+    wire                  att_axi_wr_en_o;
+    wire [12:0]           att_axi_wr_addr_o;
+    wire [(11+20)-1 : 0]  att_axi_wr_data_o;
+    wire                  att_axi_rd_en_o;
+    wire [12:0]           att_axi_rd_addr_o;
+
+    // Clause Table side
+    wire [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i;
+    wire                         clause_axi_wr_en_o;
+    wire [10:0]                  clause_axi_wr_addr_o;
+    wire [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o;
+    wire                         clause_axi_rd_en_o;
+    wire [10:0]                  clause_axi_rd_addr_o;
+
+    wire                         varcl1_axi_data_read_i;
+    wire                         varcl1_axi_en_o;
+    wire                         varcl1_axi_wr_en_o;
+    wire [10:0]                  varcl1_axi_addr_o;
+    wire                         varcl1_axi_data_o;
+
+    wire                         varcl2_axi_data_read_i;
+    wire                         varcl2_axi_en_o;
+    wire                         varcl2_axi_wr_en_o;
+    wire [10:0]                  varcl2_axi_addr_o;
+    wire                         varcl2_axi_data_o;
 
 /* --- clause register --- */
     Clause_Register #(
