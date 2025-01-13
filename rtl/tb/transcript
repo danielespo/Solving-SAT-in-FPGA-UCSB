@@ -1,25 +1,25 @@
 # do simulate.tcl
 # ** Warning: (vlib-34) Library already exists at "work".
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 11:52:30 on Jan 11,2025
+# Start time: 12:12:26 on Jan 13,2025
 # vlog -sv ../src/AXI4_Memory_Controller.v 
 # -- Compiling module AXI4_Memory_Controller
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller
-# End time: 11:52:30 on Jan 11,2025, Elapsed time: 0:00:00
+# End time: 12:12:26 on Jan 13,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
-# Start time: 11:52:30 on Jan 11,2025
+# Start time: 12:12:26 on Jan 13,2025
 # vlog -sv /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v 
 # -- Compiling module AXI4_Memory_Controller_tb
 # 
 # Top level modules:
 # 	AXI4_Memory_Controller_tb
-# End time: 11:52:30 on Jan 11,2025, Elapsed time: 0:00:00
+# End time: 12:12:26 on Jan 13,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vsim -c AXI4_Memory_Controller_tb -do "run -all; quit" 
-# Start time: 11:52:30 on Jan 11,2025
+# Start time: 12:12:26 on Jan 13,2025
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.33.1.el8_10.x86_64
 # //
@@ -469,10 +469,9 @@
 # [1615000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000008
 #   => ATT write: addr=0x0004, data=0x2aaa1111
 #   => NO BVALID seen yet. Possibly PASS if design is waiting for WLAST/remaining beats.
-# ====================================================
-# TEST SUMMARY => test_passed=15, test_failed=0
-# ALL PASSED!
-# ** Note: $finish    : /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/AXI4_Memory_Controller_tb.v(223)
-#    Time: 2015 ns  Iteration: 0  Instance: /AXI4_Memory_Controller_tb
-# End time: 11:52:31 on Jan 11,2025, Elapsed time: 0:00:01
+#   => Attempting follow-up single-beat write to test recovery...
+# Break key hit
+# Simulation stop requested.
+#  quit
+# End time: 12:12:41 on Jan 13,2025, Elapsed time: 0:00:15
 # Errors: 0, Warnings: 0

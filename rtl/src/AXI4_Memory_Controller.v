@@ -43,6 +43,9 @@ Change Log:
 
 01/10/2024:
     Fixed parameter lengths to match datapath
+
+01/11/2024:
+    Modified max burst length from 8 to 16
 */
 
 module AXI4_Memory_Controller #(
@@ -221,10 +224,10 @@ always @(posedge clk_i or posedge rst_i) begin
                 end
             end
             WADDR: begin
-                // No change
+                // No logical change
             end
             WDATA: begin
-                // No change
+                // No logical change
             end
         endcase
     end
