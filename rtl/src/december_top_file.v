@@ -53,6 +53,9 @@ Change Log:
 
 01/10/2024 - Harim Choe
     Added AXI slave
+
+01/13/2024 - Harim Choe
+    AXI slave integrated
 */
 module december_top_file #(
     parameter NSAT = 3,
@@ -318,7 +321,7 @@ genvar n, m;
     );
 
     assign clause_axi_rd_clauses_i = ct_clauses;
-    
+
     generate
         for(n = 0; n < MC - 1; n = n + 1) begin
             for(m = 0; m < NSAT - 1; m = m + 1) begin

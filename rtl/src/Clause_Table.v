@@ -24,7 +24,7 @@ Notes:
     The Clause Table is implemented with a simple dual port memory to acommodate the zynq 7000
     native. The write port will only be used before the accelerator starts running and the mem
     will behave as a rom afterwards. 
-
+XI
 Testing:
     None
     
