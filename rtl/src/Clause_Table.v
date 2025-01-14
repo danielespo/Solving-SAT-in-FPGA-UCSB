@@ -1,5 +1,5 @@
 /*
-Version: 2.0
+Version: 2.5
 Clause_Table.v
 
 V1.0 Author: Zeiler Randall-Reed
@@ -37,7 +37,7 @@ Change Log:
     naming changes
 
 2025/01/13 - Harim Choe
-    reset memory of clause table to 0 and added display for debugging
+    reset memory of clause table to 0 and added display for debugging (use it for axi simulation)
 */
 
 module Clause_Table #(

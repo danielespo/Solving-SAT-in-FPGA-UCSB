@@ -37,4 +37,4 @@ vsim -c -do $TCL_SCRIPT
 rm -f $TCL_SCRIPT
 
 # Use this code by first making it executable by chmod +x simulate.sh
-# Run the script like this: ./simulate.sh /fs/student/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/your_file.v
+# Run the script like this: ./simulate.sh /Solving-SAT-in-FPGA-UCSB/rtl/src/your_file.v
