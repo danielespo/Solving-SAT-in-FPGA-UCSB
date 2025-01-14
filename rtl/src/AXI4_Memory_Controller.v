@@ -169,12 +169,14 @@ always @(*) begin
 
     case (wstate)
         WIDLE: begin
+            $display("[MC W-FSM] In WIDLE");
             if (s_axi_awvalid) begin
                 s_axi_awready = 1'b1;
                 wnext         = WADDR;
             end
         end
         WADDR: begin
+            $display("[MC W-FSM] In WADDR");
             if (s_axi_wvalid) begin
                 s_axi_wready = 1'b1;
                 wnext = WDATA;
@@ -182,6 +184,7 @@ always @(*) begin
         end
         WDATA: begin
             s_axi_wready = 1'b1;
+            $display("[MC W-FSM] In WDATA");
             if (s_axi_wvalid && s_axi_wready) begin
                 $display("[%0t] AXI4_Memory_Controller: WDATA handshake => beat_count=%0d, waddr_beat=0x%08h, wlast=%b",
                          $time, awbeat_count, waddr_beat, s_axi_wlast);
@@ -192,6 +195,7 @@ always @(*) begin
         end
         WRESP: begin
             // Provide BVALID. Wait for BREADY.
+            $display("[MC W-FSM] In WRESP");
             if (s_axi_bready) begin
                 $display("[%0t] AXI4_Memory_Controller: WRESP done => returning to WIDLE", $time);
                 wnext = WIDLE;
@@ -211,6 +215,9 @@ always @(posedge clk_i or posedge rst_i) begin
         awbeat_count <= 8'd0;
         wburst_resp  <= RESP_OKAY;
     end else begin
+        $display("[MC W-FSM] state=%d, time=%t, wburst_resp=%b, wstate=%b, s_axi_wvalid=%b, s_axi_wready=%b, s_axi_bvalid=%b",
+                 wstate, $time, wburst_resp, wstate, s_axi_wvalid, s_axi_wready, s_axi_bvalid);
+
         case(wstate)
             WIDLE: begin
                 if(s_axi_awvalid && s_axi_awready) begin
@@ -307,8 +314,9 @@ always @(posedge clk_i or posedge rst_i) begin
             else if(waddr_beat >= CLAUSE_BASE_ADDR && waddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                 clause_axi_wr_en_o      <= 1'b1;
                 clause_axi_wr_addr_o    <= waddr_beat[10:0];
-                clause_axi_wr_clauses_o <= {( (11+1)*(3-1)*20 ){1'b0}};
-                $display("  => CLAUSE write: sub-addr=0x%03h", clause_axi_wr_addr_o);
+                // clause_axi_wr_clauses_o <= {( (11+1)*(3-1)*20 ){1'b0}};
+                clause_axi_wr_clauses_o <= {448'd0, s_axi_wdata};
+                $display("  => CLAUSE write: sub-addr=0x%03h, data=0x%08h", clause_axi_wr_addr_o, s_axi_wdata);
             end
             else if(waddr_beat >= VARCL1_BASE_ADDR && waddr_beat < (VARCL1_BASE_ADDR+VARCL1_SIZE_BYTES)) begin
                 varcl1_axi_en_o    <= 1'b1;
@@ -472,8 +480,9 @@ always @(posedge clk_i or posedge rst_i) begin
                 else if(raddr_beat >= CLAUSE_BASE_ADDR && raddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                     clause_axi_rd_en_o   <= 1'b1;
                     clause_axi_rd_addr_o = raddr_beat[10:0];
-                    s_axi_rdata = {AXI_DATA_WIDTH{1'b0}}; 
-                    $display("    => CLAUSE read: addr=0x%03h => returning 0", clause_axi_rd_addr_o);
+                    // s_axi_rdata = {AXI_DATA_WIDTH{1'b0}}; 
+                    s_axi_rdata = clause_axi_rd_clauses_i[31:0];
+                    $display("  => CLAUSE read: addr=0x%03h => data=0x%08h", clause_axi_rd_addr_o, s_axi_rdata);
                 end
                 else if(raddr_beat >= VARCL1_BASE_ADDR && raddr_beat < (VARCL1_BASE_ADDR + VARCL1_SIZE_BYTES)) begin
                     varcl1_axi_en_o   <= 1'b1;

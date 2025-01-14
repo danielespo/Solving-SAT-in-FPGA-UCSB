@@ -4,6 +4,7 @@ Clause_Table.v
 
 V1.0 Author: Zeiler Randall-Reed
 V2.0 Author: Barry Wang
+V2.5 Author: Harim Choe
 
 Description:
     The clause table holds the information for all of the clauses in the current problem. The 
@@ -34,7 +35,9 @@ Change Log:
 
 2024/09/11 - Zeiler Randall-Reed
     naming changes
-    
+
+2025/01/13 - Harim Choe
+    reset memory of clause table to 0 and added display for debugging
 */
 
 module Clause_Table #(
@@ -54,12 +57,24 @@ module Clause_Table #(
     input [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_i,
     output reg [CT_WIDTH - 1 : 0]          clauses_o
 );
-    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1];
+    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1]; // reg [479:0] mem [0:2047]
 
-    always @ (posedge clk_i)
-    begin
-        if (axi_wr_en_i) mem[axi_wr_addr_i] <= axi_wr_clauses_i;
+    integer k;
+
+    // reset memory to 0
+    initial begin
+        for (k = 0; k < DEPTH; k = k + 1) begin
+            mem[k] = 0;
+        end
+    end
+
+    always @ (posedge clk_i) begin
+        if (axi_wr_en_i) begin
+            mem[axi_wr_addr_i] <= axi_wr_clauses_i;
+            $display("Clause_Table: Written mem[%0d] = 0x%h", axi_wr_addr_i, axi_wr_clauses_i);
+        end
         clauses_o <= mem[rd_addr_i];
+        $display("Clause_Table: Read mem[%0d] = 0x%h", rd_addr_i, mem[rd_addr_i]);
     end
     
 endmodule

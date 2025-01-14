@@ -122,17 +122,6 @@ localparam MC = MAX_CLAUSE_MEMBERSHIP;
 localparam MC_BITS = $clog2(MC);
 localparam NSAT_BITS = $clog2(NSAT);
 
-// Local AXI slave parameters
-localparam MAX_BURST_LEN   = 16; // Placeholder, can change
-localparam ATT_BASE_ADDR     = 32'h0000_0000; // Address Translation Table
-localparam ATT_SIZE_BYTES    = 32'h0000_1000; // 4 KB
-localparam CLAUSE_BASE_ADDR  = 32'h0001_0000; // Clause Table
-localparam CLAUSE_SIZE_BYTES = 32'h0000_4000; // 16 KB
-localparam VARCL1_BASE_ADDR  = 32'h0002_0000; // 1st Variable Table Cluster
-localparam VARCL1_SIZE_BYTES = 32'h0000_2000; // 8 KB
-localparam VARCL2_BASE_ADDR  = 32'h0003_0000; // 2nd Variable Table Cluster
-localparam VARCL2_SIZE_BYTES = 32'h0000_2000;  // 8 KB
-
 // integer vars
 integer i, j;
 genvar n, m;
@@ -276,6 +265,8 @@ genvar n, m;
         .mask_o(att_mask_out)
     );
 
+    assign att_axi_rd_data_i = {att_addr_out, att_mask_out};
+
 /* --- clause negated literals buffer --- */
     generate
         for(n = 0; n < NSAT; n = n + 1) begin
@@ -326,6 +317,8 @@ genvar n, m;
         .clauses_o(ct_clauses)
     );
 
+    assign clause_axi_rd_clauses_i = ct_clauses;
+    
     generate
         for(n = 0; n < MC - 1; n = n + 1) begin
             for(m = 0; m < NSAT - 1; m = m + 1) begin
@@ -385,6 +378,8 @@ genvar n, m;
         .data_mo(vtc_value_bits)
     );
 
+    assign varcl1_axi_data_read_i = vtc_value_bits;
+
 /* --- temporal buffer wrapper --- */
     Temporal_Buffer_Wrapper #(
         .NSAT(NSAT),
@@ -443,6 +438,8 @@ genvar n, m;
         .axi_addr_i(varcl2_axi_addr_o),
         .axi_data_i(varcl2_axi_data_o)
     );
+
+    assign varcl2_axi_data_read_i = vtc2_value_bits;
 
 /* --- clause evaluator cluster --- */
     Clause_Evaluator_Cluster #(
@@ -557,19 +554,22 @@ genvar n, m;
         .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
         .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
         .AXI_STRB_WIDTH (AXI_STRB_WIDTH),
-        .MAX_BURST_LEN  (MAX_BURST_LEN),
-        .ATT_BASE_ADDR  (ATT_BASE_ADDR),
-        .ATT_SIZE_BYTES (ATT_SIZE_BYTES),
-        .CLAUSE_BASE_ADDR (CLAUSE_BASE_ADDR),
-        .CLAUSE_SIZE_BYTES(CLAUSE_SIZE_BYTES),
-        .VARCL1_BASE_ADDR(VARCL1_BASE_ADDR),
-        .VARCL1_SIZE_BYTES(VARCL1_SIZE_BYTES),
-        .VARCL2_BASE_ADDR(VARCL2_BASE_ADDR),
-        .VARCL2_SIZE_BYTES(VARCL2_SIZE_BYTES)
-    ) axi_inst (
-        .clk_i      (clk_i),
-        .rst_i      (rst_i),
-        // Write address
+        .MAX_BURST_LEN  (16),
+
+        // Base addresses for each region
+        .ATT_BASE_ADDR     (32'h00000000),
+        .ATT_SIZE_BYTES    (32'h00004000),
+        .CLAUSE_BASE_ADDR  (32'h00004000),
+        .CLAUSE_SIZE_BYTES (32'h0001e000),
+        .VARCL1_BASE_ADDR  (32'h00022000),
+        .VARCL1_SIZE_BYTES (32'h00002000),
+        .VARCL2_BASE_ADDR  (32'h00024000),
+        .VARCL2_SIZE_BYTES (32'h00002000)
+    ) memory_controller (
+        .clk_i          (clk_i),
+        .rst_i          (rst_i),
+
+        // AXI slave interface
         .s_axi_awid     (s_axi_awid),
         .s_axi_awaddr   (s_axi_awaddr),
         .s_axi_awlen    (s_axi_awlen),
@@ -578,20 +578,17 @@ genvar n, m;
         .s_axi_awvalid  (s_axi_awvalid),
         .s_axi_awready  (s_axi_awready),
 
-        // Write data
         .s_axi_wdata    (s_axi_wdata),
         .s_axi_wstrb    (s_axi_wstrb),
         .s_axi_wlast    (s_axi_wlast),
         .s_axi_wvalid   (s_axi_wvalid),
         .s_axi_wready   (s_axi_wready),
 
-        // Write response
         .s_axi_bid      (s_axi_bid),
         .s_axi_bresp    (s_axi_bresp),
         .s_axi_bvalid   (s_axi_bvalid),
         .s_axi_bready   (s_axi_bready),
 
-        // Read address
         .s_axi_arid     (s_axi_arid),
         .s_axi_araddr   (s_axi_araddr),
         .s_axi_arlen    (s_axi_arlen),
@@ -600,40 +597,42 @@ genvar n, m;
         .s_axi_arvalid  (s_axi_arvalid),
         .s_axi_arready  (s_axi_arready),
 
-        // Read data
+        .s_axi_rready   (s_axi_rready),
         .s_axi_rid      (s_axi_rid),
         .s_axi_rdata    (s_axi_rdata),
         .s_axi_rresp    (s_axi_rresp),
         .s_axi_rlast    (s_axi_rlast),
         .s_axi_rvalid   (s_axi_rvalid),
-        .s_axi_rready   (s_axi_rready),
 
-        // Submodules
-        .att_axi_wr_en_o    (att_axi_wr_en_o),
-        .att_axi_wr_addr_o  (att_axi_wr_addr_o),
-        .att_axi_wr_data_o  (att_axi_wr_data_o),
-        .att_axi_rd_en_o    (att_axi_rd_en_o),
-        .att_axi_rd_addr_o  (att_axi_rd_addr_o),
-        .att_axi_rd_data_i  (att_axi_rd_data_i),
+        // Address Translation Table
+        .att_axi_rd_data_i      (att_axi_rd_data_i),
+        .att_axi_wr_en_o        (att_axi_wr_en_o),
+        .att_axi_wr_addr_o      (att_axi_wr_addr_o),
+        .att_axi_wr_data_o      (att_axi_wr_data_o),
+        .att_axi_rd_en_o        (att_axi_rd_en_o),
+        .att_axi_rd_addr_o      (att_axi_rd_addr_o),
 
-        .clause_axi_wr_en_o      (clause_axi_wr_en_o),
-        .clause_axi_wr_addr_o    (clause_axi_wr_addr_o),
-        .clause_axi_wr_clauses_o (clause_axi_wr_clauses_o),
-        .clause_axi_rd_en_o      (clause_axi_rd_en_o),
-        .clause_axi_rd_addr_o    (clause_axi_rd_addr_o),
-        .clause_axi_rd_clauses_i (clause_axi_rd_clauses_i),
+        // Clause Table
+        .clause_axi_rd_clauses_i  (clause_axi_rd_clauses_i),
+        .clause_axi_wr_en_o       (clause_axi_wr_en_o),
+        .clause_axi_wr_addr_o     (clause_axi_wr_addr_o),
+        .clause_axi_wr_clauses_o  (clause_axi_wr_clauses_o),
+        .clause_axi_rd_en_o       (clause_axi_rd_en_o),
+        .clause_axi_rd_addr_o     (clause_axi_rd_addr_o),
 
-        .varcl1_axi_en_o    (varcl1_axi_en_o),
-        .varcl1_axi_wr_en_o (varcl1_axi_wr_en_o),
-        .varcl1_axi_addr_o  (varcl1_axi_addr_o),
-        .varcl1_axi_data_o  (varcl1_axi_data_o),
+        // Var Table #1
         .varcl1_axi_data_read_i (varcl1_axi_data_read_i),
+        .varcl1_axi_en_o        (varcl1_axi_en_o),
+        .varcl1_axi_wr_en_o     (varcl1_axi_wr_en_o),
+        .varcl1_axi_addr_o      (varcl1_axi_addr_o),
+        .varcl1_axi_data_o      (varcl1_axi_data_o),
 
-        .varcl2_axi_en_o    (varcl2_axi_en_o),
-        .varcl2_axi_wr_en_o (varcl2_axi_wr_en_o),
-        .varcl2_axi_addr_o  (varcl2_axi_addr_o),
-        .varcl2_axi_data_o  (varcl2_axi_data_o),
-        .varcl2_axi_data_read_i (varcl2_axi_data_read_i)
+        // Var Table #2
+        .varcl2_axi_data_read_i (varcl2_axi_data_read_i),
+        .varcl2_axi_en_o        (varcl2_axi_en_o),
+        .varcl2_axi_wr_en_o     (varcl2_axi_wr_en_o),
+        .varcl2_axi_addr_o      (varcl2_axi_addr_o),
+        .varcl2_axi_data_o      (varcl2_axi_data_o)
     );
 
     generate
