@@ -4,6 +4,7 @@ Address_Translation_Table.v
 
 V1.0 Author: Dan Espinosa
 V2.0 Author: Barry Wang
+V2.5 Author: Harim Choe
 
 Description:
     This is a configurable width/depth memory with a
@@ -26,6 +27,9 @@ Change Log:
 2024/09/11 - Zeiler Randall-Reed
     Changed "VARIABLE_ADDRESS_WIDTH" to "LITERAL_ADDRESS_WIDTH" to match naming in other modules
     naming convention parity
+
+2025/01/14 - Harim Choe
+    Initalize mask_out and addr_out as 0
 
 -----------------------------------------------------*/
 
@@ -51,10 +55,16 @@ module Address_Translation_Table # (
     localparam WIDTH = CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT;
     
     reg [WIDTH - 1 : 0] ram [0 : DEPTH - 1];
-    
     reg [WIDTH - 1 : 0] dout;
     
     // assign {addr_o, mask_o} = dout; // potential alternative, but unclear
+    integer i;
+    initial begin
+        dout = {WIDTH{1'b0}};
+        for (i = 0; i < DEPTH; i = i + 1)
+            ram[i] = {WIDTH{1'b0}};
+    end
+
     assign mask_o = dout[CLAUSE_COUNT - 1 : 0];
     assign addr_o = dout[WIDTH - 1 : CLAUSE_COUNT];
     

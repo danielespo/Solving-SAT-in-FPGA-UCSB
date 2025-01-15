@@ -263,7 +263,8 @@ genvar n, m;
         .axi_wr_en_i   (att_axi_wr_en_o),
         .axi_wr_addr_i (att_axi_wr_addr_o),
         .axi_wr_data_i (att_axi_wr_data_o),
-        .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]), // Modified this line
+        // .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]), // Modified this line
+        .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]),
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
     );

@@ -175,7 +175,7 @@ always @(posedge clk or posedge rst) begin
 	end
 end
 
-// TODO: learn how to subinstance this and set it to 1 lol
+// TODO: learn how to subinstance this and set it to 1
 // The general idea is that now in this branch we have access to the output state of the state machine based on the
 // state_data output, so you cna use it as a conditional inside this state machine controller
 // so that you can advance the state of the solver in the IDLE -> LOAD state and the DONE to IDLE states
