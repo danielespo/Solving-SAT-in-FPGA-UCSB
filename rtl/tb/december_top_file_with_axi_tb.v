@@ -9,7 +9,7 @@ module december_top_file_with_axi_tb;
     reg rst_i;
     reg start_i;
 
-    // AXI signals
+    // AXI signals (same as before)
     localparam AXI_ID_WIDTH   = 4;
     localparam AXI_ADDR_WIDTH = 32;
     localparam AXI_DATA_WIDTH = 32;
@@ -56,14 +56,14 @@ module december_top_file_with_axi_tb;
     // Internally driven control signals from the datapath's controller
     wire [13:0] control_signal_i;
 
+    // Instantiate the DUT (same as before)
     december_top_file #(
        .AXI_ID_WIDTH   (AXI_ID_WIDTH),
        .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
        .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
        .AXI_STRB_WIDTH (AXI_STRB_WIDTH)
        // plus other parameters
-    ) 
-    dut (
+    ) dut (
         .clk_i          (clk_i),
         .rst_i          (rst_i),
         .start_i        (start_i),
@@ -106,16 +106,19 @@ module december_top_file_with_axi_tb;
         .s_axi_rvalid   (s_axi_rvalid)
     );
 
-    // Simple clock
+    // Simple clock & reset
     initial begin
         rst_i = 1'b1;
         #50;
         rst_i = 1'b0;
     end
 
+    //------------------------------------------------------
+    //  Single-Beat Write Task
+    //------------------------------------------------------
     task axi_write_single(
-    input [AXI_ADDR_WIDTH-1:0] addr,
-    input [AXI_DATA_WIDTH-1:0] data
+        input [AXI_ADDR_WIDTH-1:0] addr,
+        input [AXI_DATA_WIDTH-1:0] data
     );
     begin
         // AW channel handshake
@@ -126,9 +129,7 @@ module december_top_file_with_axi_tb;
         s_axi_awburst <= 2'b01;   // INCR
         s_axi_awsize  <= 3'd2;    // 4 bytes
         @(posedge clk_i);
-        while (!s_axi_awready) begin
-            @(posedge clk_i);
-        end
+        while (!s_axi_awready) @(posedge clk_i);
         s_axi_awvalid <= 1'b0;
 
         // W channel handshake
@@ -139,29 +140,25 @@ module december_top_file_with_axi_tb;
 
         // Wait for WREADY
         @(posedge clk_i);
-        while (!s_axi_wready) begin
-            @(posedge clk_i);
-        end
+        while (!s_axi_wready) @(posedge clk_i);
 
         @(posedge clk_i);
-
-        // Now deassert
         s_axi_wvalid <= 1'b0;
         s_axi_wlast  <= 1'b0;
 
         // B channel handshake
         s_axi_bready <= 1'b1;
         @(posedge clk_i);
-        while (!s_axi_bvalid) begin
-            @(posedge clk_i);
-        end
+        while (!s_axi_bvalid) @(posedge clk_i);
 
         @(posedge clk_i);
         s_axi_bready <= 1'b0;
     end
     endtask
 
-    // Single-beat AXI Read Task
+    //------------------------------------------------------
+    //  Single-Beat Read Task
+    //------------------------------------------------------
     task axi_read_single(
         input  [AXI_ADDR_WIDTH-1:0] addr,
         output [AXI_DATA_WIDTH-1:0] data_out
@@ -179,31 +176,29 @@ module december_top_file_with_axi_tb;
         // Wait for ARREADY
         @(posedge clk_i);
         while(!s_axi_arready) begin
-            $display("    [axi_read_single] Waiting for ARREADY... t=%t", $time);
             @(posedge clk_i);
         end
-        $display("    [axi_read_single] AR handshake done at t=%t", $time);
         s_axi_arvalid <= 1'b0;
 
         // Wait for RVALID
         s_axi_rready  <= 1'b1;
-        while(!s_axi_rvalid) begin
-            $display("    [axi_read_single] Waiting for RVALID... t=%t", $time);
-            @(posedge clk_i);
-        end
+        while(!s_axi_rvalid) @(posedge clk_i);
+
         data_out = s_axi_rdata;
-        $display("    [axi_read_single] Got RVALID, rdata=0x%08h, rresp=%b, time=%t",
-                 data_out, s_axi_rresp, $time);
         @(posedge clk_i);
         s_axi_rready <= 1'b0;
-        $display("==== Single-Beat Read Complete from addr=0x%08h, data=0x%08h @time=%t ====\n",
-                 addr, data_out, $time);
     end
     endtask
 
-    // We’ll just do one single write, one single read, for demonstration
-    localparam [31:0] EXAMPLE_ADDR = 32'h00004000;
-    localparam [31:0] EXAMPLE_DATA = 32'hDEADBEEF;
+    // Address Regions
+    localparam ATT_BASE_ADDR       = 32'h00000000; // For Address Translation Table
+    localparam CLAUSE_TABLE_ADDR   = 32'h00004000; // For Clause Table
+
+    // For Clause Table: just store 0xDEADBEEF
+    localparam [31:0] ATT_EXAMPLE_OFFSET   = 32'h00000000; // literal=0
+    localparam [31:0] ATT_EXAMPLE_DATA     = 32'h00000001;
+    localparam [31:0] CLAUSE_EXAMPLE_OFFSET= 32'h00000000;
+    localparam [31:0] CLAUSE_EXAMPLE_DATA  = 32'hDEADBEEF;
 
     reg [31:0] readback;
 
@@ -212,9 +207,9 @@ module december_top_file_with_axi_tb;
         forever begin
             @(posedge clk_i);
             $display("T=%0t: done_signal=%b, AWV=%b, AWR=%b, WV=%b, WR=%b, BV=%b, ARV=%b, ARR=%b, RV=%b, RL=%b",
-                $time, done_signal, 
-                s_axi_awvalid, s_axi_awready, 
-                s_axi_wvalid, s_axi_wready, 
+                $time, done_signal,
+                s_axi_awvalid, s_axi_awready,
+                s_axi_wvalid, s_axi_wready,
                 s_axi_bvalid,
                 s_axi_arvalid, s_axi_arready,
                 s_axi_rvalid, s_axi_rlast);
@@ -252,14 +247,30 @@ module december_top_file_with_axi_tb;
         $display("=== TB: Reset de-asserted at T=%0t ===", $time);
 
         #50;
-        // Single AXI write to one address
-        axi_write_single(EXAMPLE_ADDR, EXAMPLE_DATA);
 
-        // Optionally read it back
-        axi_read_single(EXAMPLE_ADDR, readback);
-        $display("TB: readback=0x%08h (expected=0x%08h)", readback, EXAMPLE_DATA);
+        //-------------------------------
+        // 1) Write to ATT (literal=0)
+        //-------------------------------
+        $display("==== Writing to ATT, address=0, data=0x%08h", ATT_EXAMPLE_DATA);
+        axi_write_single(ATT_BASE_ADDR + ATT_EXAMPLE_OFFSET, ATT_EXAMPLE_DATA);
 
-        // Start solver or other logic
+        // Read it back
+        axi_read_single(ATT_BASE_ADDR + ATT_EXAMPLE_OFFSET, readback);
+        $display("TB: ATT readback=0x%08h (expected=0x%08h)", readback, ATT_EXAMPLE_DATA);
+
+        //-------------------------------
+        // 2) Write to Clause Table (row=0)
+        //-------------------------------
+        $display("==== Writing Clause Table[0], data=0x%08h ====", CLAUSE_EXAMPLE_DATA);
+        axi_write_single(CLAUSE_TABLE_ADDR + CLAUSE_EXAMPLE_OFFSET, CLAUSE_EXAMPLE_DATA);
+
+        // Read it back
+        axi_read_single(CLAUSE_TABLE_ADDR + CLAUSE_EXAMPLE_OFFSET, readback);
+        $display("TB: Clause Table readback=0x%08h (expected=0x%08h)", readback, CLAUSE_EXAMPLE_DATA);
+
+        //-------------------------------
+        // 3) (Optional) Start the solver
+        //-------------------------------
         #100;
         $display("=== TB: Asserting start_i @T=%0t ===", $time);
         start_i = 1'b1;
