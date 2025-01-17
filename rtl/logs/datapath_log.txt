@@ -1,3 +1,7 @@
+Reading pref.tcl
+
+# 10.7d
+
 # vsim -c december_top_file_with_axi_tb -do "run -all; quit" 
 # Start time: 10:08:25 on Jan 17,2025
 # ** Note: (vsim-8009) Loading existing optimized design _opt1

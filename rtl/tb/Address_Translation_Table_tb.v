@@ -26,7 +26,7 @@ module Address_Translation_Table_tb;
     reg axi_wr_en;
     reg [LITERAL_ADDRESS_WIDTH:0] axi_wr_addr;
     reg [WIDTH-1:0] axi_wr_data;
-    reg [LITERAL_ADDRESS_WIDTH:0] rd_addr;
+    reg [10:0] rd_addr;
 
     wire [CLAUSE_COUNT-1:0] mask_out;
     wire [CLAUSE_TABLE_ADDRESS_WIDTH-1:0] addr_out;
@@ -59,7 +59,6 @@ module Address_Translation_Table_tb;
 
         // Test 1: Reset behavior
         #10;
-        $display("mask_out=%b, addr_out=%b", mask_out, addr_out);
         $display("TEST 1: Checking reset behavior...");
         if (mask_out == 0 && addr_out == 0)
             $display("TEST 1 PASSED: Reset behavior is correct");
@@ -73,7 +72,7 @@ module Address_Translation_Table_tb;
         axi_wr_data = {11'b10101010101, 20'b11110000111100001111}; // Clause + Mask
         #10;
         axi_wr_en = 0;
-        rd_addr = 12'h001; // Address to read
+        rd_addr = 11'h001; // Address to read
         #10;
 
         if (addr_out == 11'b10101010101 && mask_out == 20'b11110000111100001111)
@@ -93,14 +92,14 @@ module Address_Translation_Table_tb;
         axi_wr_en = 0;
 
         // Read back from different addresses
-        rd_addr = 12'h002;
+        rd_addr = 11'h002;
         #10;
         if (addr_out == 11'b01010101010 && mask_out == 20'b00001111000011110000)
             $display("TEST 3.1 PASSED: Random access read 1 is correct");
         else
             $display("TEST 3.1 FAILED: Random access read 1 is incorrect");
 
-        rd_addr = 12'h003;
+        rd_addr = 11'h003;
         #10;
         if (addr_out == 11'b11111111111 && mask_out == 20'b10101010101010101010)
             $display("TEST 3.2 PASSED: Random access read 2 is correct");
@@ -109,7 +108,7 @@ module Address_Translation_Table_tb;
 
         // Test 4: Check correctness of outputs
         $display("TEST 4: Verifying correctness of outputs...");
-        rd_addr = 12'h001; // Go back to address 1
+        rd_addr = 11'h001; // Go back to address 1
         #10;
         if (addr_out == 11'b10101010101 && mask_out == 20'b11110000111100001111)
             $display("TEST 4 PASSED: Outputs are correct for address 1");
@@ -118,6 +117,14 @@ module Address_Translation_Table_tb;
 
         $display("All tests completed.");
         $stop;
+    end
+
+    // Monitor Signal Changes
+    initial begin
+        $monitor(
+            "Time=%0t | clk=%b | axi_wr_en=%b | axi_wr_addr=%h | axi_wr_data=%h | rd_addr=%h | mask_out=%b | addr_out=%b", 
+            $time, clk, axi_wr_en, axi_wr_addr, axi_wr_data, rd_addr, mask_out, addr_out
+        );
     end
 
 endmodule

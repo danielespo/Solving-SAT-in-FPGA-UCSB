@@ -45,7 +45,15 @@ module Variable_Table #(
 );
 
     reg ram [0 : 2 ** VARIABLE_ADDRESS_WIDTH - 1];
-    
+
+    integer i;
+    initial begin
+        data_o = 1'b0;
+        for (i = 0; i < 2 ** VARIABLE_ADDRESS_WIDTH; i = i + 1) begin
+            ram[i] = 0;
+        end
+    end
+
     always @(posedge clk_i)
     begin
         if (en_i)

@@ -151,4 +151,10 @@ module Variable_Table_Cluster_tb;
         $stop;
     end
 
+    // Monitor signal changes
+    initial begin
+        $monitor("Time=%0t | en=%b | wr_en=%b | addr_m=%b | data_in=%b | axi_en=%b | axi_wr_en=%b | axi_addr=%d | axi_data=%b", 
+                    $time, en, wr_en, addr_m, data_in, axi_en, axi_wr_en, axi_addr, axi_data);
+    end
+
 endmodule

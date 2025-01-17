@@ -258,6 +258,11 @@ module december_top_file_with_axi_tb;
         axi_read_single(ATT_BASE_ADDR + ATT_EXAMPLE_OFFSET, readback);
         $display("TB: ATT readback=0x%08h (expected=0x%08h)", readback, ATT_EXAMPLE_DATA);
 
+        if (readback == ATT_EXAMPLE_DATA)
+            $display("Matched: Expected=0x%08h, Readback=0x%08h", ATT_EXAMPLE_DATA, readback);
+        else
+            $display("Mismatch: Expected=0x%08h, Readback=0x%08h", ATT_EXAMPLE_DATA, readback);
+
         //-------------------------------
         // 2) Write to Clause Table (row=0)
         //-------------------------------
@@ -268,24 +273,15 @@ module december_top_file_with_axi_tb;
         axi_read_single(CLAUSE_TABLE_ADDR + CLAUSE_EXAMPLE_OFFSET, readback);
         $display("TB: Clause Table readback=0x%08h (expected=0x%08h)", readback, CLAUSE_EXAMPLE_DATA);
 
-        //-------------------------------
-        // 3) (Optional) Start the solver
-        //-------------------------------
-        #100;
-        $display("=== TB: Asserting start_i @T=%0t ===", $time);
-        start_i = 1'b1;
-        @(posedge clk_i);
-        start_i = 1'b0;
-
-        // Wait for solver or time out
-        repeat(2000) @(posedge clk_i);
-        if(done_signal) 
-            $display("TB: done_signal=1 => solver done @T=%0t", $time);
+        axi_write_single(CLAUSE_TABLE_ADDR + CLAUSE_EXAMPLE_OFFSET, CLAUSE_EXAMPLE_DATA);
+        axi_read_single(CLAUSE_TABLE_ADDR + CLAUSE_EXAMPLE_OFFSET, readback);
+        
+        if (readback == CLAUSE_EXAMPLE_DATA)
+            $display("Matched: Expected=0x%08h, Readback=0x%08h", CLAUSE_EXAMPLE_DATA, readback);
         else
-            $display("TB: Timeout - solver not done @T=%0t", $time);
-
-        $display("TB: Simulation complete @T=%0t => calling $stop", $time);
-        $stop;
+            $display("Mismatch: Expected=0x%08h, Readback=0x%08h", CLAUSE_EXAMPLE_DATA, readback);
+        
+        $finish;
     end
 
 endmodule

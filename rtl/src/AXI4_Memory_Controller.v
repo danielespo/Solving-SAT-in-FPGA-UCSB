@@ -311,10 +311,9 @@ always @(posedge clk_i or posedge rst_i) begin
                 $display("  => ATT write: addr=0x%04h, data=0x%08h",
                          att_axi_wr_addr_o, att_axi_wr_data_o);
             end
-            else if(waddr_beat >= CLAUSE_BASE_ADDR && waddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
+            else if (waddr_beat >= CLAUSE_BASE_ADDR && waddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                 clause_axi_wr_en_o      <= 1'b1;
                 clause_axi_wr_addr_o    <= waddr_beat[10:0];
-                // clause_axi_wr_clauses_o <= {( (11+1)*(3-1)*20 ){1'b0}};
                 clause_axi_wr_clauses_o <= {448'd0, s_axi_wdata};
                 $display("  => CLAUSE write: sub-addr=0x%03h, data=0x%08h", clause_axi_wr_addr_o, s_axi_wdata);
             end
@@ -477,11 +476,10 @@ always @(posedge clk_i or posedge rst_i) begin
                     s_axi_rdata       <= {{(AXI_DATA_WIDTH-(11+20)){1'b0}}, att_axi_rd_data_i};
                     $display("    => ATT read: addr=0x%04h => data=0x%08h", att_axi_rd_addr_o, s_axi_rdata);
                 end
-                else if(raddr_beat >= CLAUSE_BASE_ADDR && raddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
+                else if (raddr_beat >= CLAUSE_BASE_ADDR && raddr_beat < (CLAUSE_BASE_ADDR + CLAUSE_SIZE_BYTES)) begin
                     clause_axi_rd_en_o   <= 1'b1;
-                    clause_axi_rd_addr_o = raddr_beat[10:0];
-                    // s_axi_rdata = {AXI_DATA_WIDTH{1'b0}}; 
-                    s_axi_rdata = clause_axi_rd_clauses_i[31:0];
+                    clause_axi_rd_addr_o <= raddr_beat[10:0];
+                    s_axi_rdata          <= clause_axi_rd_clauses_i[arbeat_count * AXI_DATA_WIDTH +: AXI_DATA_WIDTH];
                     $display("  => CLAUSE read: addr=0x%03h => data=0x%08h", clause_axi_rd_addr_o, s_axi_rdata);
                 end
                 else if(raddr_beat >= VARCL1_BASE_ADDR && raddr_beat < (VARCL1_BASE_ADDR + VARCL1_SIZE_BYTES)) begin

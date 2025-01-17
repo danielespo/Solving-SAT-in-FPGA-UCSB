@@ -22,6 +22,8 @@ Change Log:
 
 */
 
+`timescale 1ns / 1ps
+
 module Clause_Table_tb;
     parameter CLAUSE_COUNT = 20;
     parameter DEPTH = 2048;
@@ -29,7 +31,7 @@ module Clause_Table_tb;
     parameter NSAT = 3;
     parameter CT_WIDTH = (VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT; // 480
 
-    // IO
+    // IO signals
     reg clk;
     reg axi_wr_en_input;
     reg [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_wr_addr_input;
@@ -37,7 +39,7 @@ module Clause_Table_tb;
     reg [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_input;
     wire [CT_WIDTH - 1 : 0] clauses_output;
 
-    // HW
+    // Clause Table instantiation
     Clause_Table #(
         .CLAUSE_COUNT(CLAUSE_COUNT),
         .DEPTH(DEPTH),
@@ -52,46 +54,77 @@ module Clause_Table_tb;
         .clauses_o(clauses_output)
     );
     
-    // 20 ns period, 50 MHz
+    // Clock generation: 20 ns period (50 MHz)
     initial begin
         clk = 0;
         forever #10 clk = ~clk;
     end
 
-    // Test
+    // Test Process
     initial begin
-        // IO
+        // Initialize inputs
         axi_wr_en_input = 0;
-        axi_wr_addr_input = {11{1'b0}}; //start as empty
-        axi_wr_clauses_input = {480{1'b0}};
-        rd_addr_input = {12{1'b0}};
-
-        // Wait 100 ns, no reset in this ROM ?...
+        axi_wr_addr_input = 0;
+        axi_wr_clauses_input = 0;
+        rd_addr_input = 0;
         #100;
+        
+        // Test 1: Write a Clause and Read It Back
+        $display("TEST 1: Writing and reading a clause at address 1...");
 
-        // Enable write and load data
         axi_wr_en_input = 1;
         axi_wr_addr_input = 11'd1;
-        // One clause example data: 1b negation 11b literal
-
-        axi_wr_clauses_input = 480'd2050; // empty except (x1 x2 x3 at addr 11'h1)
-        // ie. 
-        // 24 (0 00000000001 0 0000000010)
-        // Wait to observe output
-        #100;
+        axi_wr_clauses_input = 480'hAABBCCDDEEFF00112233445566778899AABBCCDDEEFF00112233445566778899;
+        #20; // Wait (2 clock cycles)
         axi_wr_en_input = 0;
-        #100
-        rd_addr_input = 11'd1;
 
-        #2000;
-        // Stop the simulation
+        #10;
+        rd_addr_input = 11'd1;
+        #20;
+        if (clauses_output == 480'hAABBCCDDEEFF00112233445566778899AABBCCDDEEFF00112233445566778899) begin
+            $display("TEST 1 PASSED: Correct data read from address 1.");
+        end else begin
+            $display("TEST 1 FAILED: Incorrect data read from address 1. Read: 0x%h", clauses_output);
+        end
+
+        // Test 2: Write and Read Another Clause
+        $display("TEST 2: Writing and reading a clause at address 100...");
+
+        axi_wr_en_input = 1;
+        axi_wr_addr_input = 11'd100;
+        axi_wr_clauses_input = 480'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+        #20; // Wait (2 clock cycles)
+        axi_wr_en_input = 0;
+
+        #10;
+        rd_addr_input = 11'd100;
+        #20; 
+        if (clauses_output == 480'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF) begin
+            $display("TEST 2 PASSED: Correct data read from address 100.");
+        end else begin
+            $display("TEST 2 FAILED: Incorrect data read from address 100. Read: 0x%h", clauses_output);
+        end
+
+        // Test 3: Attempt to Read from an Unwritten Address
+        $display("TEST 3: Reading from an unwritten address (address 500)...");
+
+        rd_addr_input = 11'd500;
+        #20;
+        if (clauses_output == 480'd0) begin
+            $display("TEST 3 PASSED: Correct data (all zeros) read from unwritten address 500.");
+        end else begin
+            $display("TEST 3 FAILED: Incorrect data read from address 500. Read: 0x%h", clauses_output);
+        end
+
+        // End of tests
+        $display("All tests completed.");
         $stop;
     end
 
-    // Monitor changes
+    // Monitor signal changes
     initial begin
-        $monitor("Time=%0t, axi_wr_en_input=%b, axi_wr_addr_input=%d, axi_wr_clauses_input=%d, clauses_output=%d", 
-                 $time, axi_wr_en_input, axi_wr_addr_input, axi_wr_clauses_input, clauses_output);
+        $monitor("Time=%0t | axi_wr_en_input=%b | axi_wr_addr_input=%d | axi_wr_clauses_input=0x%h | rd_addr_input=%d | clauses_output=0x%h", 
+                 $time, axi_wr_en_input, axi_wr_addr_input, axi_wr_clauses_input, rd_addr_input, clauses_output);
     end
 
 endmodule

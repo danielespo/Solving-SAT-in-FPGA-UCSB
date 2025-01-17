@@ -46,7 +46,7 @@ module Address_Translation_Table # (
     input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] axi_wr_data_i,
 
     // runtime read io
-    input       [LITERAL_ADDRESS_WIDTH : 0]          rd_addr_i,
+    input       [LITERAL_ADDRESS_WIDTH-2 : 0]          rd_addr_i,
     output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1 : 0] addr_o,
     output wire [CLAUSE_COUNT - 1 : 0]               mask_o
 );
@@ -63,6 +63,7 @@ module Address_Translation_Table # (
         dout = {WIDTH{1'b0}};
         for (i = 0; i < DEPTH; i = i + 1)
             ram[i] = {WIDTH{1'b0}};
+        $display("Address Translation Table Initialized.");
     end
 
     assign mask_o = dout[CLAUSE_COUNT - 1 : 0];
@@ -70,8 +71,16 @@ module Address_Translation_Table # (
     
     always @(posedge clk_i)
     begin
-        if (axi_wr_en_i) ram[axi_wr_addr_i] <= axi_wr_data_i;
+        // Handle write operations
+        if (axi_wr_en_i) begin
+            ram[axi_wr_addr_i] <= axi_wr_data_i;
+            $display("Write operation: Address = %0h, Data = %0h", axi_wr_addr_i, axi_wr_data_i);
+        end
+
+        // Handle read operations
         dout <= ram[rd_addr_i];
+        $display("Read operation: Address = %0h, Data = %0h (Addr_o = %0h, Mask_o = %0h)", 
+                 rd_addr_i, dout, addr_o, mask_o);
     end
 
 endmodule
