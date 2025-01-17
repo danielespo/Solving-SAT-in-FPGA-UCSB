@@ -1,6 +1,6 @@
-# vsim -c december_top_file_with_axi_tb -do "run -all; quit" 
-# Start time: 10:08:25 on Jan 17,2025
-# ** Note: (vsim-8009) Loading existing optimized design _opt1
+# vsim -c december_top_file_tb -do "run -all; quit" 
+# Start time: 11:10:09 on Jan 17,2025
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.34.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -14,232 +14,351 @@
 # //  is prohibited from disclosure under the Trade Secrets Act,
 # //  18 U.S.C. Section 1905.
 # //
-# Loading work.december_top_file_with_axi_tb(fast)
+# Loading work.december_top_file_tb(fast)
 # run -all
 # Address Translation Table Initialized.
 # [MC W-FSM] In WIDLE
 # Read operation: Address = x, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# T=5000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # Read operation: Address = 0, Data = x (Addr_o = x, Mask_o = x)
 # Clause_Table: Read mem[x] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# T=15000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# T=25000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# T=35000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# T=45000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# === TB: Reset de-asserted at T=50000 ===
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=               55000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=55000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# 
+# --- Initializing first 4 variables to 0 in varcl1 region ---
+# [MC W-FSM] In WIDLE
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=               65000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=65000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] In WADDR
+# Reset de-asserted
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=               75000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=75000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=1, time=               75000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [MC W-FSM] In WDATA
+# [75000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022000, wlast=1
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=               85000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=85000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [85000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022000
+#   => VARCL1 write: addr=0x000, data_bit=0
+# [MC W-FSM] state=2, time=               85000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [MC W-FSM] In WRESP
+# [85000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=               95000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=95000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# ==== Writing to ATT, address=0, data=0x00000001
+# [MC W-FSM] state=3, time=               95000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # [MC W-FSM] In WIDLE
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              105000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=105000: done_signal=0, AWV=1, AWR=1, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=0, time=              105000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
+# [MC W-FSM] In WIDLE
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# [MC W-FSM] state=0, time=              115000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # [MC W-FSM] In WADDR
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=1, time=              115000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=115000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=1, time=              125000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
 # [MC W-FSM] In WDATA
-# [115000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00000000, wlast=1
+# [125000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022004, wlast=1
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [125000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00000000
-#   => ATT write: addr=0x0000, data=0x00000000
-# [MC W-FSM] state=2, time=              125000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=125000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [135000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022004
+#   => VARCL1 write: addr=0x000, data_bit=0
+# [MC W-FSM] state=2, time=              135000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
 # [MC W-FSM] In WRESP
-# [125000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
-# Write operation: Address = 0, Data = 1
+# [135000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=3, time=              135000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=135000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=3, time=              145000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # [MC W-FSM] In WIDLE
 # Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              145000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
-# T=145000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=1, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              155000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# 
-# ==== Single-Beat Read: addr=0x00000000 @time=              155000 ====
-# T=155000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=0, time=              155000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
 # [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=              165000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=165000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=1, ARR=1, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# [MC W-FSM] In WADDR
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              175000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=175000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# [MC W-FSM] state=1, time=              175000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [MC W-FSM] In WDATA
+# [175000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00022008, wlast=1
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [185000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00000000, rlast=0, rresp=00
-#   read_from_submodules: raddr=0x00000000
-#     => ATT read: addr=0xxxxx => data=0x00000000
-# [MC W-FSM] state=0, time=              185000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=185000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# [185000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00022008
+#   => VARCL1 write: addr=0x004, data_bit=0
+# [MC W-FSM] state=2, time=              185000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [MC W-FSM] In WRESP
+# [185000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              195000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=195000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=1, RL=1
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [MC W-FSM] state=0, time=              205000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# TB: ATT readback=0x00000001 (expected=0x00000001)
-# Matched: Expected=0x00000001, Readback=0x00000001
-# ==== Writing Clause Table[0], data=0xdeadbeef ====
-# T=205000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [MC W-FSM] state=3, time=              195000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# [MC W-FSM] state=0, time=              205000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
+# [MC W-FSM] In WIDLE
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=              215000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=215000: done_signal=0, AWV=1, AWR=1, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # [MC W-FSM] In WADDR
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=1, time=              225000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=225000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # [MC W-FSM] In WDATA
-# [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=1
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
+# [225000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x0002200c, wlast=1
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-# [235000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
-#   => CLAUSE write: sub-addr=0x000, data=0xdeadbeef
+# [235000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x0002200c
+#   => VARCL1 write: addr=0x008, data_bit=0
 # [MC W-FSM] state=2, time=              235000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=235000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # [MC W-FSM] In WRESP
 # [235000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Written mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
 # Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=3, time=              245000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=245000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=              255000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
-# T=255000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=1, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# 
+# --- Writing 3 clauses via AXI burst to clause table region ---
+# [MC W-FSM] In WIDLE
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 # [MC W-FSM] state=0, time=              265000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# 
-# ==== Single-Beat Read: addr=0x00004000 @time=              265000 ====
-# T=265000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              275000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=275000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=1, ARR=1, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              285000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=285000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [295000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00004000, rlast=0, rresp=00
-#   read_from_submodules: raddr=0x00004000
-#   => CLAUSE read: addr=0x000 => data=0x00000001
-# [MC W-FSM] state=0, time=              295000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=295000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              305000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=305000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=1, RL=1
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              315000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# TB: Clause Table readback=0xdeadbeef (expected=0xdeadbeef)
-# T=315000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              325000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=325000: done_signal=0, AWV=1, AWR=1, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
 # [MC W-FSM] In WADDR
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=1, time=              335000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=335000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# [MC W-FSM] state=1, time=              275000, wburst_resp=00, wstate=01, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
 # [MC W-FSM] In WDATA
-# [335000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=1
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [345000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
-#   => CLAUSE write: sub-addr=0x000, data=0xdeadbeef
-# [MC W-FSM] state=2, time=              345000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
-# T=345000: done_signal=0, AWV=0, AWR=0, WV=1, WR=1, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [275000] AXI4_Memory_Controller: WDATA handshake => beat_count=0, waddr_beat=0x00004000, wlast=0
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# [285000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004000
+#   => CLAUSE write: sub-addr=0x000, data=0x00860381
+# [MC W-FSM] state=2, time=              285000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [MC W-FSM] In WDATA
+# [285000] AXI4_Memory_Controller: WDATA handshake => beat_count=1, waddr_beat=0x00004004, wlast=1
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Written mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# [MC W-FSM] state=2, time=              295000, wburst_resp=00, wstate=10, s_axi_wvalid=1, s_axi_wready=1, s_axi_bvalid=0
+# [295000] AXI4_Memory_Controller: submodule decode => waddr_beat=0x00004004
+#   => CLAUSE write: sub-addr=0x000, data=0x00028704
 # [MC W-FSM] In WRESP
-# [345000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Written mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=3, time=              355000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=355000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# [295000] AXI4_Memory_Controller: WRESP done => returning to WIDLE
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Written mem[4] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000028704
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=3, time=              305000, wburst_resp=00, wstate=11, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              365000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
-# T=365000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=1, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [MC W-FSM] state=0, time=              375000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              315000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=1
 # 
-# ==== Single-Beat Read: addr=0x00004000 @time=              375000 ====
-# T=375000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
+# --- Starting solver ---
 # [MC W-FSM] In WIDLE
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              325000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              335000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = 0, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              345000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Clause_Table: Read mem[0] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              355000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000860381
+# [MC W-FSM] state=0, time=              365000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              375000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # [MC W-FSM] state=0, time=              385000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=385000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=1, ARR=1, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # [MC W-FSM] state=0, time=              395000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=395000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
-# [405000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00004000, rlast=0, rresp=00
-#   read_from_submodules: raddr=0x00004000
-#   => CLAUSE read: addr=0x000 => data=0xdeadbeef
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # [MC W-FSM] state=0, time=              405000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=405000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=0, RL=0
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # [MC W-FSM] state=0, time=              415000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# T=415000: done_signal=0, AWV=0, AWR=0, WV=0, WR=0, BV=0, ARV=0, ARR=0, RV=1, RL=1
-# Read operation: Address = 0, Data = 1 (Addr_o = 0, Mask_o = 1)
-# Clause_Table: Read mem[0] = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # [MC W-FSM] state=0, time=              425000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
-# Matched: Expected=0xdeadbeef, Readback=0xdeadbeef
-# ** Note: $finish    : december_top_file_with_axi_tb.v(284)
-#    Time: 425 ns  Iteration: 1  Instance: /december_top_file_with_axi_tb
-# End time: 10:08:25 on Jan 17,2025, Elapsed time: 0:00:00
+# 
+# --- Solver finished. Reading back first 8 variables from VARCL1 ---
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              435000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              445000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [455000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022000, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022000
+#     => VARCL1 read: addr=0x000 => data_bit=0
+# [MC W-FSM] state=0, time=              455000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              465000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          1 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              475000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              485000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [495000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022004, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022004
+#     => VARCL1 read: addr=0x004 => data_bit=0
+# [MC W-FSM] state=0, time=              495000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              505000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          2 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              515000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              525000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [535000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022008, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022008
+#     => VARCL1 read: addr=0x008 => data_bit=0
+# [MC W-FSM] state=0, time=              535000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              545000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          3 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              555000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              565000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [575000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x0002200c, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x0002200c
+#     => VARCL1 read: addr=0x00c => data_bit=0
+# [MC W-FSM] state=0, time=              575000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              585000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          4 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              595000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              605000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [615000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022010, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022010
+#     => VARCL1 read: addr=0x010 => data_bit=0
+# [MC W-FSM] state=0, time=              615000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              625000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          5 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              635000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              645000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [655000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022014, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022014
+#     => VARCL1 read: addr=0x014 => data_bit=0
+# [MC W-FSM] state=0, time=              655000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              665000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          6 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              675000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              685000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [695000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x00022018, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x00022018
+#     => VARCL1 read: addr=0x018 => data_bit=0
+# [MC W-FSM] state=0, time=              695000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              705000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          7 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              715000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              725000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [735000] AXI4_Memory_Controller: RDATA => beat_count=0, raddr_beat=0x0002201c, rlast=0, rresp=00
+#   read_from_submodules: raddr=0x0002201c
+#     => VARCL1 read: addr=0x01c => data_bit=0
+# [MC W-FSM] state=0, time=              735000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              745000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# x          8 = 0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              755000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              765000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              775000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              785000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              795000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              805000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              815000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              825000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Clause_Table: Read mem[x] = 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# [MC W-FSM] state=0, time=              835000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
+# ** Note: $finish    : december_top_file_tb.v(372)
+#    Time: 845 ns  Iteration: 0  Instance: /december_top_file_tb
+# End time: 11:10:09 on Jan 17,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0

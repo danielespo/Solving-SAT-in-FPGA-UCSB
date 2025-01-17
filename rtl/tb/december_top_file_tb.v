@@ -2,318 +2,381 @@
 
 module december_top_file_tb;
 
-    // Parameters
-    parameter CLK_PERIOD = 10; // Clock period in ns
-    parameter NSAT = 3;
-    parameter NUM_VARIABLES = 2048;
-    parameter MAX_CLAUSE_MEMBERSHIP = 20;
-    parameter FIFO_DEPTH = 32;
-    parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048;
-    parameter CONTROLLER_SIGNAL_WIDTH = 14;
-    localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);
-    localparam LITERAL_ADDRESS_WIDTH  = VARIABLE_ADDRESS_WIDTH + 1;
-    localparam CLAUSE_WIDTH = NSAT * 8; // 24 bits (3 * 8)
+    parameter CLK_PERIOD                = 10;
+    parameter NSAT                      = 3;
+    parameter NUM_VARIABLES            = 2048;
+    parameter MAX_CLAUSE_MEMBERSHIP    = 20;
+    parameter FIFO_DEPTH               = 32;
+    parameter UNSAT_CLAUSE_BUFFER_DEPTH= 2048;
+    parameter CONTROLLER_SIGNAL_WIDTH  = 14;
+
+    localparam VARIABLE_ADDRESS_WIDTH  = $clog2(NUM_VARIABLES);
+    localparam LITERAL_ADDRESS_WIDTH   = VARIABLE_ADDRESS_WIDTH + 1;
+    localparam CLAUSE_WIDTH            = NSAT * 8; // 24 bits (3 * 8)
+
+    // AXI parameters
+    localparam AXI_ID_WIDTH   = 4;
+    localparam AXI_ADDR_WIDTH = 32;
+    localparam AXI_DATA_WIDTH = 32;
+    localparam AXI_STRB_WIDTH = AXI_DATA_WIDTH/8;
+
+    // Base addresses from the AXI4_Memory_Controller parameters
+    localparam ATT_BASE_ADDR    = 32'h00000000;  
+    localparam CLAUSE_BASE_ADDR = 32'h00004000;  // Clause Table region starts here
+    localparam VARCL1_BASE_ADDR = 32'h00022000;  // Variable Table #1 region
+    localparam VARCL2_BASE_ADDR = 32'h00024000;  // Variable Table #2 region
 
     // Signals
-    reg clk_i;
-    reg rst_i;
-    reg start_i;
+    reg  clk_i;
+    reg  rst_i;
+    reg  start_i;
     wire [CONTROLLER_SIGNAL_WIDTH-1:0] control_signal_i;
     wire done_signal;
 
-    // Hardcoded clauses
-    reg [CLAUSE_WIDTH-1:0] hardcoded_clauses [2:0];
+    // AXI Master -> DUT signals
+    reg  [AXI_ID_WIDTH-1:0]  s_axi_awid;
+    reg  [AXI_ADDR_WIDTH-1:0] s_axi_awaddr;
+    reg  [7:0]                s_axi_awlen;
+    reg  [2:0]                s_axi_awsize;
+    reg  [1:0]                s_axi_awburst;
+    reg                       s_axi_awvalid;
+    wire                      s_axi_awready;
 
-    // Instantiate the DUT
+    reg  [AXI_DATA_WIDTH-1:0] s_axi_wdata;
+    reg  [AXI_STRB_WIDTH-1:0] s_axi_wstrb;
+    reg                       s_axi_wlast;
+    reg                       s_axi_wvalid;
+    wire                      s_axi_wready;
+
+    wire [AXI_ID_WIDTH-1:0]   s_axi_bid;
+    wire [1:0]                s_axi_bresp;
+    wire                      s_axi_bvalid;
+    reg                       s_axi_bready;
+
+    reg  [AXI_ID_WIDTH-1:0]   s_axi_arid;
+    reg  [AXI_ADDR_WIDTH-1:0] s_axi_araddr;
+    reg  [7:0]                s_axi_arlen;
+    reg  [2:0]                s_axi_arsize;
+    reg  [1:0]                s_axi_arburst;
+    reg                       s_axi_arvalid;
+    wire                      s_axi_arready;
+
+    reg                       s_axi_rready;
+    wire [AXI_ID_WIDTH-1:0]   s_axi_rid;
+    wire [AXI_DATA_WIDTH-1:0] s_axi_rdata;
+    wire [1:0]                s_axi_rresp;
+    wire                      s_axi_rlast;
+    wire                      s_axi_rvalid;
+
+    // Hardcoded clauses (24 bits each, but stored in 32 bits)
+    // (We put the 24-bit clause in bits [23:0] of the 32-bit word.)
+    reg [31:0] hardcoded_clauses [0:2];
+
     december_top_file #(
         .NSAT(NSAT),
         .NUM_VARIABLES(NUM_VARIABLES),
         .MAX_CLAUSE_MEMBERSHIP(MAX_CLAUSE_MEMBERSHIP),
         .FIFO_DEPTH(FIFO_DEPTH),
         .UNSAT_CLAUSE_BUFFER_DEPTH(UNSAT_CLAUSE_BUFFER_DEPTH),
-        .CONTROLLER_SIGNAL_WIDTH(CONTROLLER_SIGNAL_WIDTH)
-    ) 
+        .CONTROLLER_SIGNAL_WIDTH(CONTROLLER_SIGNAL_WIDTH),
+        .AXI_ID_WIDTH   (AXI_ID_WIDTH),
+        .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
+        .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
+        .AXI_STRB_WIDTH (AXI_STRB_WIDTH)
+    )
     dut (
         .clk_i(clk_i),
         .rst_i(rst_i),
         .start_i(start_i),
         .control_signal_i(control_signal_i),
-        .done_signal(done_signal)
+        .done_signal(done_signal),
+
+        // AXI slave interface
+        .s_axi_awid     (s_axi_awid),
+        .s_axi_awaddr   (s_axi_awaddr),
+        .s_axi_awlen    (s_axi_awlen),
+        .s_axi_awsize   (s_axi_awsize),
+        .s_axi_awburst  (s_axi_awburst),
+        .s_axi_awvalid  (s_axi_awvalid),
+        .s_axi_awready  (s_axi_awready),
+
+        .s_axi_wdata    (s_axi_wdata),
+        .s_axi_wstrb    (s_axi_wstrb),
+        .s_axi_wlast    (s_axi_wlast),
+        .s_axi_wvalid   (s_axi_wvalid),
+        .s_axi_wready   (s_axi_wready),
+
+        .s_axi_bid      (s_axi_bid),
+        .s_axi_bresp    (s_axi_bresp),
+        .s_axi_bvalid   (s_axi_bvalid),
+        .s_axi_bready   (s_axi_bready),
+
+        .s_axi_arid     (s_axi_arid),
+        .s_axi_araddr   (s_axi_araddr),
+        .s_axi_arlen    (s_axi_arlen),
+        .s_axi_arsize   (s_axi_arsize),
+        .s_axi_arburst  (s_axi_arburst),
+        .s_axi_arvalid  (s_axi_arvalid),
+        .s_axi_arready  (s_axi_arready),
+
+        .s_axi_rready   (s_axi_rready),
+        .s_axi_rid      (s_axi_rid),
+        .s_axi_rdata    (s_axi_rdata),
+        .s_axi_rresp    (s_axi_rresp),
+        .s_axi_rlast    (s_axi_rlast),
+        .s_axi_rvalid   (s_axi_rvalid)
     );
 
     // Clock generation
     always #(CLK_PERIOD/2) clk_i = ~clk_i;
 
-    integer i;
-
-    // Task to check if all clauses are satisfied
-    task check_all_clauses_satisfaction;
+    // Single-beat AXI write: writes one 32-bit word
+    task axi_write_single;
+        input [AXI_ADDR_WIDTH-1:0] addr;
+        input [AXI_DATA_WIDTH-1:0] data;
         begin
-            $display("Checking all clauses satisfaction...");
-            $display("Variable Table Cluster data: %b", dut.vtc_value_bits);
-            
-            // Check each clause
-            for (i = 0; i < 3; i = i + 1) begin
-                $display("Checking clause %0d: (%b OR %b OR %b)",
-                    i,
-                    hardcoded_clauses[i][23:16],
-                    hardcoded_clauses[i][15:8],
-                    hardcoded_clauses[i][7:0]
-                );
+            // Send AW
+            s_axi_awvalid <= 1'b1;
+            s_axi_awaddr  <= addr;
+            s_axi_awid    <= 4'h1;
+            s_axi_awlen   <= 0;        // single beat
+            s_axi_awburst <= 2'b01;    // INCR
+            s_axi_awsize  <= 3'd2;     // 2 => 4 bytes per beat (32 bits)
+
+            // Wait for AWREADY
+            @(posedge clk_i);
+            while(!s_axi_awready) @(posedge clk_i);
+            // De-assert AWVALID
+            s_axi_awvalid <= 1'b0;
+
+            // Send W
+            s_axi_wdata  <= data;
+            s_axi_wstrb  <= 4'hF;   // All bytes valid
+            s_axi_wlast  <= 1'b1;
+            s_axi_wvalid <= 1'b1;
+
+            // Wait for WREADY
+            @(posedge clk_i);
+            while(!s_axi_wready) @(posedge clk_i);
+            // De-assert WVALID
+            @(posedge clk_i);
+            s_axi_wvalid <= 1'b0;
+            s_axi_wlast  <= 1'b0;
+
+            // Wait for BVALID
+            s_axi_bready <= 1'b1;
+            @(posedge clk_i);
+            while(!s_axi_bvalid) @(posedge clk_i);
+
+            // De-assert BREADY
+            s_axi_bready <= 1'b0;
+        end
+    endtask
+
+    // Multi-beat AXI write burst
+    task axi_write_burst;
+        input [AXI_ADDR_WIDTH-1:0] start_addr;
+        input [7:0] burst_len;  // #beats - 1
+        input [AXI_DATA_WIDTH*256-1:0] burst_data; 
+               // Just big enough array to hold up to 256 words if you want
+        integer i;
+        reg [31:0] word;
+        begin
+            // Send AW
+            s_axi_awid    <= 'h2;
+            s_axi_awaddr  <= start_addr;
+            s_axi_awlen   <= burst_len;   // number_of_beats - 1
+            s_axi_awsize  <= 3'd2;        // 4 bytes
+            s_axi_awburst <= 2'b01;       // INCR
+            s_axi_awvalid <= 1'b1;
+
+            // Wait for AWREADY
+            @(posedge clk_i);
+            while(!s_axi_awready) @(posedge clk_i);
+            s_axi_awvalid <= 1'b0;
+
+            // Write each beat
+            for(i=0; i<=burst_len; i=i+1) begin
+                word = burst_data[i*32 +: 32];
+                s_axi_wdata  <= word;
+                s_axi_wstrb  <= 4'b1111;
+                s_axi_wlast  <= (i==burst_len); // last beat
+                s_axi_wvalid <= 1'b1;
+
+                @(posedge clk_i);
+                while(!s_axi_wready) @(posedge clk_i);
                 
-                if ((hardcoded_clauses[i][23] ^ dut.vtc_value_bits[hardcoded_clauses[i][22:16]]) |
-                    (hardcoded_clauses[i][15] ^ dut.vtc_value_bits[hardcoded_clauses[i][14:8]]) |
-                    (hardcoded_clauses[i][7] ^ dut.vtc_value_bits[hardcoded_clauses[i][6:0]])) begin
-                    $display("Clause %0d is SATISFIED", i);
-                end else begin
-                    $display("Clause %0d is NOT SATISFIED", i);
-                end
+                s_axi_wvalid <= 1'b0;
             end
 
-            $display("Variable assignments: x1=%b, x2=%b, x3=%b, x4=%b", 
-                     dut.vtc_value_bits[0],
-                     dut.vtc_value_bits[1],
-                     dut.vtc_value_bits[2],
-                     dut.vtc_value_bits[3]);
+            // Wait for BVALID
+            s_axi_bready <= 1'b1;
+            @(posedge clk_i);
+            while(!s_axi_bvalid) @(posedge clk_i);
+            // De-assert BREADY
+            s_axi_bready <= 1'b0;
         end
     endtask
 
-    // Task to initialize the variable table
-    task initialize_variable_table;
+    task axi_read_single;
+        input  [AXI_ADDR_WIDTH-1:0] addr;
+        output [AXI_DATA_WIDTH-1:0] data;
+        begin
+            // Send AR
+            s_axi_arid    <= 'h3;
+            s_axi_araddr  <= addr;
+            s_axi_arlen   <= 0;         // single beat
+            s_axi_arsize  <= 3'd2;      // 4 bytes
+            s_axi_arburst <= 2'b01;     // INCR
+            s_axi_arvalid <= 1'b1;
+
+            @(posedge clk_i);
+            while(!s_axi_arready) @(posedge clk_i);
+            s_axi_arvalid <= 1'b0;
+
+            // Now wait for RVALID
+            s_axi_rready <= 1'b1;
+            @(posedge clk_i);
+            while(!s_axi_rvalid) @(posedge clk_i);
+
+            data = s_axi_rdata;  // latch the returned data
+
+            // De-assert RREADY
+            s_axi_rready <= 1'b0;
+
+            // Wait for RLAST if it’s not the same cycle
+            while(!s_axi_rlast) @(posedge clk_i);
+        end
+    endtask
+
+    // AXI read burst
+    task axi_read_burst;
+        input [AXI_ADDR_WIDTH-1:0] start_addr;
+        input [7:0] burst_len;
+        output reg [AXI_DATA_WIDTH*256-1:0] read_data;
         integer i;
         begin
-            // Enable writing to the variable table
-            force dut.vt_en = 1'b1;
-            force dut.vt_wr_en = 1'b1;
-            force dut.vt_addr_src = 1'b0;
+            // Send AR
+            s_axi_arid    <= 'h3;
+            s_axi_araddr  <= start_addr;
+            s_axi_arlen   <= burst_len;
+            s_axi_arsize  <= 3'd2;      // 4 bytes
+            s_axi_arburst <= 2'b01;     // INCR
+            s_axi_arvalid <= 1'b1;
 
-            for (i = 0; i < NUM_VARIABLES; i = i + 1) begin
-                force dut._vtc_address_m = i[VARIABLE_ADDRESS_WIDTH-1:0];
-                force dut._vtc_data = 1'b0;
-                #(CLK_PERIOD);
-            end
+            @(posedge clk_i);
+            while(!s_axi_arready) @(posedge clk_i);
+            s_axi_arvalid <= 1'b0;
 
-            // Disable writing to the variable table
-            force dut.vt_en = 1'b0;
-            force dut.vt_wr_en = 1'b0;
-        end
-    endtask
-
-    // Task to load clauses into the clause table
-    task load_clauses;
-        integer i;
-        begin
-            // Enable writing to the clause table
-            force dut.clause_table.axi_wr_en_i = 1'b1;
-
-            for (i = 0; i < 3; i = i + 1) begin
-                force dut.clause_table.axi_wr_addr_i = i;
-                force dut.clause_table.axi_wr_clauses_i = hardcoded_clauses[i];
-                #(CLK_PERIOD);
-            end
-
-            // Disable writing to the clause table
-            force dut.clause_table.axi_wr_en_i = 1'b0;
-        end
-    endtask
-
-    // Task to display solved clauses
-    task display_solved_clauses;
-        reg [NUM_VARIABLES-1:0] variable_assignments;
-        reg [2:0] clause_results;
-
-        reg literal_value;
-        reg is_negated;
-        reg [VARIABLE_ADDRESS_WIDTH-1:0] var_index;
-        integer i, j;
-        begin
-            // Read variable assignments from the Variable Table Cluster
-            for (i = 0; i < NUM_VARIABLES; i = i + 1) begin
-                variable_assignments[i] = dut.vtc_value_bits[i];
-            end
-
-            $display("Final variable assignments:");
-            for (i = 0; i < 10; i = i + 1) begin // Display first 10 variables
-                $display("x%0d = %b", i+1, variable_assignments[i]);
-            end
-
-            // Evaluate each clause
-            for (i = 0; i < 3; i = i + 1) begin
-                clause_results[i] = 1'b0; // Initialize to false
-                for (j = 0; j < NSAT; j = j + 1) begin
-                    is_negated = hardcoded_clauses[i][j*8 + 7];
-                    var_index = hardcoded_clauses[i][j*8 +: VARIABLE_ADDRESS_WIDTH];
-                    literal_value = variable_assignments[var_index];
-
-                    clause_results[i] = clause_results[i] | (literal_value ^ is_negated);
+            i = 0;
+            s_axi_rready <= 1'b1;
+            while(i <= burst_len) begin
+                @(posedge clk_i);
+                if(s_axi_rvalid) begin
+                    read_data[i*32 +: 32] = s_axi_rdata;
+                    i = i+1;
                 end
             end
-
-            // Display results
-            $display("\nSolved clauses:");
-            for (i = 0; i < 3; i = i + 1) begin
-                $display("Clause %0d: (%s%0d OR %s%0d OR %s%0d) = %s",
-                    i+1,
-                    hardcoded_clauses[i][23] ? "NOT " : "", hardcoded_clauses[i][22:16] + 1,
-                    hardcoded_clauses[i][15] ? "NOT " : "", hardcoded_clauses[i][14:8] + 1,
-                    hardcoded_clauses[i][7]  ? "NOT " : "", hardcoded_clauses[i][6:0] + 1,
-                    clause_results[i] ? "SATISFIED" : "NOT SATISFIED"
-                );
-            end
-
-            $display("\nOverall result: %s", &clause_results ? "SAT" : "UNSAT");
+            // De-assert RREADY
+            s_axi_rready <= 1'b0;
         end
     endtask
 
-    // Test stimulus
+    // Clock / Reset
     initial begin
-        // Initialize signals
         clk_i = 0;
         rst_i = 1;
         start_i = 0;
 
-        // Hardcode clauses (24 bits for 3-SAT with 8-bit literal addressing)
-        // (x5 OR NOT x2 OR x7)
-        hardcoded_clauses[0] = {8'b00000101, 8'b10000010, 8'b00000111};
-        // (NOT x1 OR x3 OR NOT x6)
-        hardcoded_clauses[1] = {8'b10000110, 8'b00000011, 8'b10000001};
-        // (x4 OR NOT x7 OR x2)
-        hardcoded_clauses[2] = {8'b00000010, 8'b10000111, 8'b00000100};
-        
-        $display("Hardcoded clauses:");
-        $display("Clause 1: (x5 OR NOT x2 OR x7)");
-        $display("Clause 2: (NOT x1 OR x3 OR NOT x6)");
-        $display("Clause 3: (x4 OR NOT x7 OR x2)");
+        s_axi_awid    = 0;
+        s_axi_awaddr  = 0;
+        s_axi_awlen   = 0;
+        s_axi_awsize  = 0;
+        s_axi_awburst = 0;
+        s_axi_awvalid = 0;
 
-        // Reset
-        #(CLK_PERIOD*2);
+        s_axi_wdata   = 0;
+        s_axi_wstrb   = 0;
+        s_axi_wlast   = 0;
+        s_axi_wvalid  = 0;
+
+        s_axi_bready  = 0;
+
+        s_axi_arid    = 0;
+        s_axi_araddr  = 0;
+        s_axi_arlen   = 0;
+        s_axi_arsize  = 0;
+        s_axi_arburst = 0;
+        s_axi_arvalid = 0;
+        s_axi_rready  = 0;
+
+        // Wait a couple cycles, then deassert reset
+        #(CLK_PERIOD*5);
         rst_i = 0;
+        #(CLK_PERIOD*2);
+        $display("Reset de-asserted");
+    end
+
+    // Hardcode clauses as 32-bit words (lowest 24 bits are the clause)
+    // (x5 OR NOT x2 OR x7) = bits: [23:16] = literal1, [15:8] = literal2, [7:0] = literal3
+    initial begin
+        // (x5 OR NOT x2 OR x7)
+        hardcoded_clauses[0] = {8'h00, 8'b00000101, 8'b10000010, 8'b00000111};
+        // (NOT x1 OR x3 OR NOT x6)
+        hardcoded_clauses[1] = {8'h00, 8'b10000110, 8'b00000011, 8'b10000001};
+        // (x4 OR NOT x7 OR x2)
+        hardcoded_clauses[2] = {8'h00, 8'b00000010, 8'b10000111, 8'b00000100};
+    end
+
+    reg [AXI_DATA_WIDTH*256-1:0] burst_data;
+    reg [31:0] var_data;
+    integer i;  
+
+    initial begin
+        // Wait for end of reset
+        @(negedge rst_i);
         #(CLK_PERIOD);
-        $display("Reset complete");
+        
+        // Initialize variable table memory if desired
+        $display("\n--- Initializing first 4 variables to 0 in varcl1 region ---");
+        axi_write_single(VARCL1_BASE_ADDR + 0, 32'h00000000); 
+        axi_write_single(VARCL1_BASE_ADDR + 4, 32'h00000000);
+        axi_write_single(VARCL1_BASE_ADDR + 8, 32'h00000000);
+        axi_write_single(VARCL1_BASE_ADDR + 12,32'h00000000);
 
-        // Initialize variable table
-        initialize_variable_table();
-        $display("Variable table initialized");
+        // Load 3 clauses into the Clause Table region via a single burst
+        burst_data[ 0 +: 32] = hardcoded_clauses[0];
+        burst_data[32 +: 32] = hardcoded_clauses[1];
+        burst_data[64 +: 32] = hardcoded_clauses[2];
 
-        // Load clauses
-        load_clauses();
-        $display("Clauses loaded");
+        $display("\n--- Writing 3 clauses via AXI burst to clause table region ---");
+        axi_write_burst(CLAUSE_BASE_ADDR, 8'd2 /*3 beats*/, burst_data);
 
         // Start the solver
-        start_i = 1;
-        #(CLK_PERIOD);
-        start_i = 0;
-        $display("Solver started");
+        $display("\n--- Starting solver ---");
+        start_i <= 1'b1;
+        @(posedge clk_i);
+        start_i <= 1'b0;
 
-        // Wait for done signal or timeout
+        // Wait for done or time out
         repeat(10000) begin
-            #(CLK_PERIOD);
+            @(posedge clk_i);
             if (done_signal) begin
-                $display("Solver finished");
-                display_solved_clauses();
+                $display("\n--- Solver finished. Reading back first 8 variables from VARCL1 ---");
+                for (i = 0; i < 8; i = i + 1) begin
+                    axi_read_single(VARCL1_BASE_ADDR + (i*4), var_data);
+                    $display("x%d = %b", i+1, var_data[0]);
+                end
                 #(CLK_PERIOD*10);
                 $finish;
             end
         end
 
-        // If we reach here, the solver has timed out
-        $display("Solver timed out");
-        display_solved_clauses();
+        $display("\n--- Solver timed out ---");
         #(CLK_PERIOD*10);
         $finish;
     end
 
-    // // Monitor control signals
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: control_signal_i = %b", $time, control_signal_i);
-    // end
-
-    // // Monitor state transitions
-    // always @(posedge clk_i) begin
-    //     case(dut.controller_inst.state)
-    //         4'd0: $display("Time %t: State = IDLE", $time);
-    //         4'd1: $display("Time %t: State = LOAD", $time);
-    //         4'd2: $display("Time %t: State = SELECT_UNSAT_CLAUSES", $time);
-    //         4'd3: $display("Time %t: State = READ_CLAUSE_TABLE", $time);
-    //         4'd4: $display("Time %t: State = READ_VARIABLE_TABLE", $time);
-    //         4'd5: $display("Time %t: State = EVALUATE_CLAUSE", $time);
-    //         4'd6: $display("Time %t: State = COUNT_UNSAT_CLAUSES", $time);
-    //         4'd7: $display("Time %t: State = GATHER_UNSAT_CLAUSES", $time);
-    //         4'd8: $display("Time %t: State = SELECT_UNSAT_CLAUSES_AGAIN", $time);
-    //         4'd9: $display("Time %t: State = DONE", $time);
-    //         default: $display("Time %t: State = UNKNOWN", $time);
-    //     endcase
-    // end
-
-    // // Monitor for Clause Register
-    // always @(posedge clk_i) begin
-    //     if (dut.cr_wr_en)
-    //         $display("Time %t: Clause Register - Writing clause: %h", $time, dut.ucs_selected_clause);
-    //     $display("Time %t: Clause Register - Current clause: %h", $time, dut.cr_selected_clause);
-    // end
-
-    // // Monitor for Address Translation Table
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: ATT - Input address: %h, Output address: %h, Mask: %b", 
-    //              $time, dut._cr_negated_literal, dut.att_addr_out, dut.att_mask_out);
-    // end
-
-    // // Monitor for Clause Table
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: Clause Table - Reading clauses for address: %h", $time, dut.att_addr_out);
-    //     $display("Time %t: Clause Table - Output clauses: %h", $time, dut.ct_clauses);
-    // end
-
-    // // Monitor for Variable Table Cluster
-    // always @(posedge clk_i) begin
-    //     if (dut.vt_wr_en)
-    //         $display("Time %t: VTC - Writing data: %b to addresses: %h", $time, dut._vtc_data, dut._vtc_address_m);
-    //     $display("Time %t: VTC - Reading values: %b", $time, dut.vtc_value_bits);
-    // end
-
-    // // Monitor for Temporal Buffer Wrapper
-    // always @(posedge clk_i) begin
-    //     if (~(&dut.tb_wr_index))
-    //         $display("Time %t: TBW - Writing literals: %h, Index: %b", $time, dut.ct_clauses, dut.tb_wr_index);
-    //     $display("Time %t: TBW - Reading literals: %h, Index: %b", $time, dut.tbw_literals_multi_out, dut.vfs_selected);
-    // end
-
-    // // Monitor for Clause Evaluator Cluster
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: CEC - Input values: %b, Negations: %b", $time, dut.vtc_value_bits, dut.nb_negation_bits);
-    //     $display("Time %t: CEC - Break bits: %b", $time, dut.ce1_break_bits);
-    // end
-
-    // // Monitor for Variable Flip Selector
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: VFS - Break bits: %b, Mask: %b, Random: %h", 
-    //              $time, dut.ce1_break_bits, dut.mb_mask_bits, dut.prng_random_number);
-    //     $display("Time %t: VFS - Selected: %b, Valid bits: %b", $time, dut.vfs_selected, dut.vfs_clause_valid_bits);
-    // end
-
-    // // Monitor for FIFO Tree
-    // always @(posedge clk_i) begin
-    //     if (dut.fifo_wr_en)
-    //         $display("Time %t: FIFO - Writing clauses: %h", $time, dut._broken_clauses);
-    //     if (dut.fifo_rd_en)
-    //         $display("Time %t: FIFO - Reading clause: %h", $time, dut.fifo_clause);
-    //     $display("Time %t: FIFO - Empty: %b", $time, dut.fifo_empty);
-    // end
-
-    // // Monitor for Unsat Clause Selector
-    // always @(posedge clk_i) begin
-    //     if (dut.ucs_request)
-    //         $display("Time %t: UCS - Requesting clause", $time);
-    //     $display("Time %t: UCS - Selected clause: %h", $time, dut.ucs_selected_clause);
-    // end
-
-    // // Monitor for Controller
-    // always @(posedge clk_i) begin
-    //     $display("Time %t: Controller - State: %d, Control signals: %b", 
-    //              $time, dut.controller_inst.state, dut.control_signal_i);
-    // end
-
-    // Dump waveforms
     initial begin
         $dumpfile("december_top_file_tb.vcd");
         $dumpvars(0, december_top_file_tb);
