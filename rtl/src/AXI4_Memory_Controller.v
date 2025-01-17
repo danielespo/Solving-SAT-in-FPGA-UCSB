@@ -7,7 +7,7 @@ V0.0 Author: Harim Choe
 Description:
 This module implements a basic AXI4 slave memory controller. It handles both 
 write and read transactions on the AXI bus and maps them to corresponding 
-submodules (Clause_Table, Address_Translation_Table, Variable_Table_Clusters).
+submodules (Clause_Table, Address_Translation_Table, 2 Variable_Table_Clusters).
 
 Write operation (AW/W/B channels):
 1) The controller waits for a valid write address (AWVALID) and sets AWREADY 
@@ -21,6 +21,8 @@ Write operation (AW/W/B channels):
    burst by issuing a write response (BVALID) and sets the appropriate response 
    code (OKAY, SLVERR, etc.). After the master accepts the response (BREADY), 
    the controller returns to idle.
+4) Each time s_axi_wvalid and s_axi_wready are both asserted in a given cycle, 
+    one 32-bit data beat is transferred.
 
 Read operation (AR/R channels):
 1) The controller waits for a valid read address (ARVALID) and sets ARREADY 
@@ -33,6 +35,8 @@ Read operation (AR/R channels):
 3) The last read beat is signaled by RLAST once the burst is complete. After 
    the master asserts RREADY to accept this final beat, the controller 
    returns to idle.
+4) Each time s_axi_rvalid and s_axi_rready are both asserted in a given cycle, 
+    one 32-bit data beat is transferred.
 
 Change Log:
 01/04/2024:
@@ -46,6 +50,14 @@ Change Log:
 
 01/11/2024:
     Modified max burst length from 8 to 16
+    All tests passed according to testbench
+
+01/14/2024:
+    Integrated AXI to the datapath
+
+01/16/2024:
+    Correctly aligned clause_axi_rd_clauses_i to s_axi_rdata
+    Matches clause and ATT data doing read and write
 */
 
 module AXI4_Memory_Controller #(
