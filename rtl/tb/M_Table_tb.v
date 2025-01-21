@@ -37,12 +37,12 @@ integer i;
         .M_TABLE_WIDTH(M_TABLE_WIDTH),
         .M_TABLE_NAME(M_TABLE_NAME)
     ) m_table (
-        .clk(clk),
-        .en(en),
+        .clk_i(clk),
+        .en_i(en),
         .addr_i(addr_i),
-        .clear_debug_DIV_BY_ZERO(clear_debug_DIV_BY_ZERO),
+        .clear_debug_DIV_BY_ZERO_i(clear_debug_DIV_BY_ZERO),
         .data_o(data_o),
-        .debug_DIV_BY_ZERO(debug_DIV_BY_ZERO)
+        .debug_DIV_BY_ZERO_o(debug_DIV_BY_ZERO)
     );
 
 // test data

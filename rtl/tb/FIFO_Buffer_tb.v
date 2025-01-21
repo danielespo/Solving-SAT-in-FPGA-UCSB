@@ -52,11 +52,11 @@ FIFO_Buffer #(
     .DATA_WIDTH(DW),
     .BUFFER_ADDR_WIDTH(BA)
 ) uut (
-    .clk(clk),
-    .reset(reset),
+    .clk_i(clk),
+    .rst_i(reset),
     .data_i(data_i),
-    .rden_i(rden_i),
-    .wren_i(wren_i),
+    .rd_en_i(rden_i),
+    .wr_en_i(wren_i),
     .data_o(data_o),
     .empty_o(empty_o),
     .full_o(full_o)

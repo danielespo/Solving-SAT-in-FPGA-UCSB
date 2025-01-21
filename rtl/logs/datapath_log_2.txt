@@ -3,7 +3,7 @@ Reading pref.tcl
 # 10.7d
 
 # vsim -c december_top_file_tb -do "run -all; quit" 
-# Start time: 11:10:09 on Jan 17,2025
+# Start time: 13:55:16 on Jan 21,2025
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.34.1.el8_10.x86_64
 # //
@@ -364,5 +364,5 @@ Reading pref.tcl
 # [MC W-FSM] state=0, time=              835000, wburst_resp=00, wstate=00, s_axi_wvalid=0, s_axi_wready=0, s_axi_bvalid=0
 # ** Note: $finish    : december_top_file_tb.v(372)
 #    Time: 845 ns  Iteration: 0  Instance: /december_top_file_tb
-# End time: 11:10:09 on Jan 17,2025, Elapsed time: 0:00:00
+# End time: 13:55:18 on Jan 21,2025, Elapsed time: 0:00:02
 # Errors: 0, Warnings: 0
