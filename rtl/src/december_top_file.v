@@ -51,10 +51,10 @@ Change Log:
 12/04/2024 - Harim Choe
     Added controller
 
-01/10/2024 - Harim Choe
+01/10/2025 - Harim Choe
     Added AXI slave
 
-01/13/2024 - Harim Choe
+01/13/2025 - Harim Choe
     AXI slave integrated
 */
 module december_top_file #(
@@ -211,10 +211,10 @@ genvar n, m;
     wire [12:0]           att_axi_rd_addr_o;
 
     // Clause Table side
-    wire [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i;
+    wire [((11+1)*(3-1)*20)-1:0] clause_axi_rd_clauses_i; //480 bits
     wire                         clause_axi_wr_en_o;
     wire [10:0]                  clause_axi_wr_addr_o;
-    wire [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o;
+    wire [((11+1)*(3-1)*20)-1:0] clause_axi_wr_clauses_o; //480 bits
     wire                         clause_axi_rd_en_o;
     wire [10:0]                  clause_axi_rd_addr_o;
 
@@ -646,5 +646,4 @@ genvar n, m;
         end
     endgenerate
     assign _selected_unsatisfied_clause = ce2_break ? ucs_selected_clause : fifo_clause;
-
 endmodule

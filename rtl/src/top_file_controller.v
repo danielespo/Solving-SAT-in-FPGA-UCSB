@@ -157,6 +157,8 @@ always @(posedge clk or posedge rst) begin
         done <= 1'b1;
     end else if (state == LOAD) begin
         done <= 1'b0;
+    end else if (start) begin
+        done <= 1'b0;
     end
     else begin
         done <= 1'b0;

@@ -4,15 +4,15 @@ module december_top_file_tb;
 
     parameter CLK_PERIOD                = 10;
     parameter NSAT                      = 3;
-    parameter NUM_VARIABLES            = 2048;
-    parameter MAX_CLAUSE_MEMBERSHIP    = 20;
-    parameter FIFO_DEPTH               = 32;
-    parameter UNSAT_CLAUSE_BUFFER_DEPTH= 2048;
-    parameter CONTROLLER_SIGNAL_WIDTH  = 14;
+    parameter NUM_VARIABLES             = 2048;
+    parameter MAX_CLAUSE_MEMBERSHIP     = 20;
+    parameter FIFO_DEPTH                = 32;
+    parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048;
+    parameter CONTROLLER_SIGNAL_WIDTH   = 14;
 
     localparam VARIABLE_ADDRESS_WIDTH  = $clog2(NUM_VARIABLES);
     localparam LITERAL_ADDRESS_WIDTH   = VARIABLE_ADDRESS_WIDTH + 1;
-    localparam CLAUSE_WIDTH            = NSAT * 8; // 24 bits (3 * 8)
+    localparam CLAUSE_WIDTH            = NSAT * 8; // Not strictly needed for .mem usage
 
     // AXI parameters
     localparam AXI_ID_WIDTH   = 4;
@@ -20,21 +20,21 @@ module december_top_file_tb;
     localparam AXI_DATA_WIDTH = 32;
     localparam AXI_STRB_WIDTH = AXI_DATA_WIDTH/8;
 
-    // Base addresses from the AXI4_Memory_Controller parameters
-    localparam ATT_BASE_ADDR    = 32'h00000000;  
-    localparam CLAUSE_BASE_ADDR = 32'h00004000;  // Clause Table region starts here
-    localparam VARCL1_BASE_ADDR = 32'h00022000;  // Variable Table #1 region
-    localparam VARCL2_BASE_ADDR = 32'h00024000;  // Variable Table #2 region
+    // Base addresses
+    localparam ATT_BASE_ADDR    = 32'h0000_0000;  
+    localparam CLAUSE_BASE_ADDR = 32'h0000_4000;  
+    localparam VARCL1_BASE_ADDR = 32'h0002_2000;  
+    localparam VARCL2_BASE_ADDR = 32'h0002_4000;  
 
     // Testbench signals
     reg  clk_i;
     reg  rst_i;
     reg  start_i;
-    wire [CONTROLLER_SIGNAL_WIDTH-1:0] control_signal_i; // Unused directly, driven internally
+    wire [CONTROLLER_SIGNAL_WIDTH-1:0] control_signal_i; // Driven internally by top_file_controller
     wire done_signal;
 
-    // AXI Master -> DUT signals
-    reg  [AXI_ID_WIDTH-1:0]  s_axi_awid;
+    // AXI signals
+    reg  [AXI_ID_WIDTH-1:0]   s_axi_awid;
     reg  [AXI_ADDR_WIDTH-1:0] s_axi_awaddr;
     reg  [7:0]                s_axi_awlen;
     reg  [2:0]                s_axi_awsize;
@@ -68,10 +68,10 @@ module december_top_file_tb;
     wire                      s_axi_rlast;
     wire                      s_axi_rvalid;
 
-    // Hardcoded clauses (24 bits each, but stored in 32 bits)
-    // (We put the 24-bit clause in bits [23:0] of the 32-bit word.)
-    reg [31:0] hardcoded_clauses [0:2];
+    // Problem data from .mem
+    reg [31:0] problem_data_mem [0:4095]; // 4096 lines
 
+    // Instantiate your solver
     december_top_file #(
         .NSAT(NSAT),
         .NUM_VARIABLES(NUM_VARIABLES),
@@ -83,15 +83,14 @@ module december_top_file_tb;
         .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
         .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
         .AXI_STRB_WIDTH (AXI_STRB_WIDTH)
-    )
-    dut (
+    ) dut (
         .clk_i(clk_i),
         .rst_i(rst_i),
         .start_i(start_i),
         .control_signal_i(control_signal_i),
         .done_signal(done_signal),
 
-        // AXI slave interface
+        // AXI
         .s_axi_awid     (s_axi_awid),
         .s_axi_awaddr   (s_axi_awaddr),
         .s_axi_awlen    (s_axi_awlen),
@@ -129,37 +128,33 @@ module december_top_file_tb;
 
     always #(CLK_PERIOD/2) clk_i = ~clk_i;
 
-    // Single-beat AXI write: writes one 32-bit word
+    // Single-beat write
     task axi_write_single;
         input [AXI_ADDR_WIDTH-1:0] addr;
         input [AXI_DATA_WIDTH-1:0] data;
         begin
-            // Send AW
             s_axi_awvalid <= 1'b1;
             s_axi_awaddr  <= addr;
             s_axi_awid    <= 4'h1;
-            s_axi_awlen   <= 0;        // single beat
-            s_axi_awburst <= 2'b01;    // INCR
-            s_axi_awsize  <= 3'd2;     // 2 => 4 bytes per beat (32 bits)
+            s_axi_awlen   <= 0;        
+            s_axi_awburst <= 2'b01;    
+            s_axi_awsize  <= 3'd2;     // 4 bytes
 
             @(posedge clk_i);
             while(!s_axi_awready) @(posedge clk_i);
             s_axi_awvalid <= 1'b0;
 
-            // Send W
             s_axi_wdata  <= data;
-            s_axi_wstrb  <= 4'hF;  // All bytes valid
+            s_axi_wstrb  <= 4'hF;
             s_axi_wlast  <= 1'b1;
             s_axi_wvalid <= 1'b1;
 
             @(posedge clk_i);
             while(!s_axi_wready) @(posedge clk_i);
-
-            @(posedge clk_i);
             s_axi_wvalid <= 1'b0;
             s_axi_wlast  <= 1'b0;
 
-            // Wait for BVALID
+            // B
             s_axi_bready <= 1'b1;
             @(posedge clk_i);
             while(!s_axi_bvalid) @(posedge clk_i);
@@ -167,120 +162,78 @@ module december_top_file_tb;
         end
     endtask
 
-    // Multi-beat AXI write burst
-    task axi_write_burst;
+    // 4096 lines -> 256 bursts of 16 beats
+    task axi_write_4096_clauses;
         input [AXI_ADDR_WIDTH-1:0] start_addr;
-        input [7:0] burst_len;  // #beats - 1
-        input [AXI_DATA_WIDTH*256-1:0] burst_data; 
-        integer i;
+        integer i, j;
         reg [31:0] word;
         begin
-            // Send AW
-            s_axi_awid    <= 'h2;
-            s_axi_awaddr  <= start_addr;
-            s_axi_awlen   <= burst_len;   // number_of_beats - 1
-            s_axi_awsize  <= 3'd2;        // 4 bytes
-            s_axi_awburst <= 2'b01;       // INCR
-            s_axi_awvalid <= 1'b1;
-
-            @(posedge clk_i);
-            while(!s_axi_awready) @(posedge clk_i);
-            s_axi_awvalid <= 1'b0;
-
-            // Write each beat
-            for(i=0; i<=burst_len; i=i+1) begin
-                word = burst_data[i*32 +: 32];
-                s_axi_wdata  <= word;
-                s_axi_wstrb  <= 4'b1111;
-                s_axi_wlast  <= (i==burst_len); // last beat
-                s_axi_wvalid <= 1'b1;
+            for(i=0; i<256; i=i+1) begin
+                // AW
+                s_axi_awid    <= 'h2;
+                s_axi_awaddr  <= start_addr + i*16*4;
+                s_axi_awlen   <= 15;  // 16 beats
+                s_axi_awsize  <= 3'd2;
+                s_axi_awburst <= 2'b01;
+                s_axi_awvalid <= 1'b1;
 
                 @(posedge clk_i);
-                while(!s_axi_wready) @(posedge clk_i);
-                
-                s_axi_wvalid <= 1'b0;
-            end
+                while(!s_axi_awready) @(posedge clk_i);
+                s_axi_awvalid <= 1'b0;
 
-            // Wait for BVALID
-            s_axi_bready <= 1'b1;
-            @(posedge clk_i);
-            while(!s_axi_bvalid) @(posedge clk_i);
-            s_axi_bready <= 1'b0;
+                // W data
+                for(j=0; j<16; j=j+1) begin
+                    word = problem_data_mem[i*16 + j];
+                    s_axi_wdata  <= word;
+                    s_axi_wstrb  <= 4'b1111;
+                    s_axi_wlast  <= (j==15);
+                    s_axi_wvalid <= 1'b1;
+
+                    @(posedge clk_i);
+                    while(!s_axi_wready) @(posedge clk_i);
+                    s_axi_wvalid <= 1'b0;
+                end
+
+                // B
+                s_axi_bready <= 1'b1;
+                @(posedge clk_i);
+                while(!s_axi_bvalid) @(posedge clk_i);
+                s_axi_bready <= 1'b0;
+            end
         end
     endtask
 
-    // Single-beat AXI read
+    // Single-beat read
     task axi_read_single;
         input  [AXI_ADDR_WIDTH-1:0] addr;
         output [AXI_DATA_WIDTH-1:0] data;
         begin
-            // Send AR
             s_axi_arid    <= 'h3;
             s_axi_araddr  <= addr;
-            s_axi_arlen   <= 0;         // single beat
-            s_axi_arsize  <= 3'd2;      // 4 bytes
-            s_axi_arburst <= 2'b01;     // INCR
+            s_axi_arlen   <= 0;
+            s_axi_arsize  <= 3'd2;
+            s_axi_arburst <= 2'b01;
             s_axi_arvalid <= 1'b1;
 
             @(posedge clk_i);
             while(!s_axi_arready) @(posedge clk_i);
             s_axi_arvalid <= 1'b0;
 
-            // Now wait for RVALID
             s_axi_rready <= 1'b1;
             @(posedge clk_i);
             while(!s_axi_rvalid) @(posedge clk_i);
 
-            data = s_axi_rdata;  // latch the returned data
-
-            // De-assert RREADY
+            data = s_axi_rdata;
             s_axi_rready <= 1'b0;
 
-            // Wait for RLAST if it’s not the same cycle
             while(!s_axi_rlast) @(posedge clk_i);
         end
     endtask
 
-    // (Optional) AXI read burst
-    task axi_read_burst;
-        input [AXI_ADDR_WIDTH-1:0] start_addr;
-        input [7:0] burst_len;
-        output reg [AXI_DATA_WIDTH*256-1:0] read_data;
-        integer i;
-        begin
-            // Send AR
-            s_axi_arid    <= 'h3;
-            s_axi_araddr  <= start_addr;
-            s_axi_arlen   <= burst_len;
-            s_axi_arsize  <= 3'd2;      // 4 bytes
-            s_axi_arburst <= 2'b01;     // INCR
-            s_axi_arvalid <= 1'b1;
-
-            @(posedge clk_i);
-            while(!s_axi_arready) @(posedge clk_i);
-            s_axi_arvalid <= 1'b0;
-
-            i = 0;
-            s_axi_rready <= 1'b1;
-            while(i <= burst_len) begin
-                @(posedge clk_i);
-                if(s_axi_rvalid) begin
-                    read_data[i*32 +: 32] = s_axi_rdata;
-                    i = i+1;
-                end
-            end
-            // De-assert RREADY
-            s_axi_rready <= 1'b0;
-        end
-    endtask
-
-    //--------------------------------------------------------------------------
-    // Clock / Reset Initialization
-    //--------------------------------------------------------------------------
     initial begin
-        clk_i = 0;
-        rst_i = 1;
-        start_i = 0;
+        clk_i   = 1'b0;
+        rst_i   = 1'b1;
+        start_i = 1'b0;
 
         s_axi_awid    = 0;
         s_axi_awaddr  = 0;
@@ -288,12 +241,10 @@ module december_top_file_tb;
         s_axi_awsize  = 0;
         s_axi_awburst = 0;
         s_axi_awvalid = 0;
-
         s_axi_wdata   = 0;
         s_axi_wstrb   = 0;
         s_axi_wlast   = 0;
         s_axi_wvalid  = 0;
-
         s_axi_bready  = 0;
 
         s_axi_arid    = 0;
@@ -304,84 +255,96 @@ module december_top_file_tb;
         s_axi_arvalid = 0;
         s_axi_rready  = 0;
 
-        // Wait a couple cycles, then deassert reset
         #(CLK_PERIOD*5);
-        rst_i = 0;
+        rst_i = 1'b0;
         #(CLK_PERIOD*2);
-        $display("Reset de-asserted");
+        $display("[TB] Reset de-asserted at time %0t", $time);
     end
 
-    //--------------------------------------------------------------------------
-    // Hardcode Clauses
-    //--------------------------------------------------------------------------
-    // We store the 24-bit clause in the lower 24 bits of the 32-bit word.
-    //  (x5 OR NOT x2 OR x7)
-    //  (NOT x1 OR x3 OR NOT x6)
-    //  (x4 OR NOT x7 OR x2)
+    // The target solution:
+    // x1=FALSE, x2=FALSE, x3=TRUE, x4=FALSE,
+    // x5=TRUE,  x6=FALSE, x7=FALSE, x8=FALSE,
+    // x9=FALSE, x10=FALSE,x11=FALSE,x12=TRUE,
+    // x13=FALSE,x14=TRUE, x15=FALSE,x16=FALSE
+    reg expected_solution[1:16]; // index 1..16
+
+    integer idx;
     initial begin
-        hardcoded_clauses[0] = {8'h00, 8'b00000101, 8'b10000010, 8'b00000111};
-        hardcoded_clauses[1] = {8'h00, 8'b10000110, 8'b00000011, 8'b10000001};
-        hardcoded_clauses[2] = {8'h00, 8'b00000010, 8'b10000111, 8'b00000100};
+        expected_solution[1]  = 1'b0;
+        expected_solution[2]  = 1'b0;
+        expected_solution[3]  = 1'b1;
+        expected_solution[4]  = 1'b0;
+        expected_solution[5]  = 1'b1;
+        expected_solution[6]  = 1'b0;
+        expected_solution[7]  = 1'b0;
+        expected_solution[8]  = 1'b0;
+        expected_solution[9]  = 1'b0;
+        expected_solution[10] = 1'b0;
+        expected_solution[11] = 1'b0;
+        expected_solution[12] = 1'b1;
+        expected_solution[13] = 1'b0;
+        expected_solution[14] = 1'b1;
+        expected_solution[15] = 1'b0;
+        expected_solution[16] = 1'b0;
     end
 
-    //--------------------------------------------------------------------------
-    // Main Test Stimulus
-    //--------------------------------------------------------------------------
-    reg [AXI_DATA_WIDTH*256-1:0] burst_data;
-    reg [31:0] var_data;
-    integer i;  
+    integer i;
+    reg [31:0] read_word;
+    reg pass;
 
     initial begin
-        // Wait for end of reset
         @(negedge rst_i);
         #(CLK_PERIOD);
-        
-        // 1) Initialize first 4 variables to zero in varcl1
-        $display("\n--- Initializing first 4 variables to 0 in varcl1 region ---");
-        axi_write_single(VARCL1_BASE_ADDR + 0, 32'h00000000); 
-        axi_write_single(VARCL1_BASE_ADDR + 4, 32'h00000000);
-        axi_write_single(VARCL1_BASE_ADDR + 8, 32'h00000000);
-        axi_write_single(VARCL1_BASE_ADDR + 12,32'h00000000);
 
-        // 2) Load 3 clauses into the Clause Table region via a single burst
-        burst_data[ 0 +: 32] = hardcoded_clauses[0];
-        burst_data[32 +: 32] = hardcoded_clauses[1];
-        burst_data[64 +: 32] = hardcoded_clauses[2];
-        for(i=96; i<256*32; i=i+1) burst_data[i] = 1'b0; // zero any unused bits
+        $display("[TB] Reading problem_data.mem...");
+        $readmemh("../mem/problem_data.mem", problem_data_mem);
+        $display("[TB] Writing 4096 lines to Clause Table region...");
+        axi_write_4096_clauses(CLAUSE_BASE_ADDR);
 
-        $display("\n--- Writing 3 clauses via AXI burst to clause table region ---");
-        axi_write_burst(CLAUSE_BASE_ADDR, 8'd2 /*3 beats*/, burst_data);
+        for(i=0; i<4; i=i+1) begin
+            axi_read_single(CLAUSE_BASE_ADDR + i*4, read_word);
+            $display("[TB] ClauseTable[%0d] = 0x%08X", i, read_word);
+        end
 
-        // 3) Start the solver
-        $display("\n--- Starting solver ---");
+        $display("[TB] Start solver...");
         start_i <= 1'b1;
         @(posedge clk_i);
         start_i <= 1'b0;
 
-        // 4) Wait for done or time out
-        repeat(10000) begin
+        pass = 1'b1; // assume pass until proven otherwise
+
+        repeat(20000) begin
             @(posedge clk_i);
-            if (done_signal) begin
-                $display("\n--- Solver finished. Reading back first 8 variables from VARCL1 ---");
-                for (i = 0; i < 8; i = i + 1) begin
-                    axi_read_single(VARCL1_BASE_ADDR + (i*4), var_data);
-                    // only bit 0 is meaningful for each variable
-                    $display("x%d = %b", i+1, var_data[0]);
+            if(done_signal) begin
+                $display("[TB] Solver done at time %0t!", $time);
+
+                // Read back x1..x16 from var table #1
+                for(i=1; i<=16; i=i+1) begin
+                    axi_read_single(VARCL1_BASE_ADDR + (i-1)*4, read_word);
+                    $display("  x%0d = %b (expected %b)", i, read_word[0], expected_solution[i]);
+
+                    if(read_word[0] !== expected_solution[i]) begin
+                        $display("[TB] Mismatch! x%0d was %b but expected %b", i, read_word[0], expected_solution[i]);
+                        pass = 1'b0;
+                    end
                 end
+
+                if(pass) begin
+                    $display("[TB] All matches found! The solver produced the expected solution.");
+                end else begin
+                    $display("[TB] Some mismatches found - solution differs from expected!");
+                end
+
                 #(CLK_PERIOD*10);
                 $finish;
             end
         end
 
-        // Timed out
-        $display("\n--- Solver timed out ---");
-        #(CLK_PERIOD*10);
+        $display("[TB] Timed out waiting for solver done_signal!");
         $finish;
     end
 
-    //--------------------------------------------------------------------------
-    // Waveform Dump
-    //--------------------------------------------------------------------------
+    // Check waveform through here
     initial begin
         $dumpfile("december_top_file_tb.vcd");
         $dumpvars(0, december_top_file_tb);

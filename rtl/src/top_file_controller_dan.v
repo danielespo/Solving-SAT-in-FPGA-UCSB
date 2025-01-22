@@ -54,6 +54,7 @@ Change Log:
     	We start writing to the temporal buffer in the READ_CLAUSE_TABLE state, using index 00.
     	We continue writing in the READ_VARIABLE_TABLE state, using index 01.
     	We finish writing in the EVALUATE_CLAUSE state, using index 10.
+
 01/11/2025 - Daniel Espinosa
 	Adding AXI port information to the controller so it can communicate with the AXI4_Memory_Controller
 	module. The main idea is using the AXI to control the state transitions of the FSM.
