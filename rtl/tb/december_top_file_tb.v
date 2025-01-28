@@ -68,6 +68,8 @@ module december_top_file_tb;
     wire                      s_axi_rlast;
     wire                      s_axi_rvalid;
 
+    wire [1 : 0] att_src;
+
     // Problem data from .mem
     reg [31:0] problem_data_mem [0:4095]; // 4096 lines
 
@@ -176,7 +178,7 @@ module december_top_file_tb;
                 s_axi_awsize  <= 3'd2;
                 s_axi_awburst <= 2'b01;
                 s_axi_awvalid <= 1'b1;
-
+                
                 @(posedge clk_i);
                 while(!s_axi_awready) @(posedge clk_i);
                 s_axi_awvalid <= 1'b0;
@@ -322,7 +324,6 @@ module december_top_file_tb;
                 for(i=1; i<=16; i=i+1) begin
                     axi_read_single(VARCL1_BASE_ADDR + (i-1)*4, read_word);
                     $display("  x%0d = %b (expected %b)", i, read_word[0], expected_solution[i]);
-
                     if(read_word[0] !== expected_solution[i]) begin
                         $display("[TB] Mismatch! x%0d was %b but expected %b", i, read_word[0], expected_solution[i]);
                         pass = 1'b0;

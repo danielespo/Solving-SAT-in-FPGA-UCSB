@@ -71,7 +71,7 @@ module Clause_Table #(
     always @ (posedge clk_i) begin
         if (axi_wr_en_i) begin
             mem[axi_wr_addr_i] <= axi_wr_clauses_i;
-            $display("Clause_Table: Written mem[%0d] = 0x%h", axi_wr_addr_i, axi_wr_clauses_i);
+            // $display("Clause_Table: Written mem[%0d] = 0x%h", axi_wr_addr_i, axi_wr_clauses_i);
         end
         // Check if the read address matches the write address (read-after-write)
         if (axi_wr_en_i && (rd_addr_i == axi_wr_addr_i)) begin
@@ -79,7 +79,7 @@ module Clause_Table #(
         end else begin
             clauses_o <= mem[rd_addr_i];   // Otherwise, read from memory
         end
-        $display("Clause_Table: Read mem[%0d] = 0x%h", rd_addr_i, clauses_o);
+        // $display("Clause_Table: Read mem[%0d] = 0x%h", rd_addr_i, clauses_o);
 end
     
 endmodule

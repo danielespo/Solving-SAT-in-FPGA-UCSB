@@ -209,8 +209,6 @@ initial begin
   testcase_back_to_back_read_write();
   testcase_incomplete_burst();
 
-  // testcase_submodule_checks();
-
   #200;
   $display("====================================================");
   $display("TEST SUMMARY => test_passed=%0d, test_failed=%0d", test_passed, test_failed);

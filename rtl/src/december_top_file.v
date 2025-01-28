@@ -117,12 +117,12 @@ module december_top_file #(
 );
 
 // local parameters
-localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);      // naming change
-localparam LITERAL_ADDRESS_WIDTH = VARIABLE_ADDRESS_WIDTH + 1;  // naming change
-localparam CLAUSE_WIDTH = NSAT * LITERAL_ADDRESS_WIDTH;
+localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);      // 11 bits
+localparam LITERAL_ADDRESS_WIDTH = VARIABLE_ADDRESS_WIDTH + 1;  // 12 bits
+localparam CLAUSE_WIDTH = NSAT * LITERAL_ADDRESS_WIDTH; // 36 bits
 
-localparam MC = MAX_CLAUSE_MEMBERSHIP;
-localparam MC_BITS = $clog2(MC);
+localparam MC = MAX_CLAUSE_MEMBERSHIP; // 20 bits
+localparam MC_BITS = $clog2(MC); // unused
 localparam NSAT_BITS = $clog2(NSAT);
 
 // integer vars
@@ -145,9 +145,9 @@ genvar n, m;
     assign {cr_wr_en, att_src, vt_addr_src, vt_en, vt_wr_en, vfs_wr_en, cflb_wr_en, tb_wr_index, fifo_wr_en, fifo_rd_en, ucs_request} = control_signal_i;
 
 /* --- internal wires --- */
-    wire [CLAUSE_WIDTH - 1 : 0] cr_selected_clause;
+    wire [CLAUSE_WIDTH - 1 : 0] cr_selected_clause; // 36 bits
 
-    wire [CLAUSE_WIDTH - 1 : 0] _selected_clause_negated;
+    wire [CLAUSE_WIDTH - 1 : 0] _selected_clause_negated; // 36 bits
 
     wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _cr_selected_literal;
     wire [LITERAL_ADDRESS_WIDTH - 1 : 0]    _cr_negated_literal;
@@ -200,6 +200,10 @@ genvar n, m;
     wire [NSAT * VARIABLE_ADDRESS_WIDTH - 1 : 0] usc_selected_clause_addresses;
 
     wire [CLAUSE_WIDTH - 1 : 0] _selected_unsatisfied_clause;
+
+    wire ucb_setup_wr_en_i;
+    wire[$clog2(UNSAT_CLAUSE_BUFFER_DEPTH) - 1 : 0] ucb_setup_addr_i;
+    wire [CLAUSE_WIDTH - 1 : 0]          ucb_setup_data_i;
 
 /* --- Internal wires for AXI <-> submodules  --- */
 // Address Translation Table side
@@ -264,7 +268,7 @@ genvar n, m;
         .axi_wr_addr_i (att_axi_wr_addr_o),
         .axi_wr_data_i (att_axi_wr_data_o),
         // .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]), // Modified this line
-        .rd_addr_i(_cr_negated_literal[VARIABLE_ADDRESS_WIDTH-1:0]),
+        .rd_addr_i(_cr_negated_literal[LITERAL_ADDRESS_WIDTH-2 : 0]),
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
     );
