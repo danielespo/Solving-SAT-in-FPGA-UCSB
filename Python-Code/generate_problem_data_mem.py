@@ -31,7 +31,7 @@ def generate_problem_data_mem(cnf_filename, output_filename):
     literal_memberships = create_literal_memberships(cnf_filename)
     
     packed_literal_array, masks = packing_algorithm_20_as_max(literal_memberships)
-    uint32_list = convert_to_uint32_list(packed_literal_array, masks, depth=4096)
+    uint32_list = convert_to_uint32_list(packed_literal_array, masks, depth=2048)
 
     # Each line is an 8-digit hex, e.g. '03A1F00C'
     with open(output_filename, 'w') as f:

@@ -24,9 +24,9 @@ module Address_Translation_Table_tb;
     // Signals
     reg clk;
     reg axi_wr_en;
-    reg [LITERAL_ADDRESS_WIDTH:0] axi_wr_addr;
+    reg [LITERAL_ADDRESS_WIDTH-1:0] axi_wr_addr;
     reg [WIDTH-1:0] axi_wr_data;
-    reg [10:0] rd_addr;
+    reg [11:0] rd_addr;
 
     wire [CLAUSE_COUNT-1:0] mask_out;
     wire [CLAUSE_TABLE_ADDRESS_WIDTH-1:0] addr_out;
@@ -114,6 +114,28 @@ module Address_Translation_Table_tb;
             $display("TEST 4 PASSED: Outputs are correct for address 1");
         else
             $display("TEST 4 FAILED: Outputs are incorrect for address 1");
+
+        // Test 5: Edge case (max address)
+        $display("TEST 5: Testing maximum address...");
+        axi_wr_en = 1;
+        axi_wr_addr = 12'hFFF; // Max address for 12 bits
+        axi_wr_data = {11'b11111111111, 20'b11111111111111111111}; // All mask bits set
+        #10;
+        axi_wr_en = 0;
+        rd_addr = 12'hFFF;
+        #10;
+        if (addr_out == 11'b11111111111 && mask_out == 20'b11111111111111111111)
+            $display("TEST 5 PASSED: Edge case (max address) works");
+        else
+            $display("TEST 5 FAILED: Edge case (max address) failed");
+
+        // Test 6: Verify all mask bits
+        rd_addr = 12'hFFF;
+        #10;
+        if (mask_out == 20'hFFFFF)
+            $display("TEST 6 PASSED: All mask bits are set");
+        else
+            $display("TEST 6 FAILED: Mask bits incorrect");
 
         $display("All tests completed.");
         $stop;

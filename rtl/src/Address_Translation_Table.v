@@ -42,11 +42,11 @@ module Address_Translation_Table # (
 
     // setup write io  
     input                                                           axi_wr_en_i,
-    input       [LITERAL_ADDRESS_WIDTH : 0]                         axi_wr_addr_i, 
+    input       [LITERAL_ADDRESS_WIDTH-1 : 0]                         axi_wr_addr_i, 
     input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] axi_wr_data_i,
 
     // runtime read io
-    input       [LITERAL_ADDRESS_WIDTH-2 : 0]          rd_addr_i,
+    input       [LITERAL_ADDRESS_WIDTH-1 : 0]          rd_addr_i,
     output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1 : 0] addr_o,
     output wire [CLAUSE_COUNT - 1 : 0]               mask_o
 );

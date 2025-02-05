@@ -1,0 +1,123 @@
+/home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Heuristic_Selector.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Heuristic_Selector
+
+Top level modules:
+	Heuristic_Selector
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/december_top_file_tb.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb/december_top_file_tb.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module december_top_file_tb
+
+Top level modules:
+	december_top_file_tb
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/M_Table.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module M_Table
+
+Top level modules:
+	M_Table
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/top_file_controller.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module top_file_controller
+
+Top level modules:
+	top_file_controller
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Buffer.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module FIFO_Buffer
+
+Top level modules:
+	FIFO_Buffer
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Selector.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Selector.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Evaluator_Cluster.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Clause_Evaluator_Cluster
+
+Top level modules:
+	Clause_Evaluator_Cluster
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Variable_Flip_Selector.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Variable_Flip_Selector
+
+Top level modules:
+	Variable_Flip_Selector
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Buffer.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Unsat_Clause_Buffer
+
+Top level modules:
+	Unsat_Clause_Buffer
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Break_Value_Counter.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Break_Value_Counter
+
+Top level modules:
+	Break_Value_Counter
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Clause_Register.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Clause_Register
+
+Top level modules:
+	Clause_Register
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/dummy_mem.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/dummy_mem.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module dummy_mem
+
+Top level modules:
+	dummy_mem
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/FIFO_Tree.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module FIFO_Tree
+
+Top level modules:
+	FIFO_Tree
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/SAT_Solver_Top.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module SAT_Solver_Top
+
+Top level modules:
+	SAT_Solver_Top
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Temporal_Buffer
+
+Top level modules:
+	Temporal_Buffer
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Temporal_Buffer_Wrapper.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Temporal_Buffer_Wrapper
+
+Top level modules:
+	Temporal_Buffer_Wrapper
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/Unsat_Clause_Selector.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module Unsat_Clause_Selector
+
+Top level modules:
+	Unsat_Clause_Selector
+
+} {} {}} /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v {1 {vlog -work work -vopt -stats=none /home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src/XOR_PRNG.v
+Model Technology ModelSim SE-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+-- Compiling module XOR_PRNG
+
+Top level modules:
+	XOR_PRNG
+
+} {} {}}

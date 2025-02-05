@@ -66,13 +66,15 @@ module Clause_Evaluator #(
             end
         end
     end else begin
-        reg break;
-        assign break_o = break;
+        reg break_out;
+        reg [1:0] evaluated_literals;
+        assign break_o = break_out;
         always @ (posedge clk_i) begin
             if (rst_i) begin
-                break <= 1'b0;
+                break_out <= 1'b0;
             end else begin
-                break <= ~|(var_val_i ^ var_neg_i);
+                evaluated_literals <= (var_val_i ^ var_neg_i);
+                break_out <= ~(evaluated_literals[0] | evaluated_literals[1]);
             end
         end
     end

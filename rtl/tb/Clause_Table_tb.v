@@ -116,6 +116,33 @@ module Clause_Table_tb;
             $display("TEST 3 FAILED: Incorrect data read from address 500. Read: 0x%h", clauses_output);
         end
 
+        // Test 4: Verify packed clauses and mask interaction
+        $display("TEST 4: Testing packed clauses with mask...");
+
+        // Write 2 clauses into a single CT entry (simulate mask usage)
+        axi_wr_en_input = 1;
+        axi_wr_addr_input = 11'd200;
+        // Clause 1: Literal1=0x123 (neg=1), Literal2=0x456 (neg=0)
+        // Clause 2: Literal1=0x789 (neg=0), Literal2=0xABC (neg=1)
+        axi_wr_clauses_input = 480'h00000000000000000000000000000000000000000000000000000000789ABC923456;
+        #20;
+        axi_wr_en_input = 0;
+
+        // Read back and check clauses (assume mask selects first clause)
+        rd_addr_input = 11'd200;
+        #20;
+        if (clauses_output[23:0] == 24'h923456)  // First clause
+            $display("TEST 4.1 PASSED: First clause packed correctly");
+        else
+            $display("TEST 4.1 FAILED: First clause mismatch. Got: 0x%h", clauses_output[23:0]);
+
+       // Check Clause 1 (bits [47:24])
+        if (clauses_output[47:24] == 24'h789ABC)    // Second clause
+            $display("TEST 4.2 PASSED: Second clause packed correctly");
+        else
+            $display("TEST 4.2 FAILED: Second clause mismatch. Got: 0x%h", clauses_output[47:24]);
+
+
         // End of tests
         $display("All tests completed.");
         $stop;

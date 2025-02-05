@@ -32,6 +32,7 @@ Change Log:
 
 module Variable_Table_Cluster #(
     parameter VARIABLE_ADDRESS_WIDTH = 11,
+    parameter THREAD_ID_WIDTH = 4,
     // Total number of variable tables will be CLUSTER_SIZE,
     parameter CLUSTER_SIZE = 20 * 2
 )(
@@ -44,24 +45,32 @@ module Variable_Table_Cluster #(
 
     // runtime interface
     input  en_i, wr_en_i,
-    input  [CLUSTER_SIZE * VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_mi, 
+    input  [CLUSTER_SIZE * (THREAD_ID_WIDTH + VARIABLE_ADDRESS_WIDTH) - 1 : 0] addr_mi,
     input                                                  data_i, // common runtime data input
     output [CLUSTER_SIZE - 1 : 0]                          data_mo
 );
+    localparam RUNTIME_ADDRESS_WIDTH = THREAD_ID_WIDTH + VARIABLE_ADDRESS_WIDTH;
+
     genvar i;
     generate
         for (i = 0; i < CLUSTER_SIZE; i = i + 1) begin: variable_table_gen
-            Variable_Table #(VARIABLE_ADDRESS_WIDTH) vt_inst (
-                .clk_i(clk_i),
-                .axi_en_i(axi_en_i),
-                .axi_wr_en_i(axi_wr_en_i),
-                .axi_addr_i(axi_addr_i),
-                .axi_data_i(axi_data_i),
-                .en_i(en_i),
-                .wr_en_i(wr_en_i),
-                .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),
-                .data_i(data_i),
-                .data_o(data_mo[i])
+            wire [RUNTIME_ADDRESS_WIDTH - 1 : 0] addr_i_for_this_table;
+            assign addr_i_for_this_table = addr_mi[i * RUNTIME_ADDRESS_WIDTH +: RUNTIME_ADDRESS_WIDTH];
+            
+            Variable_Table #(
+                .VARIABLE_ADDRESS_WIDTH (VARIABLE_ADDRESS_WIDTH),
+                .THREAD_ID_WIDTH        (THREAD_ID_WIDTH)
+            ) vt_inst (
+                .clk_i       (clk_i),
+                .axi_en_i    (axi_en_i),
+                .axi_wr_en_i (axi_wr_en_i),
+                .axi_addr_i  (axi_addr_i),
+                .axi_data_i  (axi_data_i),
+                .en_i        (en_i),
+                .wr_en_i     (wr_en_i),
+                .addr_i      (addr_i_for_this_table),
+                .data_i      (data_i),
+                .data_o      (data_mo[i])
             );
         end
     endgenerate

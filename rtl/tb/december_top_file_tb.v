@@ -71,7 +71,7 @@ module december_top_file_tb;
     wire [1 : 0] att_src;
 
     // Problem data from .mem
-    reg [31:0] problem_data_mem [0:4095]; // 4096 lines
+    reg [31:0] problem_data_mem [0:2047]; // 2048 lines
 
     // Instantiate your solver
     december_top_file #(
@@ -164,8 +164,7 @@ module december_top_file_tb;
         end
     endtask
 
-    // 4096 lines -> 256 bursts of 16 beats
-    task axi_write_4096_clauses;
+    task axi_write_2048_clauses;
         input [AXI_ADDR_WIDTH-1:0] start_addr;
         integer i, j;
         reg [31:0] word;
@@ -299,9 +298,9 @@ module december_top_file_tb;
         #(CLK_PERIOD);
 
         $display("[TB] Reading problem_data.mem...");
-        $readmemh("../mem/problem_data.mem", problem_data_mem);
-        $display("[TB] Writing 4096 lines to Clause Table region...");
-        axi_write_4096_clauses(CLAUSE_BASE_ADDR);
+        $readmemh("../mem/4_queens.mem", problem_data_mem);
+        $display("[TB] Writing 2048 lines to Clause Table region...");
+        axi_write_2048_clauses(CLAUSE_BASE_ADDR);
 
         for(i=0; i<4; i=i+1) begin
             axi_read_single(CLAUSE_BASE_ADDR + i*4, read_word);

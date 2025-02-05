@@ -1,5 +1,5 @@
 $date
-	Sat Jan 25 00:02:07 2025
+	Mon Feb  3 21:11:28 2025
 $end
 $version
 	ModelSim Version 10.7d
@@ -10,13 +10,19 @@ $end
 
 $scope module december_top_file_tb $end
 
-$scope task axi_write_4096_clauses $end
+$scope task axi_write_2048_clauses $end
 $upscope $end
 
 $scope task axi_read_single $end
 $upscope $end
 
 $scope module dut $end
+
+$scope module address_translation_table $end
+$upscope $end
+
+$scope module clause_table $end
+$upscope $end
 
 $scope module unsat_clause_selector $end
 
