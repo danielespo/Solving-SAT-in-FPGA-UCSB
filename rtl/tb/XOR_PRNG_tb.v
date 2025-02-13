@@ -7,7 +7,7 @@
 `define SIM
 `define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $error($sformatf MESSAGE); end
 
-module xorshiftprng_tb ();
+module XOR_PRNG_tb ();
 
 // Inputs
 reg clk;
@@ -16,11 +16,11 @@ reg reset;
 // Outputs
 wire [31:0] out;
 
-// Instantiate the Unit Under Test (UUT)
-lfsr_prng uut (
-    .clk(clk), 
-    .reset(reset), 
-    .out(out)
+// Instantiate the Design Under Test (DUT)
+XOR_PRNG dut (
+    .clk_i(clk), 
+    .rst_i(reset), 
+    .data_o(out)
 );
 
 // Clock generation

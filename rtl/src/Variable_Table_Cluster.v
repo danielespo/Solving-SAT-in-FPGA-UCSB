@@ -37,11 +37,6 @@ module Variable_Table_Cluster #(
 )(
     input  clk_i,
     
-    // axi interface (should write simultaneously)
-    input  axi_en_i, axi_wr_en_i,
-    input  [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_addr_i,
-    input  axi_data_i, // common data input
-
     // runtime interface
     input  en_i, wr_en_i,
     input  [CLUSTER_SIZE * VARIABLE_ADDRESS_WIDTH - 1 : 0] addr_mi, 
@@ -53,10 +48,6 @@ module Variable_Table_Cluster #(
         for (i = 0; i < CLUSTER_SIZE; i = i + 1) begin: variable_table_gen
             Variable_Table #(VARIABLE_ADDRESS_WIDTH) vt_inst (
                 .clk_i(clk_i),
-                .axi_en_i(axi_en_i),
-                .axi_wr_en_i(axi_wr_en_i),
-                .axi_addr_i(axi_addr_i),
-                .axi_data_i(axi_data_i),
                 .en_i(en_i),
                 .wr_en_i(wr_en_i),
                 .addr_i(addr_mi[i * VARIABLE_ADDRESS_WIDTH +: VARIABLE_ADDRESS_WIDTH]),

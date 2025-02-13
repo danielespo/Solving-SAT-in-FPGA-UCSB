@@ -1,3 +1,7 @@
+Reading pref.tcl
+
+# 10.7d
+
 # vsim -c kanazawa_solver_tb -do "run -all; quit" 
 # Start time: 17:19:18 on Feb 12,2025
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...

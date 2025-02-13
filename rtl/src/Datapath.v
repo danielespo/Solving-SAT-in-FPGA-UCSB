@@ -55,21 +55,36 @@ module Datapath #(
     parameter MAX_CLAUSE_MEMBERSHIP = 20,
     parameter FIFO_DEPTH = 32,
     parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048,
-    parameter CONTROLLER_SIGNAL_WIDTH = 14 // will change
+    parameter CONTROLLER_SIGNAL_WIDTH = 14,
+    parameter VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES),
+    parameter LITERAL_ADDRESS_WIDTH = VARIABLE_ADDRESS_WIDTH + 1,
+    parameter CLAUSE_WIDTH = NSAT * LITERAL_ADDRESS_WIDTH,
+    parameter CT_WIDTH = (LITERAL_ADDRESS_WIDTH * (NSAT - 1) * MAX_CLAUSE_MEMBERSHIP)
 ) (
     input clk_i, rst_i,
     // controller signal : [x_xx_x_x_x_xx_x_xx_x_x]
     // CR_wren, ATT_src(2), VT_rden, VT_addr_src, VT_wren, VFS_wren(2), CFLB_wren, TB_wr_index(2), FIFO_wren, FIFO_rden 
-    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i
-    // in progress
-    
+    input [CONTROLLER_SIGNAL_WIDTH - 1 : 0] control_signal_i,
+
+    // Signals to write into Address_Translation_Table
+    input                              att_wr_en_i,
+    input [LITERAL_ADDRESS_WIDTH : 0]  att_wr_addr_i, 
+    input [(VARIABLE_ADDRESS_WIDTH + MAX_CLAUSE_MEMBERSHIP) - 1 : 0] att_wr_data_i,
+
+    // Signals to write into Clause_Table
+    input                    ct_wr_en_i,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] ct_wr_addr_i,
+    input [CT_WIDTH - 1 : 0]              ct_wr_data_i,  // e.g. matching your “wr_clauses_i”
+
+    input                                ucb_setup_wr_en_i,
+    input [$clog2(UNSAT_CLAUSE_BUFFER_DEPTH) - 1 : 0] ucb_setup_addr_i,
+    input [NSAT * LITERAL_ADDRESS_WIDTH - 1 : 0]      ucb_setup_data_i,
+    input                                ucb_setup_i,
+
+    output [10:0]                        unsat_buffer_count_o      
 );
 
 // local parameters
-localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);      // naming change
-localparam LITERAL_ADDRESS_WIDTH = VARIABLE_ADDRESS_WIDTH + 1;  // naming change
-localparam CLAUSE_WIDTH = NSAT * LITERAL_ADDRESS_WIDTH;
-
 localparam MC = MAX_CLAUSE_MEMBERSHIP;
 localparam MC_BITS = $clog2(MC);
 localparam NSAT_BITS = $clog2(NSAT);
@@ -172,7 +187,10 @@ genvar n, m;
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 1 +: LITERAL_ADDRESS_WIDTH] : 
             cr_selected_clause[LITERAL_ADDRESS_WIDTH * 0 +: LITERAL_ADDRESS_WIDTH]);
 
-    assign _cr_negated_literal = {~_cr_selected_literal[LITERAL_ADDRESS_WIDTH - 1], _cr_selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0]};
+    assign _cr_negated_literal =
+            { ~_cr_selected_literal[LITERAL_ADDRESS_WIDTH - 1],
+              _cr_selected_literal[LITERAL_ADDRESS_WIDTH - 2 : 0] };
+        
 
     Address_Translation_Table #(
         .CLAUSE_COUNT(MAX_CLAUSE_MEMBERSHIP),
@@ -180,9 +198,9 @@ genvar n, m;
         .CLAUSE_TABLE_ADDRESS_WIDTH(VARIABLE_ADDRESS_WIDTH)
     ) address_translation_table (
         .clk_i(clk_i),
-        .axi_wr_en_i(),
-        .axi_wr_addr_i(),
-        .axi_wr_data_i(),
+        .wr_en_i(att_wr_en_i),
+        .wr_addr_i(att_wr_addr_i),
+        .wr_data_i(att_wr_data_i),
         .rd_addr_i(_cr_negated_literal),
         .addr_o(att_addr_out),
         .mask_o(att_mask_out)
@@ -231,9 +249,9 @@ genvar n, m;
         .NSAT(NSAT)
     ) clause_table (
         .clk_i(clk_i),
-        .axi_wr_en_i(),
-        .axi_wr_addr_i(),
-        .axi_wr_clauses_i(),
+        .wr_en_i(ct_wr_en_i),
+        .wr_addr_i(ct_wr_addr_i),
+        .wr_clauses_i(ct_wr_data_i),
         .rd_addr_i(att_addr_out),
         .clauses_o(ct_clauses)
     );
@@ -286,10 +304,6 @@ genvar n, m;
         .CLUSTER_SIZE((NSAT - 1) * MC)
     ) variable_table_cluster (
         .clk_i(clk_i),
-        .axi_en_i(),
-        .axi_wr_en_i(),
-        .axi_addr_i(),
-        .axi_data_i(),
         .en_i(vt_en),
         .wr_en_i(vt_wr_en),
         .addr_mi(_vtc_address_m),
@@ -349,11 +363,7 @@ genvar n, m;
         .wr_en_i(vt_wr_en),
         .addr_mi(_vtc2_address_m),
         .data_i(_vtc2_data),
-        .data_mo(vtc2_value_bits),
-        .axi_en_i(),
-        .axi_wr_en_i(),
-        .axi_addr_i(),
-        .axi_data_i()
+        .data_mo(vtc2_value_bits)
     );
 
 /* --- clause evaluator cluster --- */
@@ -430,11 +440,11 @@ genvar n, m;
     ) unsat_clause_selector (
         .clk_i(clk_i),
         .rst_i(rst_i),
-        .setup_i(),
+        .setup_i(ucb_setup_i),
         // .ready_o(),
-        .ucb_setup_wr_en_i(),
-        .ucb_setup_addr_i(),
-        .ucb_setup_data_i(),
+        .ucb_setup_wr_en_i(ucb_setup_wr_en_i),
+        .ucb_setup_addr_i(ucb_setup_addr_i),
+        .ucb_setup_data_i(ucb_setup_data_i),
         .request_i(ucs_request),
         .write_disable_i(~ce2_break),
         .clear_debug_DIV_BY_ZERO_i(),
@@ -442,7 +452,7 @@ genvar n, m;
         .fifo_empty_i(fifo_empty),
         .fifo_clause_i(fifo_clause),
         .random_i(prng_random_number[RANDOM_OFFSET +: RANDOM_NUM_WIDTH]),
-        .buffer_count_o(),
+        .buffer_count_o(unsat_buffer_count_o),
         .selected_o(ucs_selected_clause),
         .ucb_overflow_o()
     );

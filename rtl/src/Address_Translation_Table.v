@@ -4,7 +4,6 @@ Address_Translation_Table.v
 
 V1.0 Author: Dan Espinosa
 V2.0 Author: Barry Wang
-V2.5 Author: Harim Choe
 
 Description:
     This is a configurable width/depth memory with a
@@ -28,9 +27,6 @@ Change Log:
     Changed "VARIABLE_ADDRESS_WIDTH" to "LITERAL_ADDRESS_WIDTH" to match naming in other modules
     naming convention parity
 
-2025/01/14 - Harim Choe
-    Initalize mask_out and addr_out as 0
-
 -----------------------------------------------------*/
 
 module Address_Translation_Table # (
@@ -41,12 +37,12 @@ module Address_Translation_Table # (
     input       clk_i, 
 
     // setup write io  
-    input                                                           axi_wr_en_i,
-    input       [LITERAL_ADDRESS_WIDTH : 0]                         axi_wr_addr_i, 
-    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] axi_wr_data_i,
+    input                                                           wr_en_i,
+    input       [LITERAL_ADDRESS_WIDTH : 0]                         wr_addr_i, 
+    input       [CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT - 1 : 0] wr_data_i,
 
     // runtime read io
-    input       [LITERAL_ADDRESS_WIDTH-2 : 0]          rd_addr_i,
+    input       [LITERAL_ADDRESS_WIDTH-1 : 0]          rd_addr_i,
     output wire [CLAUSE_TABLE_ADDRESS_WIDTH - 1 : 0] addr_o,
     output wire [CLAUSE_COUNT - 1 : 0]               mask_o
 );
@@ -55,32 +51,17 @@ module Address_Translation_Table # (
     localparam WIDTH = CLAUSE_TABLE_ADDRESS_WIDTH + CLAUSE_COUNT;
     
     reg [WIDTH - 1 : 0] ram [0 : DEPTH - 1];
+    
     reg [WIDTH - 1 : 0] dout;
     
     // assign {addr_o, mask_o} = dout; // potential alternative, but unclear
-    integer i;
-    initial begin
-        dout = {WIDTH{1'b0}};
-        for (i = 0; i < DEPTH; i = i + 1)
-            ram[i] = {WIDTH{1'b0}};
-        $display("Address Translation Table Initialized.");
-    end
-
     assign mask_o = dout[CLAUSE_COUNT - 1 : 0];
     assign addr_o = dout[WIDTH - 1 : CLAUSE_COUNT];
     
     always @(posedge clk_i)
     begin
-        // Handle write operations
-        if (axi_wr_en_i) begin
-            ram[axi_wr_addr_i] <= axi_wr_data_i;
-            $display("Write operation: Address = %0h, Data = %0h", axi_wr_addr_i, axi_wr_data_i);
-        end
-
-        // Handle read operations
+        if (wr_en_i) ram[wr_addr_i] <= wr_data_i;
         dout <= ram[rd_addr_i];
-        $display("Read operation: Address = %0h, Data = %0h (Addr_o = %0h, Mask_o = %0h)", 
-                 rd_addr_i, dout, addr_o, mask_o);
     end
 
 endmodule

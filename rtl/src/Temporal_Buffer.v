@@ -37,7 +37,7 @@ module Temporal_Buffer #(
     input                           clk_i,          // Clock signal
     input                           rst_i,          // Reset signal
 
-    input [$clog2(NSAT) - 1 : 0]    wr_index_i,     // which flip is currently being evaluated 
+    input [$clog2(NSAT) - 1 : 0]    wr_index_i,     // which flip is currently being evaluated
     input                           wr_en_i,        // write enable signal
     input [SIZE * LAW - 1 : 0]      wr_literals_i,  // clause_table literals input by literals because need to put selected literal together with clause_table literals
 
@@ -54,16 +54,16 @@ module Temporal_Buffer #(
     
     /* Logic */
     always @(posedge clk_i) begin
-        if(rst_i) begin // if reset then for 0 to 3 , make the stored literals be 0
+        if(rst_i) begin
             for(i = 0; i < NSAT; i = i + 1) begin
                 stored_literals[i] <= 0;
             end
-        end else begin // otherwise, if the write enable signal is on, then write the wr_literals_i (24b)
-            // if 2 passthrough, otherwise read previously stored literals
+        end else begin
             if(wr_en_i) stored_literals[wr_index_i] <= wr_literals_i;
             if(rd_index_i == 2) literals_o <= wr_literals_i; 
             if(rd_index_i != 2) literals_o <= stored_literals[rd_index_i];
         end
     end
+    
 
 endmodule

@@ -1,0 +1,52 @@
+Reading pref.tcl
+
+# 10.7d
+
+# vsim -c new_datapath_tb -do "run -all; quit" 
+# Start time: 05:11:46 on Feb 06,2025
+# ** Note: (vsim-8009) Loading existing optimized design _opt
+# //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.27.1.el8_10.x86_64
+# //
+# //  Copyright 1991-2019 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.new_datapath_tb(fast)
+# run -all
+# Address Translation Table Initialized.
+# Read operation: Address = x, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = 800, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = x, Data = 0 (Addr_o = 0, Mask_o = 0)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# Read operation: Address = x, Data = x (Addr_o = x, Mask_o = x)
+# [TB] Final 16-bit assignment read out = 0101101101111110
+# [TB] 4-Queens check: FAIL => row_error=4 col_error=4 diag_error=34
+# [TB] Simulation complete. Stopping.
+# ** Note: $stop    : new_datapath_tb.v(106)
+#    Time: 185 ns  Iteration: 1  Instance: /new_datapath_tb
+# Break at new_datapath_tb.v line 106
+# Stopped at new_datapath_tb.v line 106
+#  quit
+# End time: 05:11:46 on Feb 06,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0

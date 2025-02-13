@@ -205,7 +205,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     M_Table #(
         .BUFFER_DEPTH(BUFFER_DEPTH),
         .M_TABLE_WIDTH(MT_WIDTH),
-        .M_TABLE_NAME("M_table_roundup.mem")
+        .M_TABLE_NAME("/home/harim_choe/Z_KSAT/rtl/mem/M_table_roundup.mem")
     ) m_table (
         .clk_i(clk_i),
         .en_i(mt_en),

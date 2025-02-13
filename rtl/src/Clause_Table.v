@@ -1,10 +1,9 @@
 /*
-Version: 2.5
+Version: 2.0
 Clause_Table.v
 
 V1.0 Author: Zeiler Randall-Reed
 V2.0 Author: Barry Wang
-V2.5 Author: Harim Choe
 
 Description:
     The clause table holds the information for all of the clauses in the current problem. The 
@@ -24,7 +23,7 @@ Notes:
     The Clause Table is implemented with a simple dual port memory to acommodate the zynq 7000
     native. The write port will only be used before the accelerator starts running and the mem
     will behave as a rom afterwards. 
-XI
+
 Testing:
     None
     
@@ -35,9 +34,7 @@ Change Log:
 
 2024/09/11 - Zeiler Randall-Reed
     naming changes
-
-2025/01/13 - Harim Choe
-    reset memory of clause table to 0 and added display for debugging (use it for axi simulation)
+    
 */
 
 module Clause_Table #(
@@ -50,36 +47,19 @@ module Clause_Table #(
 )(
     input clk_i, 
     
-    input                                  axi_wr_en_i,
-    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] axi_wr_addr_i, 
-    input [CT_WIDTH - 1 : 0]               axi_wr_clauses_i,
+    input                                  wr_en_i,
+    input [VARIABLE_ADDRESS_WIDTH - 1 : 0] wr_addr_i, 
+    input [CT_WIDTH - 1 : 0]               wr_clauses_i,
 
     input [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_i,
     output reg [CT_WIDTH - 1 : 0]          clauses_o
 );
-    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1]; // reg [479:0] mem [0:2047]
+    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1];
 
-    integer k;
-
-    // reset memory to 0
-    initial begin
-        for (k = 0; k < DEPTH; k = k + 1) begin
-            mem[k] = 0;
-        end
-    end 
-
-    always @ (posedge clk_i) begin
-        if (axi_wr_en_i) begin
-            mem[axi_wr_addr_i] <= axi_wr_clauses_i;
-            // $display("Clause_Table: Written mem[%0d] = 0x%h", axi_wr_addr_i, axi_wr_clauses_i);
-        end
-        // Check if the read address matches the write address (read-after-write)
-        if (axi_wr_en_i && (rd_addr_i == axi_wr_addr_i)) begin
-            clauses_o <= axi_wr_clauses_i; // Forward the write data to the output
-        end else begin
-            clauses_o <= mem[rd_addr_i];   // Otherwise, read from memory
-        end
-        // $display("Clause_Table: Read mem[%0d] = 0x%h", rd_addr_i, clauses_o);
-end
+    always @ (posedge clk_i)
+    begin
+        if (wr_en_i) mem[wr_addr_i] <= wr_clauses_i;
+        clauses_o <= mem[rd_addr_i];
+    end
     
 endmodule

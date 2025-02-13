@@ -22,7 +22,7 @@ Change Log:
 module M_Table #(
     parameter BUFFER_DEPTH = 2048,
     parameter M_TABLE_WIDTH = 32,
-    parameter M_TABLE_NAME = "M_table_roundup.mem"
+    parameter M_TABLE_NAME = "/home/harim_choe/Z_KSAT/rtl/mem/M_table_roundup.mem"
 )(
     input                                     clk_i,
     input                                     en_i,
