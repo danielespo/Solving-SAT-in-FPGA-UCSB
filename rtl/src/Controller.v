@@ -1,3 +1,23 @@
+/*
+Version 1.1
+Overlord.v
+
+V1.0 Author: Harim Choe
+V1.1 Author: Daniel Espinosa
+
+Description: This module is the controller for a single thread of the SAT Solver,
+  it is basically a FSM that makes sure to start solving only when data is stable,
+    and to stop when either the thread runs out of MAXFLIPS or it finds SAT.
+    
+
+Testing: 
+02/14/2025 - Daniel Espinosa
+    Harim's original design passed testing fine, the diff here is trying to add the extra signals
+      from the Overlord.v file which is being a bit of a pain.
+
+Change Log:
+*/
+
 module Controller #(
   parameter NSAT                        = 3,
   parameter NUM_VARIABLES               = 2048,

@@ -1,3 +1,23 @@
+/*
+Version 0.0
+Overlord.v
+
+V0.0 Author: Daniel Espinosa
+
+Description: This module is a top level FSM that has the generate blocks for
+  making the four independent threads (tries) of our SAT solver, and to talk
+  to the CPU directly regarding starting, loading data, etc.
+
+Notes: 
+  - Initial draft does not pass simulation even with controller changes
+
+Testing: N/A
+
+Change Log:
+2025/02/13 - Daniel Espinosa
+    Created Overlord.v
+*/
+
 module Overlord #(
   parameter NSAT                        = 3,
   parameter NUM_VARIABLES               = 2048,

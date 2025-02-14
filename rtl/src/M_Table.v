@@ -17,6 +17,9 @@ Change Log:
 2024/08/29 - Zeiler Randall-Reed
     Created M_Table.v
     Copied from Unsat_Clause_Selector.v
+2025/02/14 - Daniel Espinosa
+    Modified path so it works for my local path. In the future, we should
+    make the paths be repository agnostic, and make sure to anonimize them.
 */
 
 module M_Table #(
