@@ -27,8 +27,17 @@ NA
 # ModelSim Files
 rtl/src/src/
 rtl/src/work/
+rtl/tb/src/
+rtl/tb/work/
+rtl/work
 *.qdb
 *.qpg
 *.qtl
+*.mti
+*.mpf
+*.wlf
+*.do
+*.vstf
 _info
 _vmake
+transcript
