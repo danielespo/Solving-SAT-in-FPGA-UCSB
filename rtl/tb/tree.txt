@@ -1,0 +1,118 @@
+/home/dae/Solving-SAT-in-FPGA-UCSB/rtl
+├── axi_test.cr.mti
+├── axi_test.mpf
+├── bd
+│   └── MVP_example
+├── logs
+│   ├── datapath_log_2.txt
+│   ├── datapath_log.txt
+│   ├── kanazawa.txt
+│   └── new_datapath_log.txt
+├── mem
+│   ├── 4_queens.mem
+│   ├── att_dummy.mem
+│   ├── Break_Value_Counter_tb_status.mem
+│   ├── Break_Value_Counter_tb_value.mem
+│   ├── clause_dummy.mem
+│   ├── Clause_Evaluator_break.mem
+│   ├── Clause_Evaluator_var_neg.mem
+│   ├── Clause_Evaluator_var_val.mem
+│   ├── dummy_att.mem
+│   ├── factor440101.mem
+│   ├── FIFO_tb_clauses.mem
+│   ├── FIFO_tb_clauses_valid.mem
+│   ├── HS_tb_f0.mem
+│   ├── HS_tb_f1.mem
+│   ├── HS_tb_f2.mem
+│   ├── HS_tb_ri.mem
+│   ├── HS_tb_xout.mem
+│   ├── minunsat.mem
+│   ├── M_table_rounddown.mem
+│   ├── M_table_roundnear.mem
+│   ├── M_table_roundup.mem
+│   ├── problem_data.mem
+│   └── uf50-01.mem
+├── src
+│   ├── Address_Translation_Table.v
+│   ├── AXI4_Memory_Controller.v
+│   ├── Break_Value_Counter.v
+│   ├── Clause_Evaluator_Cluster.v
+│   ├── Clause_Evaluator.v
+│   ├── Clause_Processor.v
+│   ├── Clause_Register.v
+│   ├── Clause_Selector.v
+│   ├── Clause_Table.v
+│   ├── Controller.v
+│   ├── Datapath.v
+│   ├── december_top_file.v
+│   ├── dummy_mem.v
+│   ├── FIFO_Buffer.v
+│   ├── FIFO_Tree.v
+│   ├── Heuristic_Selector.v
+│   ├── LICENSE.txt
+│   ├── M_Table.v
+│   ├── Overlord.v
+│   ├── Parallel_to_Serial.v
+│   ├── SAT_Solver_Top.v
+│   ├── src
+│   ├── Temporal_Buffer.v
+│   ├── Temporal_Buffer_Wrapper.v
+│   ├── top_file_controller_dan.v
+│   ├── transcript
+│   ├── Unsat_Clause_Buffer.v
+│   ├── Unsat_Clause_Selector.v
+│   ├── Variable_Flip_Selector.v
+│   ├── Variable_Table_Cluster.v
+│   ├── Variable_Table.v
+│   └── XOR_PRNG.v
+├── tb
+│   ├── Address_Translation_Table_tb.v
+│   ├── AXI4_Memory_Controller_tb.v
+│   ├── Break_Value_Counter_tb.v
+│   ├── Clause_Evaluator_tb.v
+│   ├── Clause_Register_tb.v
+│   ├── Clause_Table_tb.v
+│   ├── datapath_sim.sh
+│   ├── december_top_file_tb.v
+│   ├── december_top_file_tb.vcd
+│   ├── december_top_file_with_axi_tb.v
+│   ├── dummy_mem_tb.v
+│   ├── FIFO_Buffer_tb.v
+│   ├── FIFO_Tree_tb.v
+│   ├── Hardcode_Clause_Test.cr.mti
+│   ├── Hardcode_Clause_Test.mpf
+│   ├── Heuristic_Selector_tb.v
+│   ├── kanazawa_solver_tb.v
+│   ├── modelsim.ini
+│   ├── M_table_roundup.mem
+│   ├── M_Table_tb.v
+│   ├── simulate.sh
+│   ├── src
+│   ├── tb_4_queens.v
+│   ├── Temporal_Buffer_tb.v
+│   ├── Temporal_Buffer_Wrapper_tb.v
+│   ├── top_file_controller_tb.v
+│   ├── transcript
+│   ├── tree.txt
+│   ├── Unsat_Clause_Selector_tb.v
+│   ├── Variable_Flip_Selector_tb.v
+│   ├── Variable_Table_Cluster_tb.v
+│   ├── vish_stacktrace.vstf
+│   ├── vsim_stacktrace.vstf
+│   ├── vsim.wlf
+│   ├── work
+│   └── XOR_PRNG_tb.v
+├── transcript
+├── vsim.wlf
+└── work
+    ├── _info
+    ├── _lib1_1.qdb
+    ├── _lib1_1.qpg
+    ├── _lib1_1.qtl
+    ├── _lib.qdb
+    ├── @_opt
+    ├── _temp
+    ├── _tempmsg
+    └── _vmake
+
+13 directories, 102 files

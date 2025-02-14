@@ -39,7 +39,7 @@ def preprocess_file(filepath):
     return temp_filepath
 
 def main():
-    cnf_dir = "/home/harim_choe/Solving-SAT-in-FPGA-UCSB/Python-Code/uf50-218"
+    cnf_dir = "/home/dae/Solving-SAT-in-FPGA-UCSB/Python-Code/uf50-218"
     prefix = "uf50-"
     extension = ".cnf"
 

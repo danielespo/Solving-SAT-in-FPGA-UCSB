@@ -3,8 +3,8 @@ Reading pref.tcl
 # 10.7d
 
 # vsim -c kanazawa_solver_tb -do "run -all; quit" 
-# Start time: 17:19:18 on Feb 12,2025
-# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Start time: 21:01:52 on Feb 13,2025
+# ** Note: (vsim-8009) Loading existing optimized design _opt
 # //  ModelSim SE-64 10.7d Feb 15 2019 Linux 4.18.0-553.27.1.el8_10.x86_64
 # //
 # //  Copyright 1991-2019 Mentor Graphics Corporation
@@ -21,20 +21,15 @@ Reading pref.tcl
 # Loading work.kanazawa_solver_tb(fast)
 # run -all
 # 
-# === LOAD minunsat.mem (UNSAT) ===
-# Loading Clause Table from /home/harim_choe/Z_KSAT/rtl/mem/minunsat.mem ...
+# === LOADING clause table for thread 0 ===
+# Loading Clause Table from /home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem ...
+# 
+# === LOADING clause table for thread 1 ===
+# Loading Clause Table from /home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem ...
+# 
+# === LOADING clause table for thread 2 ===
+# Loading Clause Table from /home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem ...
+# 
+# === LOADING clause table for thread 3 ===
+# Loading Clause Table from /home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem ...
 # === START solver for minunsat (UNSAT) ===
-# Solver done for minunsat. unsat_buffer_count_o=0
-# SUCCESS: UNSAT problem did not reach 0 unsatisfied clauses after 16777215 flips (as expected).
-# 
-# === LOAD 4_queens.mem (SAT) ===
-# Loading Clause Table from /home/harim_choe/Z_KSAT/rtl/mem/4_queens.mem ...
-# === START solver for 4_queens (SAT) ===
-# Solver done for 4_queens. unsat_buffer_count_o=0
-# SUCCESS: 4_queens is SAT and the solver found a satisfying assignment.
-# 
-# All tests complete. Finishing simulation...
-# ** Note: $finish    : kanazawa_solver_tb.v(185)
-#    Time: 409785 ns  Iteration: 3  Instance: /kanazawa_solver_tb
-# End time: 17:19:18 on Feb 12,2025, Elapsed time: 0:00:00
-# Errors: 0, Warnings: 0

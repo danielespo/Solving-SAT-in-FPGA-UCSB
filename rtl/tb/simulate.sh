@@ -6,8 +6,8 @@ if [ $# -ne 1 ]; then
 fi
 
 RTL=$1
-RTL_DIR="/home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/src"
-TB_DIR="/home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/tb"
+RTL_DIR="/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/src"
+TB_DIR="/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/tb"
 TESTBENCH="${TB_DIR}/$(basename ${RTL%.v})_tb.v"
 
 # Find RTL
