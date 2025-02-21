@@ -29,48 +29,50 @@ module FIFO_Buffer #(
     parameter DATA_WIDTH = 36,
     parameter BUFFER_ADDR_WIDTH = 5
 )(
-    input                       clk_i,            // Clock signal
-    input                       rst_i,          // rst_i signal
-    input      [DATA_WIDTH-1:0] data_i,         // Data input
-    input                       rd_en_i,         // Read signal
-    input                       wr_en_i,         // Write signal
-    
-    output reg [DATA_WIDTH-1:0] data_o,         // Data output
-    output                      empty_o,        // Empty flag
-    output                      full_o          // Full flag
+    input                       clk_i,
+    input                       rst_i,
+    input      [DATA_WIDTH-1:0] data_i,
+    input                       rd_en_i,
+    input                       wr_en_i,
+    output reg [DATA_WIDTH-1:0] data_o,
+    output                      empty_o,
+    output                      full_o
 );
     
     reg [DATA_WIDTH - 1 : 0] buffer [0 : 2 ** BUFFER_ADDR_WIDTH - 1];
     reg [BUFFER_ADDR_WIDTH - 1 : 0] read_ptr, write_ptr, counter;
     
-    // We require a power of 2 address space.
-    assign empty_o  = ~(|counter);
-    assign full_o   = &counter;
+    assign empty_o  = (counter == 0);
+    assign full_o   = (counter == (2 ** BUFFER_ADDR_WIDTH));
     
     always @ (posedge clk_i) begin
         if (rst_i) begin
-            read_ptr        <= 0;
-            write_ptr       <= 0;
-            counter         <= 0;
-            data_o          <= 0;
-        end else if (wr_en_i && rd_en_i) begin            // concurrent rw is always valid
-            buffer[write_ptr]   <= data_i;
-            data_o              <= buffer[read_ptr];
-            write_ptr           <= write_ptr + 1;
-            read_ptr            <= read_ptr + 1;
+            read_ptr  <= 0;
+            write_ptr <= 0;
+            counter   <= 0;
+            data_o    <= 0;
+            // $display("FIFO_Buffer Reset at time %0t", $time);
+        end else if (wr_en_i && rd_en_i) begin
+            buffer[write_ptr] <= data_i;
+            data_o <= buffer[read_ptr];
+            write_ptr <= write_ptr + 1;
+            read_ptr  <= read_ptr + 1;
+            // $display("FIFO_Buffer RW at time %0t: data_i=0x%0h, data_o=0x%0h", $time, data_i, data_o);
         end else begin
-            if (wr_en_i && !full_o) begin                // if write enable is high and the buffer is not full
-                buffer[write_ptr]   <= data_i;              // write the data to buffer at the write_ptr index
-                write_ptr           <= write_ptr + 1;       // increment write_ptr
-                counter             <= counter + 1;         // increment counter
+            if (wr_en_i && !full_o) begin
+                buffer[write_ptr] <= data_i;
+                write_ptr <= write_ptr + 1;
+                counter <= counter + 1;
+                // $display("FIFO_Buffer WRITE at time %0t: data_i=0x%0h, counter=%0d", $time, data_i, counter+1);
             end
-            if (rd_en_i && !empty_o) begin               // if read enable is high and the buffer is not empty
-                data_o          <= buffer[read_ptr];        // output the data at the read_ptr index
-                read_ptr        <= read_ptr + 1;            // increment read_ptr
-                counter         <= counter - 1;             // decrement counter
+            if (rd_en_i && !empty_o) begin
+                data_o <= buffer[read_ptr];
+                read_ptr <= read_ptr + 1;
+                counter <= counter - 1;
+                // $display("FIFO_Buffer READ at time %0t: data_o=0x%0h, counter=%0d", $time, data_o, counter-1);
             end
         end
     end
 
-
 endmodule
+

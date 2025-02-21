@@ -185,13 +185,29 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     always @(posedge clk_i) begin
         if(rst_i) begin
             ucb_count <= 0;
+            $display("Unsat_Clause_Selector: Reset at time %0t", $time);
         end else begin
-            if (setup_i & ucb_setup_wr_en_i)     ucb_count <= ucb_count + 1; // increment counter during setup
-            else if(~ucb_en)                     ucb_count <= ucb_count;     // if buffer is not enabled, do nothing
-            else if(~fifo_empty_i & ~request_q3) ucb_count <= ucb_count + 1; // if fifo not empty and no selection (0R 1W)
-            else if(fifo_empty_i & request_q3)   ucb_count <= ucb_count - 1; // if fifo empty and selection is last address (1R 0W)
-            else if(fifo_empty_i & ~request_q3)  ucb_count <= ucb_count;     // if fifo not empty and we're selecting (1R 1W)
-            else if(~fifo_empty_i & request_q3)  ucb_count <= ucb_count;     // if fifo empty and no selection (0R 0W)
+            if (setup_i & ucb_setup_wr_en_i) begin
+                ucb_count <= ucb_count + 1; // increment counter during setup
+                $display("Unsat_Clause_Selector: ucb_count = %0d at time %0t", ucb_count, $time);
+            end else if(~ucb_en) begin
+                // if buffer is not enabled, do nothing
+                ucb_count <= ucb_count;
+            end else if(~fifo_empty_i & ~request_q3) begin
+                // if fifo not empty and no selection (0R 1W)
+                ucb_count <= ucb_count + 1;
+                $display("Unsat_Clause_Selector: ucb_count = %0d at time %0t", ucb_count, $time);
+            end else if(fifo_empty_i & request_q3) begin
+                // if fifo empty and selection is last address (1R 0W)
+                ucb_count <= ucb_count - 1;
+                $display("Unsat_Clause_Selector: ucb_count = %0d at time %0t", ucb_count, $time);
+            end else if(fifo_empty_i & ~request_q3) begin
+                // if fifo not empty and we're selecting (1R 1W)
+                ucb_count <= ucb_count;
+            end else if(~fifo_empty_i & request_q3) begin
+                // if fifo empty and no selection (0R 0W)
+                ucb_count <= ucb_count;
+            end
         end
     end
 
@@ -205,7 +221,7 @@ localparam CLAUSE_WIDTH = NSAT * LIT_ADDR_WIDTH;
     M_Table #(
         .BUFFER_DEPTH(BUFFER_DEPTH),
         .M_TABLE_WIDTH(MT_WIDTH),
-        .M_TABLE_NAME("/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/M_table_roundup.mem")
+        .M_TABLE_NAME("/home/harim_choe/Z_KSAT/rtl/mem/M_table_roundup.mem")
     ) m_table (
         .clk_i(clk_i),
         .en_i(mt_en),

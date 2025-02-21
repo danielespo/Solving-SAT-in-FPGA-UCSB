@@ -17,15 +17,12 @@ Change Log:
 2024/08/29 - Zeiler Randall-Reed
     Created M_Table.v
     Copied from Unsat_Clause_Selector.v
-2025/02/14 - Daniel Espinosa
-    Modified path so it works for my local path. In the future, we should
-    make the paths be repository agnostic, and make sure to anonimize them.
 */
 
 module M_Table #(
     parameter BUFFER_DEPTH = 2048,
     parameter M_TABLE_WIDTH = 32,
-    parameter M_TABLE_NAME = "/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/M_table_roundup.mem"
+    parameter M_TABLE_NAME = "/home/harim_choe/Z_KSAT/rtl/mem/M_table_roundup.mem"
 )(
     input                                     clk_i,
     input                                     en_i,
@@ -44,8 +41,8 @@ module M_Table #(
     // 1/m table address (adjusted)
     wire [BUFFER_ADDR_WIDTH - 1 : 0] addr_actual = (addr_i == 0) ? 0 : addr_i - 1;
 
-    // initial register data and loading 1/M-table
-    initial begin
+     // initial register data and loading 1/M-table
+     initial begin
         debug_DIV_BY_ZERO_o = 0;
         data_o = {M_TABLE_WIDTH{1'b0}};
         $readmemh(M_TABLE_NAME, m_table);
@@ -55,8 +52,10 @@ module M_Table #(
     always @(posedge clk_i) begin
         if(en_i) begin
             data_o <= m_table[addr_actual];
+            // $display("M_Table: addr=%0d, data_o=%0d at time %0t", addr_i, data_o, $time);
         end else begin
             data_o <= {M_TABLE_WIDTH{1'b0}};
+            // $display("M_Table: addr=%0d, data_o=%0d at time %0t", addr_i, data_o, $time);
         end
     end
     // debug signal to indicate division by zero

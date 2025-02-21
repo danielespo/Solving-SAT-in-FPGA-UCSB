@@ -30,15 +30,20 @@ module Clause_Register# (
 )(
     input       clk_i, rst_i, 
     input       wr_en_i,
-    
     input       [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] data_i,
     output reg  [LITERAL_ADDRESS_WIDTH * NSAT - 1 : 0] data_o
 );
     
-    always @ (posedge clk_i)
+    always @ (posedge clk_i or posedge rst_i)
     begin
-        if (rst_i) data_o <= 0;
-        else if (wr_en_i) data_o <= data_i;
+        if (rst_i) begin 
+            data_o <= 0;
+            // $display("Clause_Register Reset at time %0t", $time);
+        end else if (wr_en_i) begin 
+            data_o <= data_i;
+            // $display("Clause_Register Write at time %0t: data_i=0x%0h", $time, data_i);
+        end
     end
     
 endmodule
+

@@ -47,8 +47,8 @@ wire [NUM_CLAUSES - 1 : 0] clause_broken_o;
 // Instantiate the Unit Under Test (UUT)
 Break_Value_Counter #(
     .NUM_CLAUSES(NUM_CLAUSES),
-    .NUM_ROWS(NUM_ROWS),
-    .NUM_CLAUSES_BITS(NUM_CLAUSES_BITS)
+    .NUM_ROWS(NUM_ROWS)
+    // .NUM_CLAUSES_BITS(NUM_CLAUSES_BITS)
 ) uut (
     .clause_broken_i(clause_status_i),
     .mask_bits_i(mask_bits_i),
@@ -61,7 +61,7 @@ genvar n;
 wire [NUM_CLAUSES_BITS - 1 : 0] uut_break_sum_steps [NUM_CLAUSES - 2 : 0];
 generate
     for(n = 0; n < NUM_CLAUSES - 1; n = n + 1) begin
-        assign uut_break_sum_steps[n] = uut.break_sum_steps[n];
+        assign uut_break_sum_steps[n] = uut.break_value_o[n];
     end
 endgenerate
 

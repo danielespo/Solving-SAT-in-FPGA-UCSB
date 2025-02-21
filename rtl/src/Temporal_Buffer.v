@@ -60,8 +60,9 @@ module Temporal_Buffer #(
             end
         end else begin
             if(wr_en_i) stored_literals[wr_index_i] <= wr_literals_i;
-            if(rd_index_i == 2) literals_o <= wr_literals_i; 
-            if(rd_index_i != 2) literals_o <= stored_literals[rd_index_i];
+            // if(rd_index_i == 2) literals_o <= wr_literals_i; 
+            // if(rd_index_i != 2) literals_o <= stored_literals[rd_index_i];
+            literals_o <= stored_literals[rd_index_i];
         end
     end
     

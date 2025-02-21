@@ -16,8 +16,8 @@ reg reset;
 // Outputs
 wire [31:0] out;
 
-// Instantiate the Design Under Test (DUT)
-XOR_PRNG dut (
+// Instantiate the Unit Under Test (UUT)
+XOR_PRNG uut (
     .clk_i(clk), 
     .rst_i(reset), 
     .data_o(out)

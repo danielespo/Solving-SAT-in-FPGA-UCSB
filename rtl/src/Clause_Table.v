@@ -1,65 +1,64 @@
-/*
-Version: 2.0
+/* ----------------------------------------------------
+Version: 2.6
 Clause_Table.v
-
 V1.0 Author: Zeiler Randall-Reed
 V2.0 Author: Barry Wang
+V2.5 Author: Harim Choe
+V2.6 Author: [Your Name]
 
 Description:
-    The clause table holds the information for all of the clauses in the current problem. The 
-    address and negation bit of a literal is sent to the address translation table which returns
-    an index and mask. The index is used to access this table by its row, which returns the 
-    addresses and negation bits of the other literals in every clause that the initial literal 
-    is in.
+    The clause table holds the information for all of the clauses in the current problem.
+    The table now supports loading its memory contents from a mem file (CT_MEM_FILE) via $readmemh.
     
-    This table only has 2048 entries by default, despite there being 4096 address + negation 
-    bit pairs (12^2). This is because multiple clauses can be packed into the same row of the 
-    table, and must be to minimize space impact. The mask from the address translation table is
-    used as an enable bit for the subsequent clause evaluators so that only the two literals  
-    with negation bits associated with the initially requested literal and negation bit are 
-    checked.
+    The table is organized such that each row contains a packed 480-bit word (20 candidate entries × 24 bits).
 
 Notes:
-    The Clause Table is implemented with a simple dual port memory to acommodate the zynq 7000
-    native. The write port will only be used before the accelerator starts running and the mem
-    will behave as a rom afterwards. 
-
-Testing:
-    None
+    The Clause Table is implemented with a simple dual port memory. The write port will only be used
+    before the accelerator starts running, and the mem will behave as a ROM afterwards.
     
-Change Log:
-
-2024/07/24 - Barry Wang
-    Remake Clause_Register
-
-2024/09/11 - Zeiler Randall-Reed
-    naming changes
-    
-*/
+-----------------------------------------------------*/
 
 module Clause_Table #(
-    // Number of clauses in the clause table
-    parameter CLAUSE_COUNT = 20,
-    parameter DEPTH = 2048,
+    parameter CLAUSE_COUNT = 20,   // Number of candidate entries per literal.
+    parameter DEPTH = 2048,        // Number of rows.
     parameter VARIABLE_ADDRESS_WIDTH = 11,
-    parameter NSAT = 3,
-    localparam CT_WIDTH = (VARIABLE_ADDRESS_WIDTH + 1) * (NSAT - 1) * CLAUSE_COUNT
+    parameter NSAT = 3,            // Number of literals in each clause (3-SAT)
+    // CT_WIDTH is calculated so that each row is 20 entries × 24 bits = 480 bits.
+    localparam CT_WIDTH = 24 * CLAUSE_COUNT,
+    parameter CT_MEM_FILE = "../../Python-Code/ct.mem"  // mem file for Clause Table initialization
 )(
     input clk_i, 
-    
     input                                  wr_en_i,
     input [VARIABLE_ADDRESS_WIDTH - 1 : 0] wr_addr_i, 
     input [CT_WIDTH - 1 : 0]               wr_clauses_i,
-
     input [VARIABLE_ADDRESS_WIDTH - 1 : 0] rd_addr_i,
     output reg [CT_WIDTH - 1 : 0]          clauses_o
 );
-    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1];
+    reg [CT_WIDTH - 1 : 0] mem [0 : DEPTH - 1]; // each row is 480 bits.
 
-    always @ (posedge clk_i)
-    begin
-        if (wr_en_i) mem[wr_addr_i] <= wr_clauses_i;
-        clauses_o <= mem[rd_addr_i];
+    integer k;
+    initial begin
+        // Reset memory to 0 for safety.
+        for (k = 0; k < DEPTH; k = k + 1) begin
+            mem[k] = {CT_WIDTH{1'b0}};
+        end 
+        // Load memory contents from file.
+        $readmemh(CT_MEM_FILE, mem);
+        // $display("Clause Table: Loaded mem file %s at time %0t", CT_MEM_FILE, $time);
+    end 
+
+    always @(posedge clk_i) begin
+        if (wr_en_i) begin
+            mem[wr_addr_i] <= wr_clauses_i;
+            // $display("Clause_Table: Written mem[%0d] = 0x%h", wr_addr_i, wr_clauses_i);
+        end
+
+        if (wr_en_i && (rd_addr_i == wr_addr_i)) begin
+            clauses_o <= wr_clauses_i;
+        end else begin
+            clauses_o <= mem[rd_addr_i];
+        end
+        // $display("Clause_Table: Read mem[%0d] = 0x%h", rd_addr_i, clauses_o);
     end
-    
+
 endmodule

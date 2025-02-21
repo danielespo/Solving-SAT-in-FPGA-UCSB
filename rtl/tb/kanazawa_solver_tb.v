@@ -2,13 +2,13 @@
 
 module kanazawa_solver_tb;
 
-  parameter NSAT                    = 3;
-  parameter NUM_VARIABLES           = 2048;
-  parameter MAX_CLAUSE_MEMBERSHIP   = 20;
-  parameter FIFO_DEPTH              = 32;
+  parameter NSAT                      = 3;
+  parameter NUM_VARIABLES             = 2048;
+  parameter MAX_CLAUSE_MEMBERSHIP     = 20;
+  parameter FIFO_DEPTH                = 32;
   parameter UNSAT_CLAUSE_BUFFER_DEPTH = 2048;
-  parameter CONTROLLER_SIGNAL_WIDTH = 14;
-  parameter MAX_FLIPS               = 32'h00FF_FFFF;
+  parameter CONTROLLER_SIGNAL_WIDTH   = 14;
+  parameter MAX_FLIPS                 = 32'h00FF_FFFF;
   
   localparam VARIABLE_ADDRESS_WIDTH = $clog2(NUM_VARIABLES);
   localparam LITERAL_ADDRESS_WIDTH  = VARIABLE_ADDRESS_WIDTH + 1;
@@ -35,10 +35,11 @@ module kanazawa_solver_tb;
   reg [$clog2(UNSAT_CLAUSE_BUFFER_DEPTH)-1:0] ucb_load_addr;
   reg [CLAUSE_WIDTH-1:0] ucb_load_data;
   
-  // unsat_buffer_count comes from the datapath.
+  // unsat_buffer_count comes from the Datapath instance.
   wire [10:0] unsat_buffer_count;
   
   // Instantiate Overlord.
+  // Note that its unsat_buffer_count input is connected to the datapath output.
   Overlord #(
       .NSAT(NSAT),
       .NUM_VARIABLES(NUM_VARIABLES),
@@ -66,6 +67,7 @@ module kanazawa_solver_tb;
   );
   
   // Instantiate Datapath.
+  // Its output unsat_buffer_count_o is connected to the same unsat_buffer_count signal.
   Datapath #(
       .NSAT(NSAT),
       .NUM_VARIABLES(NUM_VARIABLES),
@@ -76,7 +78,7 @@ module kanazawa_solver_tb;
   ) i_datapath (
       .clk_i(clk),
       .rst_i(rst),
-      .control_signal_i(),  // Not required for this testbench
+      .control_signal_i(),  // Not used in this testbench
       .att_wr_en_i(),       
       .att_wr_addr_i(),     
       .att_wr_data_i(),     
@@ -93,7 +95,7 @@ module kanazawa_solver_tb;
   // Memory for clause table.
   reg [31:0] memfile_data [0:2047];
   
-  // Task: load clause table data into ct memory.
+  // Task: load clause table data into the ct memory.
   task load_clause_table_from_mem(input reg [8*128-1:0] memfilename);
     integer j;
     begin
@@ -113,21 +115,22 @@ module kanazawa_solver_tb;
   endtask
   
   // Task: signal end of load for current thread.
+  // Pulse on the posedge so that Overlord correctly samples load_end.
   task do_load_end;
     begin
       load_end = 1'b1;
-      @(negedge clk);
+      @(posedge clk);
       load_end = 1'b0;
-      @(negedge clk);
+      @(posedge clk);
     end
   endtask
   
   // Task: reset the system.
   task do_reset;
     begin
-      rst          = 1;
-      cpu_start    = 0;
-      load_end     = 0;
+      rst           = 1;
+      cpu_start     = 0;
+      load_end      = 0;
       ct_load_valid = 0;
       att_load_valid = 0;
       ucb_load_valid = 0;
@@ -136,6 +139,9 @@ module kanazawa_solver_tb;
     end
   endtask
   
+  // In this testbench Overlord is designed to run the Datapath four times (one per thread).
+  // We load a clause table for each thread, signal the end of that load,
+  // then start the solver.
   integer i;
   initial begin
     // Initialize load interface signals.
@@ -145,11 +151,10 @@ module kanazawa_solver_tb;
     
     do_reset;
     
-    // Load each thread serially.
+    // Load each thread serially (Overlord will cycle through four threads).
     for (i = 0; i < 4; i = i + 1) begin
       $display("\n=== LOADING clause table for thread %0d ===", i);
-      load_clause_table_from_mem("/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem");
-      // (Similarly, other memories can be loaded here.)
+      load_clause_table_from_mem("/home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/mem/minunsat.mem");
       do_load_end;
     end
     
@@ -159,7 +164,7 @@ module kanazawa_solver_tb;
     @(negedge clk);
     cpu_start = 1'b0;
     
-    // Wait until the Overlord signals completion.
+    // Wait until the Overlord signals completion (based on the Datapath signal).
     wait(cpu_done);
     $display("Solver done for minunsat. unsat_buffer_count=%0d", unsat_buffer_count);
     if (unsat_buffer_count === 0)
@@ -169,10 +174,10 @@ module kanazawa_solver_tb;
       
     do_reset;
     
-    // Load SAT problem (e.g., 4_queens) for each thread.
+    // For the SAT problem, load each thread’s clause table.
     for (i = 0; i < 4; i = i + 1) begin
       $display("\n=== LOADING clause table for thread %0d (4_queens) ===", i);
-      load_clause_table_from_mem("/home/dae/Solving-SAT-in-FPGA-UCSB/rtl/mem/4_queens.mem");
+      load_clause_table_from_mem("/home/harim_choe/Solving-SAT-in-FPGA-UCSB/rtl/mem/4_queens.mem");
       do_load_end;
     end
     
@@ -193,4 +198,3 @@ module kanazawa_solver_tb;
   end
 
 endmodule
-

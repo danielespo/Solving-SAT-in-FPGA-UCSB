@@ -30,10 +30,10 @@ module FIFO_Tree_tb;
 
 // Parameters for the FIFO tree
 parameter CLAUSE_COUNT = 20;
-parameter CLAUSE_WIDTH = 9;  
+parameter CLAUSE_WIDTH = 36;  
 parameter BUFFER_DEPTH = 32;
 // testing parameters
-parameter NUM_TESTS = 5;
+parameter NUM_TESTS = 10;
 parameter TEST_CYCLES = 0.6 * CLAUSE_COUNT;
 
 localparam CW = CLAUSE_WIDTH;
@@ -346,9 +346,6 @@ $display("> Phase 1: Test that the FIFO tree can store and retrieve data");
     end else begin
         $display("  Phase 1 Failed");
     end
-
-
-
 
 $display("FIFO Tree Testbench: End Simulation");
 $finish;

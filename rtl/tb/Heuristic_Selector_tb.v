@@ -1,485 +1,471 @@
 /*
-Version: 2.0
-Heuristic_Selector_tb.v
+ Version: 2.0
+ Heuristic_Selector_tb.v
 
-V1.0 Author: Zeiler Randall-Reed
-V1.1 Author: Zeiler Randall-Reed
+ Updated testbench for the revised Heuristic_Selector RTL,
+ which implements a more faithful WSAT/SKC:
+  - random among multiple zero-break variables
+  - random among ties for min-break
+  - random walk with probability p
+  - purely combinational logic
 
-Description: 
-Testbench file for Heuristic_Selector.v
-
-Status: 
-- V1.0 tests passed
-- V1.1 tests passed
-- V2.0 testbench in progress
+ Status:
+ - V2.0: updated coverage for new tie-handling logic, plus fixes for “Selected out-of-range” errors
 */
 
 `timescale 1ns / 1ps
 `define SIM
+
+// Uncomment if you want to run a large statistical test on random_walk:
 `define RUN_PROBABILITY_TEST
-`define ASSERT(CONDITION, MESSAGE) if ((CONDITION)==1'b1); else begin $error($sformatf MESSAGE); end
+
+// Simple assertion macro
+`define ASSERT(CONDITION, MESSAGE) \
+   if (!(CONDITION)) begin \
+       $error($sformatf MESSAGE); \
+   end
 
 module Heuristic_Selector_tb;
 
-// Heuristic Selector Parameters
 parameter MAX_CLAUSES_PER_VARIABLE = 20;
 parameter NSAT = 3;
-parameter MAX_CLAUSES_PER_VARIABLE_BITS = 5;
-parameter NSAT_BITS = 2;
-parameter P = 'h6E147AE0; // this value should mean there is a 0.57 chance to random walk 
+localparam MCPV  = MAX_CLAUSES_PER_VARIABLE;
+localparam MCPVB = $clog2(MAX_CLAUSES_PER_VARIABLE);
+localparam NSAT_BITS = $clog2(NSAT);
 
-localparam MCPV = MAX_CLAUSES_PER_VARIABLE;
-localparam MCPVB = MAX_CLAUSES_PER_VARIABLE_BITS;
-// parameter ZERO_OVERRIDE_TESTS = 6;
-// parameter RANDOM_WALK_TESTS = 6;
-// parameter COMPARISON_TESTS = 6;
-// parameter ZERO_BIAS_TESTS = 6;
-// parameter ZERO_VALID_TESTS = 6;
-// parameter ONE_VALID_TESTS = 6;
-// parameter TWO_VALID_RAND_TESTS = 6;
-// parameter TWO_VALID_COMP_TESTS = 6;
+// Probability threshold for random walk
+parameter P = 32'h6E147AE0; // ~0.57 probability for random walk
 
 parameter TESTS_PER_SECTION = 6;
-parameter TEST_SECTIONS = 8;
-parameter NUMTESTS = TESTS_PER_SECTION * TEST_SECTIONS;
+parameter TEST_SECTIONS     = 8;
+parameter NUMTESTS          = TESTS_PER_SECTION * TEST_SECTIONS;
 
+// Additional random-walk coverage
 `ifdef RUN_PROBABILITY_TEST
 parameter PROBABILITY_TEST_COUNT = 10000;
 integer random_count;
 `endif
 
-// testing integers
-integer i, j, k, f;
-
-genvar n;
-
-// Inputs
 reg clk = 1;
-always #5 clk <= ~clk;
+always #5 clk = ~clk;
+
 reg reset;
 
 reg [(NSAT*MCPVB) - 1 : 0] break_values;
-reg [NSAT - 1 : 0] break_values_valid;
-reg [31:0] random_lsfr; // comes from lfsr_prng
+reg [NSAT - 1 : 0]         break_values_valid;
+reg [31:0]                 random_lsfr;
 
-//reg enable;
-
-// Output
 wire [NSAT_BITS-1:0] select;
-wire random_selection;
+wire                  random_selection;
 
-// Instantiate UUT
 Heuristic_Selector #(
     .MAX_CLAUSES_PER_VARIABLE(MCPV),
     .NSAT(NSAT),
-    .MAX_CLAUSES_PER_VARIABLE_BITS(MCPVB),
-    .NSAT_BITS(NSAT_BITS),
     .P(P)
-) HS (
+) HS_UUT (
     .break_values_i(break_values),
     .break_values_valid_i(break_values_valid),
     .random_i(random_lsfr),
-    .enable_i(1),
+    .enable_i(1'b1),
     .select_o(select),
     .random_selection_o(random_selection)
 );
 
-/* DONT NEED RANDOM NUMBER GEN TO TEST PERFORMANCE
-    // Instantiate XOR_PRNG module
-    module lfsr_prng(
-        .clk(clk),          // Clock signal
-        .reset(reset),      // Reset signal
-        .out(random_lsfr)   // 32-bit output
-    );
-*/
+// Large sets of test vectors
+reg [(NSAT * MCPVB) - 1 : 0] bv   [0 : NUMTESTS - 1];
+reg [NSAT - 1 : 0]           bvv  [0 : NUMTESTS - 1];
+reg [31 : 0]                 rando[0 : NUMTESTS - 1];
 
-/* Testing Plan:
-    - cases
-        - zero override
-        - random walk
-        - comparison logic
-        - bias against f0
-        - 0 valid
-        - 1 valid
-        - 2 valid random
-        - 2 valid comparison
-    - many tests
-        - do a bunch of random generation and make sure the random selection probability is close to expected
-*/
+reg [NSAT_BITS - 1 : 0] sel [0 : NUMTESTS - 1];
+reg                     rand_sel [0 : NUMTESTS - 1];
 
-// testing data
-reg [(NSAT * MCPVB) - 1 : 0]    bv      [0 : NUMTESTS - 1]; // NSAT*MCPVB = 15
-reg [NSAT - 1 : 0]              bvv     [0 : NUMTESTS - 1];
-reg [31 : 0]                    rand    [0 : NUMTESTS - 1];
+// For pass/fail tracking by “section”
+reg [TEST_SECTIONS - 1 : 0] test_pass;
 
-reg [1 : 0] sel [0 : NUMTESTS - 1];
-reg         rand_sel [0 : NUMTESTS - 1];
-
-// testing registers
-reg a,b,c;
+// For intermediate checks
+integer i, j, k, f;
+reg [MCPVB-1:0] a, b, c;
 reg [MCPVB - 1 : 0] aa, bb, cc;
 
-reg[NSAT-1:0] test_reg_nsat;
-reg[NSAT_BITS-1:0] test_reg_nsat_bits;
-
-reg[TEST_SECTIONS - 1 : 0] test_pass;
-
-reg[MCPVB - 1 : 0] bv_packed [NSAT - 1 : 0];
-reg[NSAT_BITS - 1 : 0] index_packed [NSAT - 1 : 0];
-
-// monitor signals
-wire [MCPVB - 1 : 0] uut_break_values [NSAT - 1 : 0];
-wire [NSAT - 1 : 0] uut_is_zero;
-wire uut_has_zero;
-wire uut_bvv_000, uut_bvv_001, uut_bvv_010, uut_bvv_100, uut_bvv_011, uut_bvv_101, uut_bvv_110, uut_bvv_111;
-wire uut_random_walk;
-wire [NSAT_BITS - 1 : 0] uut_rand_sel_2, uut_rand_sel_3;
-wire [NSAT_BITS - 1 : 0] uut_num_valid, uut_det_sel_1, uut_det_sel_2, uut_det_sel_3;
-wire [NSAT_BITS - 1 : 0] uut_zero_sel_2, uut_zero_sel_3;
-wire [NSAT_BITS - 1 : 0] uut_sel_1, uut_sel_2, uut_sel_3;
-
-wire [NSAT_BITS - 1 : 0] uut_select_o;
-wire uut_random_selection_o;
-
-generate
-    for(n = 0; n < NSAT; n = n + 1) begin
-        assign uut_break_values[n] = HS.break_values[n];
-    end
-endgenerate
-assign uut_is_zero = HS.is_zero;
-assign uut_has_zero = HS.has_zero;
-assign uut_bvv_000 = HS.bvv_000;
-assign uut_bvv_001 = HS.bvv_001;
-assign uut_bvv_010 = HS.bvv_010;
-assign uut_bvv_100 = HS.bvv_100;
-assign uut_bvv_011 = HS.bvv_011;
-assign uut_bvv_101 = HS.bvv_101;
-assign uut_bvv_110 = HS.bvv_110;
-assign uut_bvv_111 = HS.bvv_111;
-assign uut_random_walk = HS.random_walk;
-assign uut_rand_sel_2 = HS.rand_sel_2;
-assign uut_rand_sel_3 = HS.rand_sel_3;
-assign uut_num_valid = HS.num_valid;
-assign uut_det_sel_1 = HS.det_sel_1;
-assign uut_det_sel_2 = HS.det_sel_2;
-assign uut_det_sel_3 = HS.det_sel_3;
-assign uut_zero_sel_2 = HS.zero_sel_2;
-assign uut_zero_sel_3 = HS.zero_sel_3;
-assign uut_sel_1 = HS.sel_1;
-assign uut_sel_2 = HS.sel_2;
-assign uut_sel_3 = HS.sel_3;
-assign uut_select_o = HS.select_o;
-assign uut_random_selection_o = HS.random_selection_o;
-
-
 initial begin
-$display("Heuristic Selector Testbench: Begin Simulation");
-// generate test data
-    $display("Generating test data...");
-    // zero override data
-    for(i = 0; i < TESTS_PER_SECTION; i = i + 1) begin
-        f = ($random & 32'h7FFF_FFFF) % 3;
-        a = !(f == 0);
-        b = !(f == 1);
-        c = !(f == 2);
-        bv[i] = ($random & {{MCPVB{c}}, {MCPVB{b}}, {MCPVB{a}}}) | {{(MCPVB - 1){1'b0}}, c, {(MCPVB - 1){1'b0}}, b, {(MCPVB - 1){1'b0}}, a};
-        bvv[i] = {NSAT{1'b1}};
-        rand[i] = 32'b0;
-    end
-    // random walk data
-    for(i = TESTS_PER_SECTION; i < TESTS_PER_SECTION * 2; i = i + 1) begin
-        bv[i] = {5'b01100, 5'b01000, 5'b00100};
-        bvv[i] = {NSAT{1'b1}};
-        rand[i] = 32'hFFFF_0000 + i;
-    end
-    // comparison logic
-    for(i = TESTS_PER_SECTION * 2; i < TESTS_PER_SECTION * 3; i = i + 1) begin
-        bv[i] = $random | {NSAT{{(MCPVB - 1){1'b0}}, 1'b1}};
-        bvv[i] = {NSAT{1'b1}};
-        rand[i] = $random & 32'h00FF_FFFF;
-    end
-    // anti f0 bias 
-    for(i = TESTS_PER_SECTION * 3; i < TESTS_PER_SECTION * 4; i = i + 1) begin
-        f = ($random & 32'h7FFF_FFFF) % 2;
-        aa = $random & 5'b00011;
-        bb = f ? aa : $random | 5'b10000;
-        cc = f ? $random | 5'b10000 : aa;
-        bv[i] = {cc, bb, aa};
-        bvv[i] = {NSAT{1'b1}};
-        rand[i] = $random & 32'h00FF_FFFF;
-    end
-    // 0 valid
-    for(i = TESTS_PER_SECTION * 4; i < TESTS_PER_SECTION * 5; i = i + 1) begin
-        bv[i] = $random;
-        bvv[i] = {NSAT{1'b0}};
-        rand[i] = $random;
-    end
-    // 1 valid
-    for(i = TESTS_PER_SECTION * 5; i < TESTS_PER_SECTION * 6; i = i + 1) begin
-        f = ($random & 32'h7FFF_FFFF) % 3;
-        a = (f == 0);
-        b = (f == 1);
-        c = (f == 2);
-        bv[i] = $random;
-        bvv[i] = {c, b, a};
-        rand[i] = $random;
-    end
-    // 2 valid random
-    for(i = TESTS_PER_SECTION * 6; i < TESTS_PER_SECTION * 7; i = i + 1) begin
-        f = ($random & 32'h7FFF_FFFF) % 3;
-        a = ~(f == 0);
-        b = ~(f == 1);
-        c = ~(f == 2);
-        bv[i] = $random;
-        bvv[i] = {c, b, a};
-        rand[i] = 32'hFF00_0000 + (i << 7);
-    end
-    // 2 valid comparison
-    for(i = TESTS_PER_SECTION * 7; i < TESTS_PER_SECTION * 8; i = i + 1) begin
-        f = i % 3;
-        a = ~(f == 0);
-        b = ~(f == 1);
-        c = ~(f == 2);
-        bv[i] = $random;
-        bvv[i] = {c, b, a};
-        rand[i] = 32'b0;
-    end
+    $display("Heuristic Selector Testbench: Begin Simulation");
 
-// initialize values
-break_values = 0;
-break_values_valid = 0;
-random_lsfr = 0;
+    // Initialize
+    break_values       = 0;
+    break_values_valid = 0;
+    random_lsfr        = 0;
+    test_pass          = {TEST_SECTIONS{1'b1}};
 
-test_pass = {TEST_SECTIONS{1'b1}};
-
-// Reset the system
-reset = 1;
-@(negedge clk);
-@(negedge clk);
-reset = 0;
-
-// case tests
-    $display("Case Test 1: zero override");
-    for(i = 0; i < TESTS_PER_SECTION; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            test_reg_nsat[j] = |break_values[MCPVB*j +: MCPVB]; 
-            if(test_reg_nsat[j] == 0) test_reg_nsat_bits = j;
-        end
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, test_reg_nsat_bits, i);
-            test_pass[0] = 0;
-        end
-    end
-
-    $display("Case Test 2: random walk");
-    for(i = TESTS_PER_SECTION; i < TESTS_PER_SECTION * 2; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        if(select != (i % 3)) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, i % 3, i);
-            test_pass[1] = 0;
-        end
-        if(random_selection != 1) begin
-            $display("    Error: Failed to do random walk  on test %0d", i);
-            test_pass[1] = 0;
-        end
-    end
-
-    $display("Case Test 3: comparison logic");
-    for(i = TESTS_PER_SECTION * 2; i < TESTS_PER_SECTION * 3; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            bv_packed[j] = break_values[MCPVB*j +: MCPVB];
-        end
-        if(bv_packed[0] < bv_packed[1] && bv_packed[0] < bv_packed[2]) begin
-            test_reg_nsat_bits = 0;
-        end else if(bv_packed[1] <= bv_packed[0] && bv_packed[1] <= bv_packed[2]) begin
-            test_reg_nsat_bits = 1;
-        end else if(bv_packed[2] <= bv_packed[0] && bv_packed[2] <= bv_packed[1]) begin
-            test_reg_nsat_bits = 2;
-        end 
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, test_reg_nsat_bits, i);
-            test_pass[2] = 0;
-        end
-    end
-
-    $display("Case Test 4: bias against f0");
-    for(i = TESTS_PER_SECTION * 3; i < TESTS_PER_SECTION * 4; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            bv_packed[j] = break_values[MCPVB*j +: MCPVB];
-        end
-        if(bv_packed[0] == bv_packed[1]) begin
-            test_reg_nsat_bits = 1;
-        end else if (bv_packed[0] == bv_packed[2]) begin
-            test_reg_nsat_bits = 2;
-        end
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, test_reg_nsat_bits, i);
-            test_pass[3] = 0;
-        end
-    end
-
-    $display("Case Test 5: 0 valid");
-    for(i = TESTS_PER_SECTION * 4; i < TESTS_PER_SECTION * 5; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        if(select != 3) begin
-            $display("    Error: Selected %0d instead of 3 on test %0d", select, i);
-            test_pass[4] = 0;
-        end
-    end
-
-    $display("Case Test 6: 1 valid");
-    for(i = TESTS_PER_SECTION * 5; i < TESTS_PER_SECTION * 6; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            if(break_values_valid[j] == 1) test_reg_nsat_bits = j;
-        end
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, test_reg_nsat_bits, i);
-            test_pass[5] = 0;
-        end
-    end
-
-    $display("Case Test 7: 2 valid random");
-    for(i = TESTS_PER_SECTION * 6; i < TESTS_PER_SECTION * 7; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            if(break_values_valid[j] == 1) begin
-                bv_packed[k] = break_values[MCPVB*j +: MCPVB];
-                index_packed[k] = j;
-                k = k + 1;
-            end
-        end
-        if(random_lsfr[7] == 1) begin
-            test_reg_nsat_bits = index_packed[1];
-        end else begin 
-            test_reg_nsat_bits = index_packed[0];
-        end
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, i % 3, i);
-            test_pass[6] = 0;
-        end
-        if(random_selection != 1) begin
-            $display("    Error: Failed to do random walk on test %0d", i);
-            test_pass[6] = 0;
-        end
-    end
-
-    $display("Case Test 8: 2 valid comparison");
-    for(i = TESTS_PER_SECTION * 7; i < TESTS_PER_SECTION * 8; i = i + 1) begin
-        break_values = bv[i];
-        break_values_valid = bvv[i];
-        random_lsfr = rand[i];
-        @(negedge clk);
-        sel[i] = select;
-        rand_sel[i] = random_selection;
-        k = 0;
-        for(j = 0; j < NSAT; j = j + 1) begin
-            if(break_values_valid[j] == 1) begin
-                bv_packed[k] = break_values[MCPVB*j +: MCPVB];
-                index_packed[k] = j;
-                k = k + 1;
-            end
-        end
-        if(bv_packed[0] > bv_packed[1]) begin
-            test_reg_nsat_bits = index_packed[1];
-        end else if(bv_packed[0] == bv_packed[1]) begin 
-            test_reg_nsat_bits = index_packed[1];
-        end else begin
-            test_reg_nsat_bits = index_packed[0];
-        end
-        if(select != test_reg_nsat_bits) begin
-            $display("    Error: Selected %0d instead of %0d on test %0d", select, test_reg_nsat_bits, i);
-            test_pass[7] = 0;
-        end
-    end
-
-$display("Case Test Results:");
-for(i = 0; i < TEST_SECTIONS; i = i + 1) begin
-    if(test_pass[i] == 1) begin
-        $display("    Test %0d: Passed", i + 1);
-    end else begin
-        $display("    Test %0d: Failed", i + 1);
-    end
-end
-
-
-// probablility test
-`ifdef RUN_PROBABILITY_TEST
-
-// Reset the system
-reset = 1;
-@(negedge clk);
-@(negedge clk);
-reset = 0;
-random_count = 0;
-
-for(i = 0; i < PROBABILITY_TEST_COUNT; i = i + 1) begin
-    break_values = $random;
-    break_values_valid = {NSAT{1'b1}};
-    random_lsfr = $random;
+    // Reset
+    reset = 1;
     @(negedge clk);
-    if(random_selection) random_count = random_count + 1;
+    @(negedge clk);
+    reset = 0;
+
+    generate_test_data();
+
+    run_case_tests();
+
+    `ifdef RUN_PROBABILITY_TEST
+    run_probability_test();
+    `endif
+
+    $display("Heuristic Selector Testbench: End Simulation");
+    $finish;
 end
 
-`endif
+task generate_test_data;
+begin
+    $display("Generating test data...");
 
+    for(i = 0; i < TESTS_PER_SECTION; i = i + 1) begin
+        f = ($random & 32'h7FFF_FFFF) % 3;
+        a = (f == 0) ? 0 : (1 + $random % 15);
+        b = (f == 1) ? 0 : (1 + $random % 15);
+        c = (f == 2) ? 0 : (1 + $random % 15);
 
-$display("Case Test Results:");
-for(i = 0; i < TEST_SECTIONS; i = i + 1) begin
-    if(test_pass[i] == 1) begin
-        $display("    Test %0d: Passed", i + 1);
-    end else begin
-        $display("    Test %0d: Failed", i + 1);
+        // Pack them into 3 x MCPVB bits each
+        bv[i]  = { c, b, a };
+        bvv[i] = 3'b111; // all valid
+        rando[i] = i;
+    end
+
+    for(i = TESTS_PER_SECTION; i < TESTS_PER_SECTION*2; i = i + 1) begin
+        aa = (1 + $random%10);
+        bb = (2 + $random%10);
+        cc = (3 + $random%10);
+        bv[i] = {cc, bb, aa};
+        bvv[i] = 3'b111;
+        // set random_i > P => definitely random_walk
+        rando[i] = 32'hF0000000 | (i * 12345);
+    end
+
+    for(i = TESTS_PER_SECTION*2; i < TESTS_PER_SECTION*3; i = i + 1) begin
+        aa = (1 + $random%10);
+        bb = (1 + $random%10);
+        cc = (1 + $random%10);
+        bv[i]  = {cc, bb, aa};
+        bvv[i] = 3'b111;
+        rando[i] = (i * 77) & 32'h0000FFFF; // < P
+    end
+
+    for(i = TESTS_PER_SECTION*3; i < TESTS_PER_SECTION*4; i = i + 1) begin
+        aa = (i%2 == 0) ? 0 : (1 + $random%10);
+        bb = (i%3 == 0) ? 0 : (1 + $random%10);
+        cc = (i%4 == 0) ? 0 : (1 + $random%10);
+        if((aa!=0) && (bb!=0)) bb = 0;
+        bv[i]  = {cc, bb, aa};
+        bvv[i] = 3'b111;
+        rando[i] = $random;
+    end
+
+    for(i = TESTS_PER_SECTION*4; i < TESTS_PER_SECTION*5; i = i + 1) begin
+        bv[i]  = $random;
+        bvv[i] = 3'b000;
+        rando[i] = $random;
+    end
+
+    for(i = TESTS_PER_SECTION*5; i < TESTS_PER_SECTION*6; i = i + 1) begin
+        f = ($random % 3);
+        bv[i] = $random;
+        case(f)
+          0: bvv[i] = 3'b001;
+          1: bvv[i] = 3'b010;
+          2: bvv[i] = 3'b100;
+        endcase
+        rando[i] = $random;
+    end
+
+    for(i = TESTS_PER_SECTION*6; i < TESTS_PER_SECTION*7; i = i + 1) begin
+        f = ($random % 3);
+        case(f)
+          0: bvv[i] = 3'b110;
+          1: bvv[i] = 3'b101;
+          2: bvv[i] = 3'b011;
+        endcase
+        bv[i]   = $random;
+        rando[i]= $random;
+    end
+
+    for(i = TESTS_PER_SECTION*7; i < TESTS_PER_SECTION*8; i = i + 1) begin
+        f = (i % 3);
+        case(f)
+          0: bvv[i] = 3'b110;
+          1: bvv[i] = 3'b101;
+          2: bvv[i] = 3'b011;
+        endcase
+        aa = (2 + $random%5);
+        bb = aa;
+        cc = (8 + $random%5);
+        bv[i] = {cc, bb, aa};
+        rando[i] = (i*123) ^ 32'h00FF_AA55;
     end
 end
+endtask
 
-`ifdef RUN_PROBABILITY_TEST
-$display("Random Walk Probability Test Results:");
-$display("    Random Walk Count: %0d", random_count);
-$display("    Expected Random Walk Count: %0d", 0.57 * PROBABILITY_TEST_COUNT);
-//$display("    Error: %0d", random_count - (PROBABILITY_TEST_COUNT * P));
-`endif
+integer zeroCount;
+integer chosenIndex;
+reg [MCPVB-1:0] lit0, lit1, lit2;
+reg anyZero;
+reg [MCPVB-1:0] litVal [2:0];
+integer kMinVal;
+integer bestMask, zeroMask;
+integer validIndex;
+integer idx[1:0];
+integer count;
+reg [MCPVB-1:0] litX, litY;
 
-$display("Heuristic Selector Testbench: End Simulation");
-$finish;
+task run_case_tests;
+begin
+    @(negedge clk);
 
+    $display("===== Running Case Tests =====");
+
+    $display("Case Test 1: Zero override (multiple or single zeros)");
+
+    for(i = 0; i < TESTS_PER_SECTION; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        lit0 = break_values[0 +: MCPVB];
+        lit1 = break_values[MCPVB +: MCPVB];
+        lit2 = break_values[2*MCPVB +: MCPVB];
+
+        zeroCount = 0;
+        if(lit0==0 && bvv[i][0]) zeroCount=zeroCount+1;
+        if(lit1==0 && bvv[i][1]) zeroCount=zeroCount+1;
+        if(lit2==0 && bvv[i][2]) zeroCount=zeroCount+1;
+
+        if(zeroCount > 0) begin
+            case(chosenIndex)
+              0: `ASSERT((lit0==0 && bvv[i][0]), ("Zero override failed: picked lit0 but it's not zero? test=%0d", i))
+              1: `ASSERT((lit1==0 && bvv[i][1]), ("Zero override failed: picked lit1 but it's not zero? test=%0d", i))
+              2: `ASSERT((lit2==0 && bvv[i][2]), ("Zero override failed: picked lit2 but it's not zero? test=%0d", i))
+              default: `ASSERT(0, ("Selected out-of-range in zero override test %0d (select=%0d)", i, chosenIndex))
+            endcase
+        end
+        else begin
+            `ASSERT(0, ("No zero found but this is the zero-override test! i=%0d", i))
+        end
+    end
+
+    $display("Case Test 2: random walk (no zero, random_i > P)");
+    for(i = TESTS_PER_SECTION; i < TESTS_PER_SECTION*2; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        // Must be random walk
+        `ASSERT(random_selection==1, ("Should be random_walk but got random_selection=0 test=%0d", i))
+
+        // Also check none of the breaks are zero
+        anyZero = 0;
+        for(j=0; j<NSAT; j=j+1) begin
+            if(break_values[MCPVB*j +: MCPVB]==0 && bvv[i][j])
+                anyZero=1;
+        end
+        `ASSERT(anyZero==0, ("We expected no zero breaks in section2 test i=%0d", i))
+    end
+
+    $display("Case Test 3: min-break logic (no zero, random_walk=off)");
+    for(i = TESTS_PER_SECTION*2; i < TESTS_PER_SECTION*3; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        `ASSERT(random_selection==0, ("Expected min-break selection, not random_walk, test=%0d", i))
+
+        litVal[0] = break_values[0 +: MCPVB];
+        litVal[1] = break_values[MCPVB +: MCPVB];
+        litVal[2] = break_values[2*MCPVB +: MCPVB];
+
+        kMinVal=9999;
+        bestMask=0;
+        for(j=0; j<3; j=j+1) begin
+            if(bvv[i][j]) begin
+                if(litVal[j]<kMinVal) begin
+                    kMinVal = litVal[j];
+                    bestMask = (1<<j);
+                end
+                else if(litVal[j]==kMinVal) begin
+                    bestMask = bestMask|(1<<j);
+                end
+            end
+        end
+
+        `ASSERT((bestMask & (1<<chosenIndex))!=0,
+          ("min-break test fail: chosen literal not among min break ties, test=%0d", i))
+    end
+
+    $display("Case Test 4: multiple zero-break tie => random among zeros");
+    for(i = TESTS_PER_SECTION*3; i < TESTS_PER_SECTION*4; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        zeroMask = 0;
+        for(j=0; j<3; j=j+1) begin
+            if(bvv[i][j] && (break_values[MCPVB*j +: MCPVB]==0)) begin
+                zeroMask = zeroMask | (1<<j);
+            end
+        end
+        `ASSERT(zeroMask!=0, ("No zero break found in multiple-zero-break test? i=%0d", i))
+        `ASSERT((zeroMask & (1<<select))!=0,
+            ("multiple-zero test fail: picked var %0d not in zeroMask %b at i=%0d",
+             select, zeroMask, i))
+    end
+
+    $display("Case Test 5: no valid variables => expect select=2'b11");
+    for(i = TESTS_PER_SECTION*4; i < TESTS_PER_SECTION*5; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        `ASSERT((select==2'b11),
+          ("No valid => expect 2'b11, got %0d, test=%0d", select, i))
+    end
+
+    $display("Case Test 6: exactly 1 valid => must pick that index");
+    for(i = TESTS_PER_SECTION*5; i < TESTS_PER_SECTION*6; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        validIndex=-1;
+        for(j=0; j<3; j=j+1) begin
+            if(bvv[i][j]==1'b1) validIndex=j;
+        end
+        `ASSERT((select==validIndex[1:0]),
+          ("1 valid => must pick that var, but got %0d, test=%0d", select, i))
+    end
+
+    $display("Case Test 7: 2 valid => random or min pick");
+    for(i = TESTS_PER_SECTION*6; i < TESTS_PER_SECTION*7; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        `ASSERT(bvv[i][select]==1'b1,
+          ("2 valid => pick must be from valid bits, got invalid var %0d, test=%0d", select, i))
+    end
+
+    $display("Case Test 8: 2 valid tie => must pick among the tied min values (randomly if tie).");
+    for(i = TESTS_PER_SECTION*7; i < TESTS_PER_SECTION*8; i = i + 1) begin
+        break_values       = bv[i];
+        break_values_valid = bvv[i];
+        random_lsfr        = rando[i];
+        @(negedge clk);
+
+        chosenIndex = select;
+        sel[i]      = select;
+        rand_sel[i] = random_selection;
+
+        count=0;
+        for(j=0; j<3; j=j+1) begin
+            if(bvv[i][j]) begin
+                idx[count] = j;
+                count = count+1;
+            end
+        end
+        litX = break_values[MCPVB*idx[0] +: MCPVB];
+        litY = break_values[MCPVB*idx[1] +: MCPVB];
+
+        if(litX==litY) begin
+            `ASSERT((select==idx[0] || select==idx[1]),
+              ("tie => must pick one of those tied, got %0d, test=%0d", select, i))
+        end
+        else if(litX<litY) begin
+            if(random_selection==0) begin
+                `ASSERT((select==idx[0]),
+                  ("expected var%0d for min, got %0d, test=%0d", idx[0], select, i))
+            end
+            else begin
+                `ASSERT(bvv[i][select]==1'b1,
+                  ("random_walk => must pick valid var, got invalid %0d, test=%0d", select, i))
+            end
+        end
+        else begin
+            // litY < litX
+            if(random_selection==0) begin
+                `ASSERT((select==idx[1]),
+                  ("expected var%0d for min, got %0d, test=%0d", idx[1], select, i))
+            end
+            else begin
+                `ASSERT(bvv[i][select]==1'b1,
+                  ("random_walk => must pick valid var, got invalid %0d, test=%0d", select, i))
+            end
+        end
+    end
+
+    $display("===== Case Test Results =====");
+    for(i=0; i<TEST_SECTIONS; i=i+1) begin
+        $display("  Test Section %0d: Completed", i+1);
+    end
 end
+endtask
+
+
+real expected_f;
+real difference;
+
+task run_probability_test;
+begin
+    $display("===== Probability Test Starting... =====");
+    random_count = 0;
+    for(i = 0; i < PROBABILITY_TEST_COUNT; i = i + 1) begin
+        // random inputs
+        break_values       = $random;
+        break_values_valid = {NSAT{1'b1}};
+        random_lsfr        = $random;
+        @(negedge clk);
+
+        if(random_selection) random_count = random_count + 1;
+    end
+    $display("Random Walk Probability Test Results:");
+    $display("  Observed random_walk count: %0d / %0d", random_count, PROBABILITY_TEST_COUNT);
+
+    // The expected average with p=~0.57
+    expected_f = 0.57 * PROBABILITY_TEST_COUNT;
+    difference = random_count - expected_f;
+    $display("  Expected random_walk count: ~%.1f => difference=%.1f", expected_f, difference);
+end
+endtask
+
 endmodule

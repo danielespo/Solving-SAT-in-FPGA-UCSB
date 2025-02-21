@@ -107,11 +107,13 @@ module Variable_Flip_Selector #(
             end
             selected_o <= 2'b11;
             clause_valid_bits_o <= 0;
+            // $display("Variable_Flip_Selector Reset at time %0t", $time);
         end else begin
             for(i = 0; i < NSAT - 1; i = i + 1) begin // assign break_values_reg if wr_en_i is one hot
                 if(wr_en_i[i] == 1 && control_one_hot) begin
                     break_values_reg[i] <= break_value;
                     break_bits_reg[i] <= break_bits;
+                    // $display("Variable_Flip_Selector: Latching break value %0d for bit %0d at time %0t", break_value, i, $time);
                 end
             end
             if(&wr_en_i) begin // when we are using the data (all ones)
@@ -119,6 +121,7 @@ module Variable_Flip_Selector #(
                 // break_bits_reg[NSAT - 1] <= break_bits;
                 selected_o <= select;
                 clause_valid_bits_o <= select == 2'b10 ? break_bits : break_bits_reg[select];
+                // $display("Variable_Flip_Selector: Selected variable %0d with valid bits 0x%0h at time %0t", select, clause_valid_bits_o, $time);
             end
         end
     end

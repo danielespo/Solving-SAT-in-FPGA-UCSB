@@ -66,13 +66,15 @@ module Clause_Evaluator #(
             end
         end
     end else begin
-        reg break;
-        assign break_o = break;
+        reg break_out;
+        assign break_o = break_out;
         always @ (posedge clk_i) begin
             if (rst_i) begin
-                break <= 1'b0;
+                break_out <= 1'b0;
+                // $display("Clause_Evaluator Reset at time %0t", $time);
             end else begin
-                break <= ~|(var_val_i ^ var_neg_i);
+                break_out <= ~|(var_val_i ^ var_neg_i);
+                // $display("Clause_Evaluator: var_val=0x%b, var_neg=0x%b, break_o=%b at time %0t", var_val_i, var_neg_i, break_out, $time);
             end
         end
     end
